@@ -1,0 +1,30 @@
+header{
+    width: 100%;
+}
+
+.header-content{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+i{
+    color: $secundary-light;
+}
+.header-icons{
+    display: flex;
+    gap: 15px;
+}
+.header-icons :hover{
+    i{
+        color: $primary-dark;
+    }
+}
+@keyframes translateY {
+    from{
+        transform:  translateY(0) scale(1);
+    }
+    to{
+        transform: translate(-5px) scale(1);
+    }
+}

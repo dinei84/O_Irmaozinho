@@ -1,0 +1,33 @@
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    outline-style: none; 
+}
+@import 'partials/colors';
+@import 'partials/header.scss';
+
+body{
+    font-family: 'sora', sans-serif;
+    width: 100%;
+    height: 100vh;
+    position: relative;
+
+    background-color: $primary-light;
+}
+
+button{
+    font-family: 'sora', sans-serif;
+    cursor: pointer;
+}
+svg{
+    width: 100%;
+}
+// img{
+//     width: 100%;
+// }
+a{
+    cursor: pointer;
+    text-decoration: none;
+}
+
