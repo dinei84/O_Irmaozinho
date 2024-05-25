@@ -15,4 +15,39 @@ i {
 .header-icons {
   display: flex;
   gap: 15px;
+}
+
+.header-icons a:hover i {
+  color: blue;
+  animation: translateY 0.3s ease-in-out;
+}
+
+@keyframes translateY {
+  from {
+    transform: translateY(0) scale(1);
+  }
+  to {
+    transform: translateY(-5px) scale(1);
+  }
+}
+img {
+  border-radius: 50%;
+}
+
+.header-nav a {
+  color: red;
+}
+
+.header-nav a:hover i {
+  color: blue;
+  animation: translateY 0.3s ease-in-out;
+}
+
+@keyframes translateY {
+  from {
+    transform: translateY(0) scale(1);
+  }
+  to {
+    transform: translateY(-5px) scale(1);
+  }
 }/*# sourceMappingURL=header.css.map */

@@ -8,27 +8,50 @@ header{
     justify-content: space-between;
 }
 
-i{
-    color: $secundary-light;
+i {
+    color: $quaternary-light;
 }
-.header-icons{
+
+.header-icons {
     display: flex;
     gap: 15px;
 }
-.header-icons :hover{
+
+.header-icons a:hover{
     i{
-        color: $primary-dark;
-    }
-}
-@keyframes translateY {
-    from{
-        transform:  translateY(0) scale(1);
-    }
-    to{
-        transform: translate(-5px) scale(1);
+        animation: translateY 0.5s infinite alternate;
+        color: rgba(87, 81, 81, 0.829);
     }
 }
 
-.header-nav{
-    color: $primary-dark;
+@keyframes translateY {
+    from {
+        transform: translateY(0) scale(1);
+    }
+    to {
+        transform: translateY(-5px) scale(1);
+    }
 }
+
+img {
+    border-radius: 50%;
+}
+
+.header-nav a {
+    color: $quaternary-light;
+    border-bottom: 5px solid $quaternary-light;
+}
+.header-nav a:hover{    
+    animation: translateX 0.3s infinite alternate;
+    color: rgba(87, 81, 81, 0.829);
+}
+
+@keyframes translateX {
+    from {
+        transform: translateX(0) scale(1);
+    }
+    to {
+        transform: translateX(-5px) scale(1);
+    }
+}
+

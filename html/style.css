@@ -16,7 +16,7 @@ header {
 }
 
 i {
-  color: #fabd01;
+  color: #fa9619;
 }
 
 .header-icons {
@@ -24,8 +24,9 @@ i {
   gap: 15px;
 }
 
-.header-icons :hover i {
-  color: #33312b;
+.header-icons a:hover i {
+  animation: translateY 0.5s infinite alternate;
+  color: rgba(87, 81, 81, 0.829);
 }
 
 @keyframes translateY {
@@ -33,7 +34,29 @@ i {
     transform: translateY(0) scale(1);
   }
   to {
-    transform: translate(-5px) scale(1);
+    transform: translateY(-5px) scale(1);
+  }
+}
+img {
+  border-radius: 50%;
+}
+
+.header-nav a {
+  color: #fa9619;
+  border-bottom: 5px solid #fa9619;
+}
+
+.header-nav a:hover {
+  animation: translateX 0.3s infinite alternate;
+  color: rgba(87, 81, 81, 0.829);
+}
+
+@keyframes translateX {
+  from {
+    transform: translateX(0) scale(1);
+  }
+  to {
+    transform: translateX(-5px) scale(1);
   }
 }
 body {
