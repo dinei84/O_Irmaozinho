@@ -28,6 +28,14 @@ i {
   color: #33312b;
 }
 
+@keyframes translateY {
+  from {
+    transform: translateY(0) scale(1);
+  }
+  to {
+    transform: translate(-5px) scale(1);
+  }
+}
 body {
   font-family: "sora", sans-serif;
   width: 100%;
