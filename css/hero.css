@@ -8,9 +8,9 @@
     align-items: center;
     color: #fff;
     text-align: center;
-    margin-top: 170px;
+    margin-top: 90px;
     position: relative; /* Garante que o conteúdo fique acima do fundo desfocado */
-    padding-top: 120px;
+    padding-top: 60px;
     z-index: 1; /* Coloca o conteúdo na frente do fundo */
 }
 
