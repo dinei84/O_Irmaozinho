@@ -4,319 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crônicas - O Irmãozinho</title>
-    <style>
-        /* Reset CSS */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f4f4f4;
-        }
-
-        a {
-            text-decoration: none;
-            color: #1a73e8;
-        }
-
-        /* Container */
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-
-        /* Header */
-        header {
-            background-color: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: 700;
-            color: #333;
-        }
-
-        .logo span {
-            color: #1a73e8;
-        }
-
-        /* Navigation */
-        nav ul {
-            display: flex;
-            list-style: none;
-        }
-
-        nav ul li {
-            margin-left: 20px;
-        }
-
-        nav ul li a {
-            font-weight: 500;
-            transition: color 0.3s;
-            color: #333;
-        }
-
-        nav ul li a:hover {
-            color: #1a73e8;
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            font-size: 24px;
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-
-        /* Page Header */
-        .page-header {
-            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('images/cronicas-header.jpg');
-            background-size: cover;
-            background-position: center;
-            height: 40vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            text-align: center;
-            margin-top: 70px;
-        }
-
-        .page-header h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
-        }
-
-        /* Crônicas Section */
-        .cronicas-section {
-            padding: 60px 0;
-        }
-
-        .cronicas-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 30px;
-        }
-
-        .cronica-card {
-            background-color: #fff;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }
-
-        .cronica-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .cronica-img {
-            height: 200px;
-            overflow: hidden;
-        }
-
-        .cronica-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s;
-        }
-
-        .cronica-card:hover .cronica-img img {
-            transform: scale(1.05);
-        }
-
-        .cronica-content {
-            padding: 20px;
-        }
-
-        .cronica-meta {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 10px;
-        }
-
-        .cronica-content h3 {
-            font-size: 20px;
-            margin-bottom: 10px;
-        }
-
-        .cronica-content p {
-            margin-bottom: 15px;
-        }
-
-        .read-more {
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-        }
-
-        .read-more span {
-            margin-left: 5px;
-            transition: margin-left 0.3s;
-        }
-
-        .read-more:hover span {
-            margin-left: 10px;
-        }
-
-        /* Pagination */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            margin-top: 40px;
-        }
-
-        .pagination a {
-            display: inline-block;
-            padding: 8px 14px;
-            margin: 0 5px;
-            background-color: #fff;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s;
-        }
-
-        .pagination a:hover,
-        .pagination a.active {
-            background-color: #1a73e8;
-            color: #fff;
-        }
-
-        /* Footer */
-        footer {
-            background-color: #333;
-            color: #fff;
-            padding: 40px 0 20px;
-        }
-
-        .footer-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-        }
-
-        .footer-col {
-            flex: 1;
-            min-width: 250px;
-        }
-
-        .footer-col h3 {
-            font-size: 18px;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .footer-col h3::after {
-            content: '';
-            display: block;
-            width: 40px;
-            height: 2px;
-            background-color: #1a73e8;
-            margin-top: 10px;
-        }
-
-        .social-icons {
-            display: flex;
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .social-icons a {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            background-color: #444;
-            border-radius: 50%;
-            color: #fff;
-            text-align: center;
-            line-height: 40px;
-            transition: background-color 0.3s;
-        }
-
-        .social-icons a:hover {
-            background-color: #1a73e8;
-        }
-
-        .copyright {
-            text-align: center;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #444;
-        }
-
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .header-container {
-                padding: 15px;
-            }
-
-            .mobile-menu-btn {
-                display: block;
-            }
-
-            nav {
-                position: absolute;
-                top: 70px;
-                left: 0;
-                width: 100%;
-                background-color: #fff;
-                display: none;
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            }
-
-            nav.active {
-                display: block;
-            }
-
-            nav ul {
-                flex-direction: column;
-                padding: 20px;
-            }
-
-            nav ul li {
-                margin: 0;
-                margin-bottom: 15px;
-            }
-
-            .page-header {
-                height: 30vh;
-            }
-
-            .page-header h1 {
-                font-size: 36px;
-            }
-
-            .cronicas-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="header.css"> <!-- Estilos do header -->
+    <link rel="stylesheet" href="hero.css"> <!-- Estilos do hero section -->
+    <link rel="stylesheet" href="featured.css"> <!-- Estilos da seção de crônicas em destaque -->
+    <link rel="stylesheet" href="footer.css"> <!-- Estilos do footer -->
+    <link rel="stylesheet" href="styles.css"> <!-- Estilos globais -->
 </head>
 <body>
     <!-- Header -->
     <header>
         <div class="container header-container">
-            <a href="index.html" class="logo">O <span>Irmãozinho</span></a>
+            <a href="index.html" class="logo">
+                <img src="../html/assets/image1/001 (6).jpeg" alt="Logotipo O Irmãozinho">
+            </a>
             <button class="mobile-menu-btn">☰</button>
             <nav id="main-nav">
                 <ul>
@@ -329,88 +30,90 @@
         </div>
     </header>
 
-    <!-- Page Header -->
-    <section class="page-header">
-        <div class="container">
+    <!-- Page Header (Hero Section) -->
+    <section class="hero">
+        <div class="container hero-content">
             <h1>Crônicas</h1>
+            <p>Reflexões diárias para nutrir sua jornada de fé e despertar a esperança no cotidiano cristão.</p>
         </div>
     </section>
 
     <!-- Crônicas Section -->
-    <section class="cronicas-section">
+    <section class="featured">
         <div class="container">
+            <h2 class="section-title">Todas as Crônicas</h2>
             <div class="cronicas-grid">
                 <!-- Crônica 1 -->
-                <div class="cronica-card">
-                    <div class="cronica-img">
-                        <img src="images/cronica1.jpg" alt="O Valor do Silêncio">
+                <div class="featured-cronica">
+                    <div class="featured-img">
+                        <img src="../html/assets/image1/conhecendo_jesus/conhecendo_jesus.webp" alt="O Valor do Silêncio">
                     </div>
-                    <div class="cronica-content">
+                    <div class="featured-content">
                         <div class="cronica-meta">24 de Fevereiro, 2025</div>
                         <h3>O Valor do Silêncio</h3>
                         <p>Em um mundo onde o barulho é constante e as vozes não cessam, encontrar momentos de silêncio tornou-se um verdadeiro desafio. Mas é justamente no silêncio que muitas vezes conseguimos ouvir a voz de Deus com mais clareza...</p>
                         <a href="cronicas/o-valor-do-silencio.html" class="read-more">Continuar lendo <span>→</span></a>
                     </div>
                 </div>
-                
+
                 <!-- Crônica 2 -->
-                <div class="cronica-card">
-                    <div class="cronica-img">
-                        <img src="images/cronica2.jpg" alt="Pequenos Milagres">
+                <div class="featured-cronica">
+                    <div class="featured-img">
+                        <img src="../html/assets/image1/conhecendo_jesus/conhecendo_jesus.webp" alt="Pequenos Milagres">
                     </div>
-                    <div class="cronica-content">
+                    <div class="featured-content">
                         <div class="cronica-meta">22 de Fevereiro, 2025</div>
                         <h3>Pequenos Milagres</h3>
                         <p>Muitas vezes esperamos grandes sinais e prodígios, mas nos esquecemos de reconhecer os pequenos milagres que ocorrem em nossa vida diariamente. O ar que respiramos, o nascer do sol, a chuva que cai e rega a terra...</p>
                         <a href="cronicas/pequenos-milagres.html" class="read-more">Continuar lendo <span>→</span></a>
                     </div>
                 </div>
-                
+
                 <!-- Crônica 3 -->
-                <div class="cronica-card">
-                    <div class="cronica-img">
-                        <img src="images/cronica3.jpg" alt="O Peso das Palavras">
+                <div class="featured-cronica">
+                    <div class="featured-img">
+                        <img src="../html/assets/image1/conhecendo_jesus/conhecendo_jesus.webp" alt="O Peso das Palavras">
                     </div>
-                    <div class="cronica-content">
+                    <div class="featured-content">
                         <div class="cronica-meta">20 de Fevereiro, 2025</div>
                         <h3>O Peso das Palavras</h3>
                         <p>As palavras têm poder. Podem construir ou destruir, curar ou ferir, encorajar ou desencorajar. A Bíblia nos ensina que "a morte e a vida estão no poder da língua" (Provérbios 18:21). Como temos usado nossas palavras?...</p>
                         <a href="cronicas/o-peso-das-palavras.html" class="read-more">Continuar lendo <span>→</span></a>
                     </div>
                 </div>
-                
+
                 <!-- Crônica 4 -->
-                <div class="cronica-card">
-                    <div class="cronica-img">
-                        <img src="images/cronica4.jpg" alt="Fé em Tempos Difíceis">
+                <div class="featured-cronica">
+                    <div class="featured-img">
+                        <img src="../html/assets/image1/conhecendo_jesus/conhecendo_jesus.webp" alt="Fé em Tempos Difíceis">
                     </div>
-                    <div class="cronica-content">
+                    <div class="featured-content">
                         <div class="cronica-meta">18 de Fevereiro, 2025</div>
                         <h3>Fé em Tempos Difíceis</h3>
                         <p>Quando as tempestades da vida se levantam, é a fé que nos mantém firmes. Não uma fé cega ou ingênua, mas uma confiança inabalável em Deus que nos sustenta mesmo quando não entendemos os propósitos por trás das provações...</p>
                         <a href="cronicas/fe-em-tempos-dificeis.html" class="read-more">Continuar lendo <span>→</span></a>
                     </div>
                 </div>
-                
+
                 <!-- Crônica 5 -->
-                <div class="cronica-card">
-                    <div class="cronica-img">
-                        <img src="images/cronica5.jpg" alt="O Amor em Ação">
+                <div class="featured-cronica">
+                    <div class="featured-img">
+                        <img src="../html/assets/image1/conhecendo_jesus/conhecendo_jesus.webp" alt="O Amor em Ação">
                     </div>
-                    <div class="cronica-content">
+                    <div class="featured-content">
                         <div class="cronica-meta">16 de Fevereiro, 2025</div>
                         <h3>O Amor em Ação</h3>
                         <p>O amor não é apenas um sentimento, mas uma ação. Jesus nos mostrou isso quando se entregou por nós. Amar é servir, é doar-se, é colocar o outro acima de si mesmo. Como temos demonstrado o amor de Cristo em nosso dia a dia?...</p>
                         <a href="cronicas/o-amor-em-acao.html" class="read-more">Continuar lendo <span>→</span></a>
                     </div>
                 </div>
-                
+
                 <!-- Crônica 6 -->
-                <div class="cronica-card">
-                    <div class="cronica-img">
-                        <img src="images/cronica6.jpg" alt="A Simplicidade do Evangelho">
+                <div class="featured-cronica">
+                    <div class="featured-img">
+                        <img src="../html/assets/image1/conhecendo_jesus/conhecendo_jesus.webp" alt="A Simplicidade do Evangelho">
                     </div>
-                    <div class="cronica-content">
+                    <div class="featured-content">
                         <div class="cronica-meta">14 de Fevereiro, 2025</div>
                         <h3>A Simplicidade do Evangelho</h3>
                         <p>Às vezes complicamos demais a mensagem do Evangelho. Acrescentamos regras, rituais e tradições que podem obscurecer a essência simples e poderosa da Boa Nova: Deus nos ama e enviou seu Filho para nos salvar...</p>
@@ -418,7 +121,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Pagination -->
             <div class="pagination">
                 <a href="#" class="active">1</a>
@@ -435,4 +138,50 @@
             <div class="footer-container">
                 <div class="footer-col">
                     <h3>O Irmãozinho</h3>
-                    <p>Crônicas cristã
+                    <p>Crônicas cristãs para inspirar sua jornada de fé e trazer reflexões sobre a vida espiritual no dia a dia.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3>Links Úteis</h3>
+                    <ul>
+                        <li><a href="index.html">Início</a></li>
+                        <li><a href="cronicas.html">Crônicas</a></li>
+                        <li><a href="sobre.html">Sobre</a></li>
+                        <li><a href="contato.html">Contato</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Contato</h3>
+                    <p>Email: contato@oirmaozinho.com</p>
+                    <p>Telefone: (00) 00000-0000</p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 O Irmãozinho. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const mainNav = document.getElementById('main-nav');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mainNav.classList.toggle('active');
+        });
+
+        // Close Menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('nav') && !e.target.closest('.mobile-menu-btn') && mainNav.classList.contains('active')) {
+                mainNav.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

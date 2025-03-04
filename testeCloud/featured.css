@@ -1,0 +1,82 @@
+/* featured.css */
+.featured {
+    padding: 60px 0;
+    background-color: #fff;
+    position: relative; /* Garante que o conteúdo fique acima do fundo desfocado */
+    z-index: 1; /* Coloca o conteúdo na frente do fundo */
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 32px;
+    color: #333;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    display: block;
+    width: 70px;
+    height: 3px;
+    background-color: #1a73e8;
+    margin: 15px auto 0;
+}
+
+.featured-cronica {
+    display: flex;
+    flex-direction: column;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.featured-cronica:hover {
+    transform: translateY(-5px);
+}
+
+.featured-img {
+    height: 250px;
+    overflow: hidden;
+}
+
+.featured-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+
+.featured-cronica:hover .featured-img img {
+    transform: scale(1.05);
+}
+
+.featured-content {
+    padding: 25px;
+}
+
+.featured-content h3 {
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.featured-content p {
+    margin-bottom: 20px;
+}
+
+.read-more {
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+}
+
+.read-more span {
+    margin-left: 5px;
+    transition: margin-left 0.3s;
+}
+
+.read-more:hover span {
+    margin-left: 10px;
+}

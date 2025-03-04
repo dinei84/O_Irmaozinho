@@ -4,372 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>O Irmãozinho - Blog de Crônicas Cristãs</title>
-    <style>
-        /* Reset CSS */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f4f4f4;
-        }
-
-        a {
-            text-decoration: none;
-            color: #1a73e8;
-        }
-
-        /* Container */
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-
-        /* Header */
-        header {
-            background-color: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: 700;
-            color: #333;
-        }
-
-        .logo span {
-            color: #1a73e8;
-        }
-
-        /* Navigation */
-        nav ul {
-            display: flex;
-            list-style: none;
-        }
-
-        nav ul li {
-            margin-left: 20px;
-        }
-
-        nav ul li a {
-            font-weight: 500;
-            transition: color 0.3s;
-            color: #333;
-        }
-
-        nav ul li a:hover {
-            color: #1a73e8;
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            font-size: 24px;
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-
-        /* Hero Section */
-        .hero {
-            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('images/hero-bg.jpg');
-            background-size: cover;
-            background-position: center;
-            height: 60vh;
-            display: flex;
-            align-items: center;
-            color: #fff;
-            text-align: center;
-            margin-top: 70px;
-        }
-
-        .hero-content {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .hero h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
-        }
-
-        .hero p {
-            font-size: 18px;
-            margin-bottom: 30px;
-        }
-
-        .cta-button {
-            display: inline-block;
-            background-color: #1a73e8;
-            color: #fff;
-            padding: 12px 25px;
-            border-radius: 5px;
-            font-weight: 600;
-            transition: background-color 0.3s;
-        }
-
-        .cta-button:hover {
-            background-color: #1557b0;
-        }
-
-        /* Featured Section */
-        .featured {
-            padding: 60px 0;
-            background-color: #fff;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 40px;
-            font-size: 32px;
-            color: #333;
-            position: relative;
-        }
-
-        .section-title::after {
-            content: '';
-            display: block;
-            width: 70px;
-            height: 3px;
-            background-color: #1a73e8;
-            margin: 15px auto 0;
-        }
-
-        .featured-cronica {
-            display: flex;
-            flex-direction: column;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }
-
-        .featured-cronica:hover {
-            transform: translateY(-5px);
-        }
-
-        .featured-img {
-            height: 250px;
-            overflow: hidden;
-        }
-
-        .featured-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s;
-        }
-
-        .featured-cronica:hover .featured-img img {
-            transform: scale(1.05);
-        }
-
-        .featured-content {
-            padding: 25px;
-        }
-
-        .featured-content h3 {
-            font-size: 24px;
-            margin-bottom: 15px;
-        }
-
-        .featured-content p {
-            margin-bottom: 20px;
-        }
-
-        .read-more {
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-        }
-
-        .read-more span {
-            margin-left: 5px;
-            transition: margin-left 0.3s;
-        }
-
-        .read-more:hover span {
-            margin-left: 10px;
-        }
-
-        /* About Section */
-        .about {
-            padding: 60px 0;
-            background-color: #f4f4f4;
-        }
-
-        .about-content {
-            display: flex;
-            align-items: center;
-            gap: 40px;
-        }
-
-        .about-text {
-            flex: 1;
-        }
-
-        .about-text h2 {
-            font-size: 32px;
-            margin-bottom: 20px;
-        }
-
-        .about-text p {
-            margin-bottom: 15px;
-        }
-
-        .about-img {
-            flex: 1;
-        }
-
-        .about-img img {
-            width: 100%;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Footer */
-        footer {
-            background-color: #333;
-            color: #fff;
-            padding: 40px 0 20px;
-        }
-
-        .footer-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-        }
-
-        .footer-col {
-            flex: 1;
-            min-width: 250px;
-        }
-
-        .footer-col h3 {
-            font-size: 18px;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .footer-col h3::after {
-            content: '';
-            display: block;
-            width: 40px;
-            height: 2px;
-            background-color: #1a73e8;
-            margin-top: 10px;
-        }
-
-        .social-icons {
-            display: flex;
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .social-icons a {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            background-color: #444;
-            border-radius: 50%;
-            color: #fff;
-            text-align: center;
-            line-height: 40px;
-            transition: background-color 0.3s;
-        }
-
-        .social-icons a:hover {
-            background-color: #1a73e8;
-        }
-
-        .copyright {
-            text-align: center;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #444;
-        }
-
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .header-container {
-                padding: 15px;
-            }
-
-            .mobile-menu-btn {
-                display: block;
-            }
-
-            nav {
-                position: absolute;
-                top: 70px;
-                left: 0;
-                width: 100%;
-                background-color: #fff;
-                display: none;
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            }
-
-            nav.active {
-                display: block;
-            }
-
-            nav ul {
-                flex-direction: column;
-                padding: 20px;
-            }
-
-            nav ul li {
-                margin: 0;
-                margin-bottom: 15px;
-            }
-
-            .hero {
-                height: 50vh;
-            }
-
-            .hero h1 {
-                font-size: 32px;
-            }
-
-            .hero p {
-                font-size: 16px;
-            }
-
-            .about-content {
-                flex-direction: column;
-            }
-
-            .about-img {
-                order: -1;
-                margin-bottom: 20px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="header.css"> <!-- Estilos do header -->
+    <link rel="stylesheet" href="hero.css"> <!-- Estilos do hero section -->
+    <link rel="stylesheet" href="featured.css"> <!-- Estilos da seção de crônicas em destaque -->
+    <link rel="stylesheet" href="about.css"> <!-- Estilos da seção "Sobre" -->
+    <link rel="stylesheet" href="footer.css"> <!-- Estilos do footer -->
+    <link rel="stylesheet" href="styles.css"> <!-- Estilos globais -->
 </head>
 <body>
     <!-- Header -->
     <header>
         <div class="container header-container">
-            <a href="index.html" class="logo">O <span>Irmãozinho</span></a>
+            <a href="index.html" class="logo">
+                <img src="../html/assets/image1/001 (6).jpeg" alt="Logotipo O Irmãozinho">
+            </a>
             <button class="mobile-menu-btn">☰</button>
             <nav id="main-nav">
                 <ul>
@@ -397,12 +46,14 @@
             <h2 class="section-title">Crônica em Destaque</h2>
             <div class="featured-cronica">
                 <div class="featured-img">
-                    <img src="images/featured-post.jpg" alt="Crônica em Destaque">
+                    <img src="../html/assets/image1/conhecendo_jesus/conhecendo_jesus.webp" alt="Crônica em Destaque">
                 </div>
                 <div class="featured-content">
-                    <h3>O Valor do Silêncio</h3>
-                    <p>Em um mundo onde o barulho é constante e as vozes não cessam, encontrar momentos de silêncio tornou-se um verdadeiro desafio. Mas é justamente no silêncio que muitas vezes conseguimos ouvir a voz de Deus com mais clareza. Como diz o salmista: "Aquietai-vos e sabei que eu sou Deus" (Salmos 46:10).</p>
-                    <p>Quando paramos e nos calamos, criamos espaço para que o Senhor fale ao nosso coração. É no silêncio que nossa alma encontra descanso e nossos pensamentos se organizam. Em meio à agitação da vida moderna, precisamos valorizar esses momentos...</p>
+                    <h3>João 4: Reflexões sobre o Ministério de Jesus</h3>
+                    <p>Ao refletir sobre João 4, duas observações me vêm à mente.</p>
+                    <p>Primeira, o planejamento do ministério de Jesus foi perfeitamente calculado. Tornar-se conhecido primeiro em Samaria soa, no mínimo, interessante. Por que se revelar logo onde os judeus mais odiavam? Na minha opinião, essa foi uma das primeiras lições aos discípulos. Como todos ali eram judeus, eles precisavam entender que Jesus não veio somente para os judeus. A crença deles justificava um Jesus particular, um Jesus só deles. Eles precisavam compreender isso, e vemos o quão difícil foi para eles entenderem, como lemos mais adiante na discussão entre Pedro e Paulo.</p>
+                    <p>Segunda, a diferença entre ouvir falar de Jesus e conhecer Jesus. Já vimos isso em Jó, o quão importante e fundamental é conhecer Jesus. Ouvimos falar dele a todo momento, principalmente hoje, com tantas pessoas falando de Jesus e seu reino na internet. Pessoas opinam sobre Jesus e seu ministério, seus feitos. Alguns dizem que Jesus era um revolucionário, um ativista; outros dizem que Jesus era somente um profeta; outros ainda dizem que Jesus era um anjo. Enfim, temos opiniões diversas sobre quem era Jesus. Mas, a partir do momento que conhecemos Jesus, nesse exato momento conhecemos o Cristo, o Filho do Deus vivo, aquele que morreu numa cruz para remir nossos pecados e nos dar a vida eterna. Muitas vezes, levamos pouco em consideração o quão importante é conhecer a Cristo e ter um relacionamento com ele.</p>
+                    <p>Que possamos conhecer a Cristo cada dia um pouco mais, que sua revelação nos alcance para que possamos ver a sua glória eterna. Que possamos visualizar sua obra da maneira que ele quer que vejamos, com olhos de amor. Mas não um amor que passa a mão na cabeça, e sim um amor que corrige e que nos dá a vida eterna.</p>
                     <a href="cronicas/o-valor-do-silencio.html" class="read-more">Continuar lendo <span>→</span></a>
                 </div>
             </div>
@@ -434,10 +85,10 @@
                     <h3>O Irmãozinho</h3>
                     <p>Crônicas cristãs para inspirar sua jornada de fé e trazer reflexões sobre a vida espiritual no dia a dia.</p>
                     <div class="social-icons">
-                        <a href="#"><i class="fab fa-facebook-f">F</i></a>
-                        <a href="#"><i class="fab fa-instagram">I</i></a>
-                        <a href="#"><i class="fab fa-twitter">T</i></a>
-                        <a href="#"><i class="fab fa-youtube">Y</i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
                     </div>
                 </div>
                 <div class="footer-col">
