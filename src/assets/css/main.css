@@ -4,6 +4,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Base styles */
+@import './base.css';
+
+/* Component styles */
+@import './components.css';
+
+/* Utility classes */
+@import './utilities.css';
+
 @layer base {
   html {
     @apply scroll-smooth;
@@ -63,5 +72,91 @@
   
   .section-title:after {
     @apply content-[''] block w-16 h-1 bg-primary mx-auto mt-4;
+  }
+  
+  /* Custom scrollbar for specific elements */
+  .custom-scrollbar {
+    @apply scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100;
+  }
+  
+  /* Custom focus styles */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500;
+  }
+  
+  /* Custom shadows */
+  .shadow-soft {
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08);
+  }
+  
+  /* Custom gradients */
+  .gradient-primary {
+    @apply bg-gradient-to-r from-primary-600 to-primary-400;
+  }
+  
+  /* Custom animations */
+  @keyframes pulse-slow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  
+  .animate-pulse-slow {
+    animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+}
+
+/* Print styles */
+@media print {
+  @page {
+    size: A4;
+    margin: 2cm;
+  }
+  
+  body {
+    font-size: 12pt;
+    line-height: 1.5;
+    color: #000;
+    background: none;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+  
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    font-weight: normal;
+  }
+  
+  .break-inside-avoid {
+    break-inside: avoid;
+  }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+  }
+  
+  body {
+    @apply bg-gray-900 text-gray-100;
+  }
+  
+  .card {
+    @apply bg-gray-800 border-gray-700;
+  }
+  
+  .form-input {
+    @apply bg-gray-800 border-gray-700 text-white focus:border-primary-500 focus:ring-primary-500;
+  }
+  
+  .nav-link {
+    @apply text-gray-300 hover:bg-gray-800 hover:text-white;
+  }
+  
+  .nav-link.active {
+    @apply bg-gray-800 text-white;
   }
 }
