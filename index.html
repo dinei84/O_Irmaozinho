@@ -5,12 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>O Irmãozinho - Blog de Crônicas Cristãs</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="css/header.css"> <!-- Estilos do header -->
-    <link rel="stylesheet" href="css/hero.css"> <!-- Estilos do hero section -->
-    <link rel="stylesheet" href="css/featured.css"> <!-- Estilos da seção de crônicas em destaque -->
-    <link rel="stylesheet" href="css/about.css"> <!-- Estilos da seção "Sobre" -->
-    <link rel="stylesheet" href="css/footer.css"> <!-- Estilos do footer -->
-    <link rel="stylesheet" href="css/styles.css"> <!-- Estilos globais -->
+    <!-- O Vite injetará os estilos automaticamente -->
 </head>
 <body>
     <!-- Header -->
@@ -112,21 +107,28 @@
         </div>
     </footer>
 
+    <!-- Script do Vite -->
+    <script type="module" src="/src/main.js"></script>
+    
+    <!-- Script para o menu móvel -->
     <script>
         // Mobile Menu Toggle
         const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
         const mainNav = document.getElementById('main-nav');
 
-        mobileMenuBtn.addEventListener('click', () => {
-            mainNav.classList.toggle('active');
-        });
+        if (mobileMenuBtn && mainNav) {
+            mobileMenuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                mainNav.classList.toggle('active');
+            });
 
-        // Close Menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('nav') && !e.target.closest('.mobile-menu-btn') && mainNav.classList.contains('active')) {
-                mainNav.classList.remove('active');
-            }
-        });
+            // Close Menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('nav') && !e.target.closest('.mobile-menu-btn') && mainNav.classList.contains('active')) {
+                    mainNav.classList.remove('active');
+                }
+            });
+        }
     </script>
 </body>
 </html>
