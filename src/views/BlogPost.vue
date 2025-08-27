@@ -30,8 +30,12 @@
     
     <!-- Content -->
     <div class="prose max-w-none">
-      <p class="text-xl text-gray-700 mb-6">{{ post.excerpt }}</p>
-      <div v-html="post.content"></div>
+      <Post 
+        :title="post.title"
+        :content="post.content"
+        :date="new Date(post.publishedAt)"
+        :renderHTML="true"
+      />
     </div>
     
     <!-- Author Bio -->
@@ -49,15 +53,18 @@
     <div v-if="relatedPosts.length > 0" class="mt-12">
       <h2 class="text-2xl font-bold mb-6">Leia também</h2>
       <div class="grid md:grid-cols-2 gap-6">
-        <article v-for="related in relatedPosts" :key="related.id" class="border rounded-lg overflow-hidden">
+        <div v-for="related in relatedPosts" :key="related.id" class="border rounded-lg overflow-hidden">
           <router-link :to="`/blog/${related.slug}`" class="block">
             <img :src="related.image" :alt="related.title" class="w-full h-40 object-cover">
-            <div class="p-4">
-              <h3 class="font-semibold text-lg mb-2">{{ related.title }}</h3>
-              <p class="text-sm text-gray-500">{{ formatDate(related.publishedAt) }}</p>
-            </div>
           </router-link>
-        </article>
+          <div class="p-4">
+            <Post 
+              :title="related.title"
+              :content="related.excerpt"
+              :date="new Date(related.publishedAt)"
+            />
+          </div>
+        </div>
       </div>
     </div>
     
@@ -79,9 +86,11 @@
 <script>
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import Post from '../components/Post.vue';
 
 export default {
   name: 'BlogPost',
+  components: { Post },
   
   setup() {
     const route = useRoute();

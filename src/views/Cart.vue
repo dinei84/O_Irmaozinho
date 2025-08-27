@@ -116,9 +116,9 @@
         <div class="mt-6 bg-white shadow rounded-lg p-6">
           <h3 class="font-medium mb-2">Métodos de Pagamento</h3>
           <div class="flex space-x-4">
-            <img src="/images/payment/visa.png" alt="Visa" class="h-8">
-            <img src="/images/payment/mastercard.png" alt="Mastercard" class="h-8">
-            <img src="/images/payment/pix.png" alt="Pix" class="h-8">
+            <img :src="visaIcon" alt="Visa" class="h-8">
+            <img :src="mastercardIcon" alt="Mastercard" class="h-8">
+            <img :src="pixIcon" alt="Pix" class="h-8">
           </div>
         </div>
       </div>
@@ -130,6 +130,9 @@
 import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
+import visaIcon from '@/assets/images/payment/visa.svg';
+import mastercardIcon from '@/assets/images/payment/mastercard.svg';
+import pixIcon from '@/assets/images/payment/pix.svg';
 
 export default {
   name: 'Cart',
@@ -203,7 +206,10 @@ export default {
       removeItem,
       applyCoupon,
       proceedToCheckout,
-      formatCurrency
+      formatCurrency,
+      visaIcon,
+      mastercardIcon,
+      pixIcon
     };
   }
 };

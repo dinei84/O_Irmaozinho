@@ -1,16 +1,17 @@
 /* footer.css */
 footer {
-    background-color: #333;
-    color: #fff;
-    padding: 40px 0 20px;
-    position: relative; /* Garante que o conteúdo fique acima do fundo desfocado */
-    z-index: 1; /* Coloca o conteúdo na frente do fundo */
+    background-color: #f8f9fa;
+    color: #333;
+    padding: 60px 0 20px;
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .footer-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 30px;
+    gap: 40px;
 }
 
 .footer-col {
@@ -19,9 +20,11 @@ footer {
 }
 
 .footer-col h3 {
-    font-size: 18px;
+    font-size: 1.3rem;
     margin-bottom: 20px;
     position: relative;
+    font-weight: 600;
+    color: #222;
 }
 
 .footer-col h3::after {
@@ -29,35 +32,109 @@ footer {
     display: block;
     width: 40px;
     height: 2px;
-    background-color: #1a73e8;
+    background-color: #4361ee;
     margin-top: 10px;
+    border-radius: 2px;
+}
+
+.footer-col p {
+    color: #555;
+    line-height: 1.7;
+    margin-bottom: 15px;
+}
+
+.footer-col ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-col ul li {
+    margin-bottom: 12px;
+}
+
+.footer-col ul li a {
+    color: #555;
+    transition: all 0.3s ease;
+    display: inline-block;
+    position: relative;
+    padding-left: 15px;
+}
+
+.footer-col ul li a::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    transition: transform 0.3s ease;
+}
+
+.footer-col ul li a:hover {
+    color: #4361ee;
+    transform: translateX(5px);
 }
 
 .social-icons {
     display: flex;
     gap: 15px;
-    margin-top: 15px;
+    margin-top: 20px;
 }
 
 .social-icons a {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 40px;
     height: 40px;
-    background-color: #444;
+    background-color: #fff;
     border-radius: 50%;
-    color: #fff;
+    color: #4361ee;
     text-align: center;
-    line-height: 40px;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .social-icons a:hover {
-    background-color: #1a73e8;
+    background-color: #4361ee;
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(67, 97, 238, 0.2);
 }
 
 .copyright {
     text-align: center;
-    margin-top: 40px;
+    margin-top: 50px;
     padding-top: 20px;
-    border-top: 1px solid #444;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    footer {
+        padding: 40px 0 20px;
+    }
+    
+    .footer-container {
+        gap: 30px;
+    }
+    
+    .footer-col {
+        min-width: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-container {
+        flex-direction: column;
+        gap: 30px;
+    }
+    
+    .footer-col {
+        width: 100%;
+    }
+    
+    .copyright {
+        margin-top: 30px;
+    }
 }

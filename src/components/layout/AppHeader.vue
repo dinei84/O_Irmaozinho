@@ -4,7 +4,7 @@
       <div class="flex items-center justify-between h-20">
         <!-- Logo -->
         <router-link to="/" class="flex items-center">
-          <img src="/images/logo.png" alt="O Irmãozinho" class="h-12 w-auto">
+          <img src="../../../html/assets/image1/001 (12).jpeg" alt="O Irmãozinho" class="h-12 w-auto">
           <span class="ml-3 text-xl font-bold text-primary">O Irmãozinho</span>
         </router-link>
 

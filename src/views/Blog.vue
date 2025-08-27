@@ -49,26 +49,29 @@
     
     <!-- Blog Posts Grid -->
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <article v-for="post in paginatedPosts" :key="post.id" class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+      <div v-for="post in paginatedPosts" :key="post.id" class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
         <router-link :to="`/blog/${post.slug}`" class="block">
           <img :src="post.image" :alt="post.title" class="w-full h-48 object-cover">
-          <div class="p-6">
-            <div class="flex items-center text-sm text-gray-500 mb-2">
-              <span>{{ formatDate(post.publishedAt) }}</span>
-              <span class="mx-2">•</span>
-              <span>{{ post.readingTime }} min de leitura</span>
-            </div>
-            <h3 class="text-xl font-semibold mb-2 hover:text-primary">{{ post.title }}</h3>
-            <p class="text-gray-600 mb-4">{{ post.excerpt }}</p>
-            <div class="flex items-center">
-              <img :src="post.author.avatar" :alt="post.author.name" class="w-10 h-10 rounded-full">
-              <div class="ml-3">
-                <p class="text-sm font-medium">{{ post.author.name }}</p>
-              </div>
+        </router-link>
+        <div class="p-6">
+          <div class="flex items-center text-sm text-gray-500 mb-2">
+            <span>{{ formatDate(post.publishedAt) }}</span>
+            <span class="mx-2">•</span>
+            <span>{{ post.readingTime }} min de leitura</span>
+          </div>
+          <Post 
+            :title="post.title"
+            :content="post.excerpt"
+            :date="new Date(post.publishedAt)"
+          />
+          <div class="flex items-center mt-4">
+            <img :src="post.author.avatar" :alt="post.author.name" class="w-10 h-10 rounded-full">
+            <div class="ml-3">
+              <p class="text-sm font-medium">{{ post.author.name }}</p>
             </div>
           </div>
-        </router-link>
-      </article>
+        </div>
+      </div>
     </div>
     
     <!-- Pagination -->
@@ -105,10 +108,12 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
+import Post from '../components/Post.vue';
 
 export default {
   name: 'Blog',
+  components: { Post },
   
   setup() {
     const loading = ref(true);

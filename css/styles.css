@@ -8,13 +8,14 @@
 
 html, body {
     height: 100%;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     color: #333;
-    background-color: #f4f4f4;
+    background-color: #f8f9fa;
+    scroll-behavior: smooth;
 }
 
-/* Imagem de fundo desfocada */
+/* Imagem de fundo com gradiente suave */
 body::before {
     content: '';
     position: fixed; /* Fixa a imagem de fundo */
@@ -22,27 +23,20 @@ body::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: url('images/background.jpg'); /* Adicione o caminho da sua imagem de fundo */
+    background-image: linear-gradient(to right, #f8f9fa, #e9ecef);
     background-size: cover;
     background-position: center;
-    filter: blur(5px); /* Aplica o desfoque apenas à imagem de fundo */
     z-index: -1; /* Coloca a imagem atrás do conteúdo */
-}
-
-body::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.8); /* Fundo branco semi-transparente para melhorar a legibilidade */
-    z-index: -1; /* Coloca o fundo branco atrás do conteúdo */
 }
 
 a {
     text-decoration: none;
-    color: #1a73e8;
+    color: #4361ee;
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+a:hover {
+    color: #3a0ca3;
 }
 
 /* Container */
@@ -50,9 +44,36 @@ a {
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 15px;
-    position: relative; /* Garante que o conteúdo fique acima do fundo desfocado */
-    z-index: 1; /* Coloca o conteúdo na frente do fundo */
+    padding: 0 20px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Utilitários */
+.text-center {
+    text-align: center;
+}
+
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
+.mb-5 { margin-bottom: 3rem; }
+
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
+.mt-5 { margin-top: 3rem; }
+
+/* Animações */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
 }
 
 /* Hero Section */

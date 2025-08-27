@@ -1,0 +1,174 @@
+/* cronicas.css */
+
+/* Estilo para a página de crônicas */
+.cronicas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.featured-cronica {
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.featured-cronica:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(67, 97, 238, 0.1);
+}
+
+.featured-img {
+    height: 220px;
+    overflow: hidden;
+    position: relative;
+}
+
+.featured-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.featured-cronica:hover .featured-img img {
+    transform: scale(1.1);
+}
+
+.featured-content {
+    padding: 30px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.cronica-meta {
+    color: #4361ee;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.featured-content h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #333;
+    font-weight: 700;
+    line-height: 1.3;
+    transition: color 0.3s ease;
+}
+
+.featured-cronica:hover .featured-content h3 {
+    color: #4361ee;
+}
+
+.featured-content p {
+    color: #666;
+    line-height: 1.7;
+    margin-bottom: 20px;
+    flex-grow: 1;
+}
+
+.read-more {
+    display: inline-flex;
+    align-items: center;
+    color: #4361ee;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    margin-top: auto;
+}
+
+.read-more span {
+    margin-left: 5px;
+    transition: margin-left 0.3s ease;
+}
+
+.read-more:hover {
+    color: #2541d8;
+}
+
+.read-more:hover span {
+    margin-left: 10px;
+}
+
+/* Paginação */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 60px;
+    gap: 10px;
+}
+
+.pagination a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: #fff;
+    color: #333;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.pagination a:hover,
+.pagination a.active {
+    background-color: #4361ee;
+    color: #fff;
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+    .cronicas-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .cronicas-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 25px;
+    }
+    
+    .featured-img {
+        height: 200px;
+    }
+    
+    .featured-content {
+        padding: 25px;
+    }
+    
+    .featured-content h3 {
+        font-size: 1.3rem;
+    }
+    
+    .pagination {
+        margin-top: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cronicas-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .featured-content h3 {
+        font-size: 1.2rem;
+    }
+    
+    .pagination a {
+        width: 35px;
+        height: 35px;
+    }
+}
