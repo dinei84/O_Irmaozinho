@@ -1,0 +1,42 @@
+# Regras do Firestore para Permitir Leitura Pública
+
+## Regras para Páginas Públicas (artigos.html, cronicas.html, post.html)
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Permitir leitura pública para conteúdo publicado
+    match /content/{document} {
+      allow read: if resource.data.status == "publicado";
+      allow write: if request.auth != null;
+    }
+    
+    // Bloquear acesso a outras coleções
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+```
+
+## Como Configurar:
+
+1. Acesse: https://console.firebase.google.com/
+2. Selecione o projeto: admoirmaozinho
+3. Vá em: Firestore Database > Rules
+4. Substitua as regras atuais pelas regras acima
+5. Clique em "Publish"
+
+## Explicação das Regras:
+
+- **Leitura pública**: Qualquer pessoa pode ler documentos da coleção `content` onde `status == "publicado"`
+- **Escrita protegida**: Apenas usuários autenticados podem criar/editar/deletar
+- **Segurança**: Rascunhos (`status != "publicado"`) não são visíveis publicamente
+- **Isolamento**: Outras coleções ficam bloqueadas
+
+## Teste das Regras:
+
+1. **Páginas públicas** (artigos.html, cronicas.html, post.html) devem funcionar sem login
+2. **Dashboard** ainda requer autenticação para criar/editar
+3. **Rascunhos** não aparecem nas páginas públicas

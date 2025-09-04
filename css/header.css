@@ -69,6 +69,7 @@
     transition: left var(--transition-normal);
     z-index: var(--z-fixed);
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .nav-menu-open {
@@ -163,17 +164,22 @@
         height: auto;
         background-color: transparent;
         left: 0;
+        overflow: visible;
     }
     
     .nav-list {
         flex-direction: row;
         padding: 0;
         gap: var(--spacing-xl);
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: visible;
     }
     
     .nav-link {
         font-size: var(--font-size-base);
         padding: var(--spacing-sm) 0;
+        white-space: nowrap;
     }
 }
 
@@ -200,6 +206,61 @@ body {
 @media (min-width: 1024px) {
     body {
         padding-top: 80px;
+    }
+}
+
+/* Admin Link Styles */
+.admin-link {
+    position: relative;
+    background: linear-gradient(135deg, var(--color-primary-orange), #ff6b35);
+    color: white !important;
+    padding: 0.5rem 1rem !important;
+    border-radius: 20px;
+    font-weight: 600;
+    transition: all var(--transition-normal);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.admin-link:hover {
+    background: linear-gradient(135deg, #ff6b35, var(--color-primary-orange));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 140, 66, 0.3);
+}
+
+.admin-link::before {
+    content: '🔐';
+    margin-right: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Mobile adjustments for admin link */
+@media (max-width: 767px) {
+    .admin-link {
+        padding: 0.4rem 0.8rem !important;
+        font-size: 0.9rem;
+    }
+    
+    .admin-link::before {
+        font-size: 0.8rem;
+        margin-right: 0.3rem;
+    }
+}
+
+/* Very small screens - hide admin link text */
+@media (max-width: 480px) {
+    .admin-link {
+        padding: 0.4rem 0.6rem !important;
+        font-size: 0.8rem;
+    }
+    
+    .admin-link::before {
+        margin-right: 0.2rem;
+    }
+    
+    .admin-link::after {
+        content: '';
+        display: none;
     }
 }
 

@@ -28,6 +28,9 @@ function createHeader() {
                         <li class="nav-item">
                             <a href="/pages/store.html" class="nav-link">Store</a>
                         </li>
+                        <li class="nav-item">
+                            <a href="/pages/dashboard.html" class="nav-link admin-link">Admin</a>
+                        </li>
                     </ul>
                 </div>
                 
