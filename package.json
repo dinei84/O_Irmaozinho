@@ -1,0 +1,28 @@
+{
+  "name": "o-irmaozinho",
+  "version": "1.0.0",
+  "description": "Site O Irmãozinho - Artigos e Crônicas Cristãs",
+  "main": "index.html",
+  "scripts": {
+    "dev": "live-server --port=3000 --open=/",
+    "build": "node scripts/generate-config.js",
+    "start": "npm run build && npm run dev",
+    "setup": "npm install && npm run build"
+  },
+  "keywords": [
+    "cristao",
+    "artigos",
+    "cronicas",
+    "firebase",
+    "blog"
+  ],
+  "author": "O Irmãozinho",
+  "license": "MIT",
+  "devDependencies": {
+    "dotenv": "^16.3.1",
+    "live-server": "^1.2.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

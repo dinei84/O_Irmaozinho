@@ -74,7 +74,28 @@ o-irmaozinho/
 
 ## 🛠️ Como Usar
 
-### Executar Localmente
+### Setup Inicial (Recomendado)
+
+1. **Clone ou baixe o projeto**
+2. **Execute o setup automático**:
+   ```bash
+   # Windows
+   setup.bat
+   
+   # Linux/Mac
+   ./setup.sh
+   ```
+3. **Configure suas chaves do Firebase** no arquivo `.env`
+4. **Gere a configuração**:
+   ```bash
+   npm run build
+   ```
+5. **Inicie o servidor**:
+   ```bash
+   npm run dev
+   ```
+
+### Executar Localmente (Método Manual)
 
 1. Clone ou baixe o projeto
 2. Navegue até a pasta do projeto
@@ -86,11 +107,16 @@ o-irmaozinho/
 
 ### Acesso Administrativo
 
-1. Acesse `/pages/admin.html`
-2. Use as credenciais:
-   - **Usuário**: admin
-   - **Senha**: oirmaozinho2025
+1. Acesse `/pages/dashboard.html`
+2. Use suas credenciais do Firebase
 3. Crie e gerencie conteúdo através do editor
+
+### 🔒 Segurança
+
+- **Chaves do Firebase** estão protegidas no arquivo `.env`
+- **Arquivo `.env`** não é enviado para o repositório
+- **Configuração** é gerada automaticamente a partir das variáveis de ambiente
+- Consulte `SECURITY.md` para mais detalhes
 
 ### Personalização
 
@@ -110,7 +136,9 @@ O site foi desenvolvido com abordagem mobile-first:
 - **HTML5**: Estrutura semântica
 - **CSS3**: Flexbox, Grid, Custom Properties
 - **JavaScript ES6+**: Funcionalidades interativas
-- **Local Storage**: Persistência de dados do carrinho e admin
+- **Firebase**: Autenticação e banco de dados
+- **Firestore**: Armazenamento de conteúdo
+- **Node.js**: Gerenciamento de dependências e build
 
 ## 📈 Performance
 
