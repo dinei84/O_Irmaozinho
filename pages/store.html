@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Store O Irmãozinho - Produtos cristãos para fortalecer sua fé. Livros, camisetas, acessórios e muito mais.">
+    <meta name="keywords" content="store cristã, produtos cristãos, livros, camisetas, acessórios, fé">
+    <title>Store - O Irmãozinho</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/assets/icons/favicon.ico">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/pages.css">
+    <link rel="stylesheet" href="/css/store.css">
+</head>
+<body>
+    <!-- Header -->
+    <div id="header-container"></div>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Page Header -->
+        <section class="page-header">
+            <div class="container">
+                <div class="page-header-content">
+                    <h1 class="page-title">Store</h1>
+                    <p class="page-subtitle">
+                        Produtos cristãos cuidadosamente selecionados para fortalecer sua fé e inspirar sua jornada espiritual
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Store Content -->
+        <section class="store-content">
+            <div class="container">
+                <!-- Categories Filter -->
+                <div class="categories-section">
+                    <h2 class="section-title">Categorias</h2>
+                    <div class="categories-filter">
+                        <button class="category-btn active" data-category="all">Todos</button>
+                        <button class="category-btn" data-category="books">Livros</button>
+                        <button class="category-btn" data-category="apparel">Vestuário</button>
+                        <button class="category-btn" data-category="accessories">Acessórios</button>
+                        <button class="category-btn" data-category="devotionals">Devocionais</button>
+                    </div>
+                </div>
+
+                <!-- Products Grid -->
+                <div class="products-section">
+                    <div class="products-grid" id="products-grid">
+                        <!-- Book Products -->
+                        <div class="product-card" data-category="books">
+                            <div class="product-image">
+                                <img src="/assets/images/book-1.jpg" alt="Livro: Caminhando na Fé" class="product-img">
+                                <div class="product-overlay">
+                                    <button class="btn btn-primary btn-sm">Ver Detalhes</button>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">Caminhando na Fé</h3>
+                                <p class="product-description">
+                                    Um guia prático para fortalecer sua caminhada cristã no dia a dia.
+                                </p>
+                                <div class="product-price">
+                                    <span class="price-current">R$ 29,90</span>
+                                    <span class="price-original">R$ 39,90</span>
+                                </div>
+                                <button class="btn btn-outline btn-sm add-to-cart">
+                                    Adicionar ao Carrinho
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="product-card" data-category="books">
+                            <div class="product-image">
+                                <img src="/assets/images/book-2.jpg" alt="Livro: Orações que Transformam" class="product-img">
+                                <div class="product-overlay">
+                                    <button class="btn btn-primary btn-sm">Ver Detalhes</button>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">Orações que Transformam</h3>
+                                <p class="product-description">
+                                    Coletânea de orações poderosas para diferentes momentos da vida.
+                                </p>
+                                <div class="product-price">
+                                    <span class="price-current">R$ 24,90</span>
+                                </div>
+                                <button class="btn btn-outline btn-sm add-to-cart">
+                                    Adicionar ao Carrinho
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Apparel Products -->
+                        <div class="product-card" data-category="apparel">
+                            <div class="product-image">
+                                <img src="/assets/images/tshirt-1.jpg" alt="Camiseta: Fé, Esperança e Amor" class="product-img">
+                                <div class="product-overlay">
+                                    <button class="btn btn-primary btn-sm">Ver Detalhes</button>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">Camiseta "Fé, Esperança e Amor"</h3>
+                                <p class="product-description">
+                                    Camiseta 100% algodão com design inspirador e confortável.
+                                </p>
+                                <div class="product-price">
+                                    <span class="price-current">R$ 49,90</span>
+                                </div>
+                                <button class="btn btn-outline btn-sm add-to-cart">
+                                    Adicionar ao Carrinho
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="product-card" data-category="apparel">
+                            <div class="product-image">
+                                <img src="/assets/images/hoodie-1.jpg" alt="Moletom: Jesus é o Caminho" class="product-img">
+                                <div class="product-overlay">
+                                    <button class="btn btn-primary btn-sm">Ver Detalhes</button>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">Moletom "Jesus é o Caminho"</h3>
+                                <p class="product-description">
+                                    Moletom premium com capuz e design moderno e inspirador.
+                                </p>
+                                <div class="product-price">
+                                    <span class="price-current">R$ 89,90</span>
+                                    <span class="price-original">R$ 109,90</span>
+                                </div>
+                                <button class="btn btn-outline btn-sm add-to-cart">
+                                    Adicionar ao Carrinho
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Accessories Products -->
+                        <div class="product-card" data-category="accessories">
+                            <div class="product-image">
+                                <img src="/assets/images/mug-1.jpg" alt="Caneca: Deus é Fiel" class="product-img">
+                                <div class="product-overlay">
+                                    <button class="btn btn-primary btn-sm">Ver Detalhes</button>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">Caneca "Deus é Fiel"</h3>
+                                <p class="product-description">
+                                    Caneca de porcelana com frase inspiradora para seus momentos de reflexão.
+                                </p>
+                                <div class="product-price">
+                                    <span class="price-current">R$ 19,90</span>
+                                </div>
+                                <button class="btn btn-outline btn-sm add-to-cart">
+                                    Adicionar ao Carrinho
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="product-card" data-category="accessories">
+                            <div class="product-image">
+                                <img src="/assets/images/keychain-1.jpg" alt="Chaveiro Cruz" class="product-img">
+                                <div class="product-overlay">
+                                    <button class="btn btn-primary btn-sm">Ver Detalhes</button>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">Chaveiro Cruz</h3>
+                                <p class="product-description">
+                                    Chaveiro em metal com cruz elegante, perfeito para carregar sua fé.
+                                </p>
+                                <div class="product-price">
+                                    <span class="price-current">R$ 12,90</span>
+                                </div>
+                                <button class="btn btn-outline btn-sm add-to-cart">
+                                    Adicionar ao Carrinho
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Devotional Products -->
+                        <div class="product-card" data-category="devotionals">
+                            <div class="product-image">
+                                <img src="/assets/images/devotional-1.jpg" alt="Devocional: 365 Dias com Jesus" class="product-img">
+                                <div class="product-overlay">
+                                    <button class="btn btn-primary btn-sm">Ver Detalhes</button>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">Devocional: 365 Dias com Jesus</h3>
+                                <p class="product-description">
+                                    Devocional diário para um ano inteiro de crescimento espiritual.
+                                </p>
+                                <div class="product-price">
+                                    <span class="price-current">R$ 34,90</span>
+                                </div>
+                                <button class="btn btn-outline btn-sm add-to-cart">
+                                    Adicionar ao Carrinho
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="product-card" data-category="devotionals">
+                            <div class="product-image">
+                                <img src="/assets/images/journal-1.jpg" alt="Diário de Oração" class="product-img">
+                                <div class="product-overlay">
+                                    <button class="btn btn-primary btn-sm">Ver Detalhes</button>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">Diário de Oração</h3>
+                                <p class="product-description">
+                                    Diário especial para registrar suas orações e testemunhos de fé.
+                                </p>
+                                <div class="product-price">
+                                    <span class="price-current">R$ 27,90</span>
+                                </div>
+                                <button class="btn btn-outline btn-sm add-to-cart">
+                                    Adicionar ao Carrinho
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shopping Cart -->
+                <div class="cart-section" id="cart-section">
+                    <div class="cart-header">
+                        <h3 class="cart-title">Carrinho de Compras</h3>
+                        <button class="cart-close" id="cart-close">&times;</button>
+                    </div>
+                    <div class="cart-items" id="cart-items">
+                        <p class="cart-empty">Seu carrinho está vazio</p>
+                    </div>
+                    <div class="cart-footer">
+                        <div class="cart-total">
+                            <strong>Total: R$ <span id="cart-total">0,00</span></strong>
+                        </div>
+                        <button class="btn btn-primary btn-full" id="checkout-btn">
+                            Finalizar Compra
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Cart Toggle Button -->
+                <button class="cart-toggle" id="cart-toggle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="m1 1 4 4 2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span class="cart-count" id="cart-count">0</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Newsletter Section -->
+        <section class="newsletter-section">
+            <div class="container">
+                <div class="newsletter-content">
+                    <h2 class="newsletter-title">Fique por Dentro das Novidades</h2>
+                    <p class="newsletter-subtitle">
+                        Receba em primeira mão informações sobre novos produtos e ofertas especiais
+                    </p>
+                    <form class="newsletter-form" id="newsletter-form">
+                        <div class="form-group">
+                            <input type="email" class="form-input" placeholder="Seu melhor e-mail" required>
+                            <button type="submit" class="btn btn-primary">Inscrever-se</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <!-- Scripts -->
+    <script src="/js/components.js"></script>
+    <script src="/js/animations.js"></script>
+    <script src="/js/store.js"></script>
+</body>
+</html>
+

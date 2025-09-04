@@ -1,0 +1,16 @@
+/* Main CSS File - Imports all stylesheets */
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;500;600;700&display=swap');
+
+/* Base Styles */
+@import url('reset.css');
+@import url('variables.css');
+
+/* Components */
+@import url('components.css');
+@import url('header.css');
+@import url('footer.css');
+
+/* Page-specific styles will be added here or in separate files */
+

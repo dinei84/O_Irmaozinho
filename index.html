@@ -3,132 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>O Irmãozinho - Blog de Crônicas Cristãs</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- O Vite injetará os estilos automaticamente -->
+    <meta name="description" content="O Irmãozinho - Compartilhando artigos, vídeos e reflexões sobre a vida Cristã. Uma marca cristã moderna, convidativa e envolvente.">
+    <meta name="keywords" content="cristão, fé, artigos, crônicas, reflexões, vida cristã, espiritualidade">
+    <meta name="author" content="O Irmãozinho">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://oirmaozinho.com/">
+    <meta property="og:title" content="O Irmãozinho - Vida Cristã Moderna">
+    <meta property="og:description" content="Compartilhando artigos, vídeos e reflexões sobre a vida Cristã. Uma marca cristã moderna, convidativa e envolvente.">
+    <meta property="og:image" content="/assets/images/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://oirmaozinho.com/">
+    <meta property="twitter:title" content="O Irmãozinho - Vida Cristã Moderna">
+    <meta property="twitter:description" content="Compartilhando artigos, vídeos e reflexões sobre a vida Cristã. Uma marca cristã moderna, convidativa e envolvente.">
+    <meta property="twitter:image" content="/assets/images/og-image.jpg">
+
+    <title>O Irmãozinho - Vida Cristã Moderna</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/assets/icons/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/home.css">
 </head>
 <body>
     <!-- Header -->
-    <header>
-        <div class="container header-container">
-            <a href="index.html" class="logo">
-                <img src="./html/assets/image1/logo_home_50px.png" alt="Logotipo O Irmãozinho">
-            </a>
-            <button class="mobile-menu-btn">☰</button>
-            <nav id="main-nav">
-                <ul>
-                    <li><a href="index.html">Início</a></li>
-                    <li><a href="cronicas.html">Crônicas</a></li>
-                    <li><a href="sobre.html">Sobre</a></li>
-                    <li><a href="contato.html">Contato</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+    <div id="header-container"></div>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container hero-content">
-            <h1>O Irmãozinho</h1>
-            <p>Reflexões e crônicas diárias para nutrir sua jornada de fé e despertar a esperança no cotidiano cristão.</p>
-            <a href="cronicas.html" class="cta-button">Ver Crônicas</a>
-        </div>
-    </section>
-
-    <!-- Featured Section -->
-    <section class="featured">
-        <div class="container">
-            <h2 class="section-title">Crônica em Destaque</h2>
-            <div class="featured-cronica">
-                <div class="featured-img">
-                    <img src="./html/assets/image1/conhecendo_jesus/conhecendo_jesus_200px.webp" alt="Crônica em Destaque">
-                </div>
-                <div class="featured-content">
-                    <h3>João 4: Reflexões sobre o Ministério de Jesus</h3>
-                    <p>Ao refletir sobre João 4, duas observações me vêm à mente.</p>
-                    <p>Primeira, o planejamento do ministério de Jesus foi perfeitamente calculado. Tornar-se conhecido primeiro em Samaria soa, no mínimo, interessante. Por que se revelar logo onde os judeus mais odiavam? Na minha opinião, essa foi uma das primeiras lições aos discípulos. Como todos ali eram judeus, eles precisavam entender que Jesus não veio somente para os judeus. A crença deles justificava um Jesus particular, um Jesus só deles. Eles precisavam compreender isso, e vemos o quão difícil foi para eles entenderem, como lemos mais adiante na discussão entre Pedro e Paulo.</p>
-                    <p>Segunda, a diferença entre ouvir falar de Jesus e conhecer Jesus. Já vimos isso em Jó, o quão importante e fundamental é conhecer Jesus. Ouvimos falar dele a todo momento, principalmente hoje, com tantas pessoas falando de Jesus e seu reino na internet. Pessoas opinam sobre Jesus e seu ministério, seus feitos. Alguns dizem que Jesus era um revolucionário, um ativista; outros dizem que Jesus era somente um profeta; outros ainda dizem que Jesus era um anjo. Enfim, temos opiniões diversas sobre quem era Jesus. Mas, a partir do momento que conhecemos Jesus, nesse exato momento conhecemos o Cristo, o Filho do Deus vivo, aquele que morreu numa cruz para remir nossos pecados e nos dar a vida eterna. Muitas vezes, levamos pouco em consideração o quão importante é conhecer a Cristo e ter um relacionamento com ele.</p>
-                    <p>Que possamos conhecer a Cristo cada dia um pouco mais, que sua revelação nos alcance para que possamos ver a sua glória eterna. Que possamos visualizar sua obra da maneira que ele quer que vejamos, com olhos de amor. Mas não um amor que passa a mão na cabeça, e sim um amor que corrige e que nos dá a vida eterna.</p>
-                    <a href="cronicas/o-valor-do-silencio.html" class="read-more">Continuar lendo <span>→</span></a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section class="about">
-        <div class="container">
-            <div class="about-content">
-                <div class="about-text">
-                    <h2>Sobre O Irmãozinho</h2>
-                    <p>Bem-vindo ao blog "O Irmãozinho", um espaço dedicado a compartilhar pensamentos, reflexões e crônicas cristãs que buscam inspirar e fortalecer sua caminhada com Deus.</p>
-                    <p>Aqui você encontrará textos diários que abordam desafios da vida cristã, lições bíblicas aplicadas ao cotidiano e reflexões sobre como viver a fé em um mundo em constante mudança.</p>
-                    <a href="sobre.html" class="read-more">Saiba mais <span>→</span></a>
-                </div>
-                <div class="about-img">
-                    <img src="images/about-image.jpg" alt="Sobre O Irmãozinho">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-container">
-                <div class="footer-col">
-                    <h3>O Irmãozinho</h3>
-                    <p>Crônicas cristãs para inspirar sua jornada de fé e trazer reflexões sobre a vida espiritual no dia a dia.</p>
-                    <div class="social-icons">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h1 class="hero-title">
+                            Bem-vindo ao <span class="hero-highlight">O Irmãozinho</span>
+                        </h1>
+                        <p class="hero-subtitle">
+                            Compartilhando artigos, vídeos e reflexões sobre a vida Cristã. 
+                            Uma jornada de fé, esperança e alegria para inspirar seu crescimento espiritual.
+                        </p>
+                        <div class="hero-buttons">
+                            <a href="#featured-article" class="btn btn-primary">
+                                Leia o Artigo em Destaque
+                            </a>
+                            <a href="/pages/sobre.html" class="btn btn-outline">
+                                Conheça Nossa História
+                            </a>
+                        </div>
+                    </div>
+                    <div class="hero-image">
+                        <img src="/assets/images/hero-illustration.svg" alt="Ilustração representando fé e comunidade cristã" class="hero-img">
                     </div>
                 </div>
-                <div class="footer-col">
-                    <h3>Links Úteis</h3>
-                    <ul>
-                        <li><a href="index.html">Início</a></li>
-                        <li><a href="cronicas.html">Crônicas</a></li>
-                        <li><a href="sobre.html">Sobre</a></li>
-                        <li><a href="contato.html">Contato</a></li>
-                    </ul>
+            </div>
+        </section>
+
+        <!-- Featured Article Section -->
+        <section class="featured-article" id="featured-article">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Artigo em Destaque</h2>
+                    <p class="section-subtitle">
+                        Reflexão especial para fortalecer sua caminhada de fé
+                    </p>
                 </div>
-                <div class="footer-col">
-                    <h3>Contato</h3>
-                    <p>Email: contato@oirmaozinho.com</p>
-                    <p>Telefone: (00) 00000-0000</p>
+                
+                <div class="featured-card">
+                    <div class="featured-image">
+                        <img src="/assets/images/featured-article.jpg" alt="A Importância da Oração na Vida Cristã" class="featured-img">
+                    </div>
+                    <div class="featured-content">
+                        <div class="featured-meta">
+                            <span class="featured-category">Artigo</span>
+                            <span class="featured-date">15 de Janeiro, 2025</span>
+                        </div>
+                        <h3 class="featured-title">
+                            A Importância da Oração na Vida Cristã: Um Diálogo Constante com Deus
+                        </h3>
+                        <p class="featured-excerpt">
+                            Descubra como a oração pode transformar sua vida espiritual e fortalecer sua 
+                            relação com Deus. Uma reflexão profunda sobre o poder da comunicação divina 
+                            em nosso dia a dia.
+                        </p>
+                        <a href="/pages/artigos.html#oracao-vida-crista" class="btn btn-primary">
+                            Ler Artigo Completo
+                        </a>
+                    </div>
                 </div>
             </div>
-            <div class="copyright">
-                <p>&copy; 2025 O Irmãozinho. Todos os direitos reservados.</p>
+        </section>
+
+        <!-- Latest Content Section -->
+        <section class="latest-content">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Últimos Conteúdos</h2>
+                    <p class="section-subtitle">
+                        Artigos e crônicas recentes para nutrir sua fé
+                    </p>
+                </div>
+                
+                <div class="content-grid grid grid-2">
+                    <!-- Article Card 1 -->
+                    <article class="article-card">
+                        <img src="/assets/images/article-1.jpg" alt="Fé em Tempos Difíceis" class="article-card-image">
+                        <div class="article-card-content">
+                            <h3 class="article-card-title">
+                                Fé em Tempos Difíceis: Encontrando Esperança na Adversidade
+                            </h3>
+                            <p class="article-card-excerpt">
+                                Como manter a fé firme quando enfrentamos desafios e provações. 
+                                Uma reflexão sobre a força que encontramos em Deus.
+                            </p>
+                            <div class="article-card-meta">
+                                <span class="article-category">Artigo</span>
+                                <span class="article-date">12 de Janeiro, 2025</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Article Card 2 -->
+                    <article class="article-card">
+                        <img src="/assets/images/article-2.jpg" alt="A Alegria do Perdão" class="article-card-image">
+                        <div class="article-card-content">
+                            <h3 class="article-card-title">
+                                A Alegria do Perdão: Libertando o Coração
+                            </h3>
+                            <p class="article-card-excerpt">
+                                O perdão como caminho para a liberdade espiritual e emocional. 
+                                Descubra como perdoar pode transformar sua vida.
+                            </p>
+                            <div class="article-card-meta">
+                                <span class="article-category">Crônica</span>
+                                <span class="article-date">10 de Janeiro, 2025</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Article Card 3 -->
+                    <article class="article-card">
+                        <img src="/assets/images/article-3.jpg" alt="Comunidade e Amor Fraternal" class="article-card-image">
+                        <div class="article-card-content">
+                            <h3 class="article-card-title">
+                                Comunidade e Amor Fraternal: Vivendo em Unidade
+                            </h3>
+                            <p class="article-card-excerpt">
+                                A importância da comunidade cristã e como o amor fraternal 
+                                fortalece nossa caminhada de fé.
+                            </p>
+                            <div class="article-card-meta">
+                                <span class="article-category">Artigo</span>
+                                <span class="article-date">8 de Janeiro, 2025</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Article Card 4 -->
+                    <article class="article-card">
+                        <img src="/assets/images/article-4.jpg" alt="Gratidão em Todas as Circunstâncias" class="article-card-image">
+                        <div class="article-card-content">
+                            <h3 class="article-card-title">
+                                Gratidão em Todas as Circunstâncias: Um Coração Agradecido
+                            </h3>
+                            <p class="article-card-excerpt">
+                                Como cultivar um espírito de gratidão mesmo nos momentos mais 
+                                desafiadores da vida.
+                            </p>
+                            <div class="article-card-meta">
+                                <span class="article-category">Crônica</span>
+                                <span class="article-date">5 de Janeiro, 2025</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+                
+                <div class="content-actions">
+                    <a href="/pages/artigos.html" class="btn btn-secondary">
+                        Ver Todos os Artigos
+                    </a>
+                    <a href="/pages/cronicas.html" class="btn btn-outline">
+                        Ver Todas as Crônicas
+                    </a>
+                </div>
             </div>
-        </div>
-    </footer>
+        </section>
 
-    <!-- Script do Vite -->
-    <script type="module" src="/src/main.js"></script>
-    
-    <!-- Script para o menu móvel -->
-    <script>
-        // Mobile Menu Toggle
-        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-        const mainNav = document.getElementById('main-nav');
+        <!-- Call to Action Section -->
+        <section class="cta-section">
+            <div class="container">
+                <div class="cta-content">
+                    <h2 class="cta-title">
+                        Junte-se à Nossa Comunidade
+                    </h2>
+                    <p class="cta-subtitle">
+                        Receba conteúdos exclusivos e faça parte de uma comunidade que 
+                        busca crescer na fé e no amor de Cristo.
+                    </p>
+                    <div class="cta-buttons">
+                        <a href="/pages/sobre.html" class="btn btn-primary">
+                            Saiba Mais
+                        </a>
+                        <a href="#" class="btn btn-outline">
+                            Siga-nos nas Redes
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 
-        if (mobileMenuBtn && mainNav) {
-            mobileMenuBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                mainNav.classList.toggle('active');
-            });
+    <!-- Footer -->
+    <div id="footer-container"></div>
 
-            // Close Menu when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('nav') && !e.target.closest('.mobile-menu-btn') && mainNav.classList.contains('active')) {
-                    mainNav.classList.remove('active');
-                }
-            });
-        }
-    </script>
+    <!-- Scripts -->
+    <script src="/js/components.js"></script>
+    <script src="/js/animations.js"></script>
 </body>
 </html>
+

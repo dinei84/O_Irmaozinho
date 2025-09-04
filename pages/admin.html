@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Painel administrativo do O Irmãozinho - Editor de conteúdo protegido por login.">
+    <title>Admin - O Irmãozinho</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/assets/icons/favicon.ico">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-screen" id="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <h1 class="login-title">O Irmãozinho</h1>
+                <p class="login-subtitle">Painel Administrativo</p>
+            </div>
+            
+            <form class="login-form" id="login-form">
+                <div class="form-group">
+                    <label for="username">Usuário</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-full">Entrar</button>
+                
+                <div class="login-error" id="login-error">
+                    Usuário ou senha incorretos
+                </div>
+            </form>
+            
+            <div class="login-footer">
+                <p>Acesso restrito aos administradores</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="admin-panel">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="admin-nav">
+                <h1 class="admin-logo">O Irmãozinho - Admin</h1>
+                <div class="admin-user">
+                    <span class="user-name" id="user-name">Administrador</span>
+                    <button class="btn btn-outline btn-sm" id="logout-btn">Sair</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <div class="admin-container">
+                <!-- Content Editor -->
+                <section class="editor-section">
+                    <div class="editor-header">
+                        <h2 class="editor-title">Editor de Conteúdo</h2>
+                        <p class="editor-subtitle">
+                            Crie e publique novos artigos e crônicas para o site
+                        </p>
+                    </div>
+                    
+                    <form class="editor-form" id="editor-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="content-type">Tipo de Conteúdo</label>
+                                <select id="content-type" name="content-type" required>
+                                    <option value="">Selecione o tipo</option>
+                                    <option value="artigo">Artigo</option>
+                                    <option value="cronica">Crônica</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="content-status">Status</label>
+                                <select id="content-status" name="content-status" required>
+                                    <option value="rascunho">Rascunho</option>
+                                    <option value="publicado">Publicado</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="content-title">Título</label>
+                            <input type="text" id="content-title" name="content-title" placeholder="Digite o título do conteúdo" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="content-excerpt">Resumo</label>
+                            <textarea id="content-excerpt" name="content-excerpt" rows="3" placeholder="Breve descrição do conteúdo"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="content-image">URL da Imagem</label>
+                            <input type="url" id="content-image" name="content-image" placeholder="https://exemplo.com/imagem.jpg">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="content-body">Conteúdo</label>
+                            <div class="editor-toolbar">
+                                <button type="button" class="toolbar-btn" data-command="bold" title="Negrito">
+                                    <strong>B</strong>
+                                </button>
+                                <button type="button" class="toolbar-btn" data-command="italic" title="Itálico">
+                                    <em>I</em>
+                                </button>
+                                <button type="button" class="toolbar-btn" data-command="underline" title="Sublinhado">
+                                    <u>U</u>
+                                </button>
+                                <button type="button" class="toolbar-btn" data-command="insertOrderedList" title="Lista Numerada">
+                                    1.
+                                </button>
+                                <button type="button" class="toolbar-btn" data-command="insertUnorderedList" title="Lista com Marcadores">
+                                    •
+                                </button>
+                                <button type="button" class="toolbar-btn" data-command="createLink" title="Link">
+                                    🔗
+                                </button>
+                            </div>
+                            <div class="editor-content" id="content-body" contenteditable="true" data-placeholder="Digite ou cole o conteúdo aqui..."></div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-outline" id="save-draft-btn">
+                                Salvar Rascunho
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                Publicar Conteúdo
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Content List -->
+                <section class="content-list-section">
+                    <div class="list-header">
+                        <h3 class="list-title">Conteúdos Salvos</h3>
+                        <div class="list-filters">
+                            <select id="filter-type">
+                                <option value="">Todos os tipos</option>
+                                <option value="artigo">Artigos</option>
+                                <option value="cronica">Crônicas</option>
+                            </select>
+                            <select id="filter-status">
+                                <option value="">Todos os status</option>
+                                <option value="rascunho">Rascunhos</option>
+                                <option value="publicado">Publicados</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="content-list" id="content-list">
+                        <div class="content-item">
+                            <div class="content-item-info">
+                                <h4 class="content-item-title">A Importância da Oração na Vida Cristã</h4>
+                                <div class="content-item-meta">
+                                    <span class="content-type-badge artigo">Artigo</span>
+                                    <span class="content-status-badge publicado">Publicado</span>
+                                    <span class="content-date">15/01/2025</span>
+                                </div>
+                            </div>
+                            <div class="content-item-actions">
+                                <button class="btn btn-outline btn-sm">Editar</button>
+                                <button class="btn btn-danger btn-sm">Excluir</button>
+                            </div>
+                        </div>
+                        
+                        <div class="content-item">
+                            <div class="content-item-info">
+                                <h4 class="content-item-title">A Alegria do Perdão: Libertando o Coração</h4>
+                                <div class="content-item-meta">
+                                    <span class="content-type-badge cronica">Crônica</span>
+                                    <span class="content-status-badge publicado">Publicado</span>
+                                    <span class="content-date">10/01/2025</span>
+                                </div>
+                            </div>
+                            <div class="content-item-actions">
+                                <button class="btn btn-outline btn-sm">Editar</button>
+                                <button class="btn btn-danger btn-sm">Excluir</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/admin.js"></script>
+</body>
+</html>
+
