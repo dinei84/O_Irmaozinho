@@ -7,7 +7,8 @@
     <title>Dashboard - O Irmãozinho</title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/assets/icons/favicon.ico">
+    <link rel="icon" type="image/png" href="/assets/icons/favcon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/favcon.png">
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/css/main.css">
@@ -15,6 +16,9 @@
     <link rel="stylesheet" href="/css/dashboard.css">
 </head>
 <body>
+    <!-- Header -->
+    <div id="header-container"></div>
+
     <!-- Login Screen -->
     <div class="login-screen" id="login-screen">
         <div class="login-container">
@@ -155,12 +159,16 @@
         </main>
     </div>
 
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     
     <!-- Scripts -->
+    <script src="/js/components.js"></script>
     <script src="/js/firebase-config.js"></script>
     <script src="/js/dashboard.js"></script>
 </body>

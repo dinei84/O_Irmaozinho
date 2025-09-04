@@ -12,5 +12,26 @@
 @import url('header.css');
 @import url('footer.css');
 
+/* Global Watermark */
+body {
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/assets/images/Podcast.png');
+    background-size: 300px 300px;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.03;
+    z-index: -1;
+    pointer-events: none;
+}
+
 /* Page-specific styles will be added here or in separate files */
 

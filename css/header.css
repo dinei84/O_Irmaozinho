@@ -21,6 +21,27 @@
     align-items: center;
     justify-content: space-between;
     height: 70px;
+    position: relative;
+    background-image: url('/assets/images/Podcast.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.nav::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.75);
+    z-index: 1;
+}
+
+.nav > * {
+    position: relative;
+    z-index: 2;
 }
 
 /* Logo */
@@ -70,6 +91,7 @@
     z-index: var(--z-fixed);
     overflow-y: auto;
     overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
 }
 
 .nav-menu-open {
@@ -90,10 +112,11 @@
     font-weight: 500;
     color: var(--color-primary-dark);
     text-decoration: none;
-    padding: var(--spacing-md) 0;
+    padding: 0.4rem 0;
     border-bottom: 1px solid transparent;
     transition: all var(--transition-fast);
     position: relative;
+    line-height: 1.2;
 }
 
 .nav-link::before {
@@ -172,14 +195,14 @@
         padding: 0;
         gap: var(--spacing-xl);
         flex-wrap: nowrap;
-        overflow-x: auto;
-        overflow-y: visible;
+        overflow: visible;
     }
     
     .nav-link {
         font-size: var(--font-size-base);
-        padding: var(--spacing-sm) 0;
+        padding: 0.4rem 0;
         white-space: nowrap;
+        line-height: 1.2;
     }
 }
 
@@ -214,12 +237,14 @@ body {
     position: relative;
     background: linear-gradient(135deg, var(--color-primary-orange), #ff6b35);
     color: white !important;
-    padding: 0.5rem 1rem !important;
-    border-radius: 20px;
+    padding: 0.4rem 0.8rem !important;
+    border-radius: 16px;
     font-weight: 600;
     transition: all var(--transition-normal);
     white-space: nowrap;
     flex-shrink: 0;
+    font-size: 0.9rem;
+    line-height: 1.2;
 }
 
 .admin-link:hover {
@@ -237,30 +262,52 @@ body {
 /* Mobile adjustments for admin link */
 @media (max-width: 767px) {
     .admin-link {
-        padding: 0.4rem 0.8rem !important;
-        font-size: 0.9rem;
+        padding: 0.3rem 0.6rem !important;
+        font-size: 0.85rem;
     }
     
     .admin-link::before {
-        font-size: 0.8rem;
-        margin-right: 0.3rem;
+        font-size: 0.75rem;
+        margin-right: 0.25rem;
     }
 }
 
 /* Very small screens - hide admin link text */
 @media (max-width: 480px) {
     .admin-link {
-        padding: 0.4rem 0.6rem !important;
-        font-size: 0.8rem;
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.75rem;
     }
     
     .admin-link::before {
-        margin-right: 0.2rem;
+        margin-right: 0.15rem;
+        font-size: 0.7rem;
     }
     
     .admin-link::after {
         content: '';
         display: none;
+    }
+}
+
+/* Prevent horizontal scroll on all screen sizes */
+.nav {
+    overflow-x: hidden;
+}
+
+.nav-list {
+    overflow-x: hidden;
+}
+
+/* Ensure nav doesn't cause page overflow */
+@media (max-width: 767px) {
+    .nav-list {
+        overflow-x: hidden;
+        overflow-y: visible;
+    }
+    
+    .nav-menu {
+        overflow-x: hidden;
     }
 }
 
