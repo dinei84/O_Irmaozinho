@@ -78,14 +78,14 @@
 /* Featured Article Section */
 .featured-article {
     padding: var(--spacing-3xl) 0;
-    background-color: var(--color-white);
+    background-color: rgba(255, 255, 255, 0.95);
 }
 
 .featured-card {
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--spacing-xl);
-    background-color: var(--color-white);
+    background-color: rgba(255, 255, 255, 0.9);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-xl);
     overflow: hidden;
@@ -157,7 +157,7 @@
 /* Latest Content Section */
 .latest-content {
     padding: var(--spacing-3xl) 0;
-    background-color: var(--color-light-gray);
+    background-color: rgba(248, 249, 250, 0.95);
 }
 
 .content-grid {

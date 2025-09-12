@@ -26,6 +26,10 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    padding: 0 2rem;
+    max-width: none;
 }
 
 .nav::before {
@@ -181,6 +185,10 @@
         display: none;
     }
     
+    .nav {
+        padding: 0 3rem;
+    }
+    
     .nav-menu {
         position: static;
         width: auto;
@@ -210,6 +218,7 @@
 @media (min-width: 1024px) {
     .nav {
         height: 80px;
+        padding: 0 4rem;
     }
     
     .nav-logo {
@@ -232,63 +241,6 @@ body {
     }
 }
 
-/* Admin Link Styles */
-.admin-link {
-    position: relative;
-    background: linear-gradient(135deg, var(--color-primary-orange), #ff6b35);
-    color: white !important;
-    padding: 0.4rem 0.8rem !important;
-    border-radius: 16px;
-    font-weight: 600;
-    transition: all var(--transition-normal);
-    white-space: nowrap;
-    flex-shrink: 0;
-    font-size: 0.9rem;
-    line-height: 1.2;
-}
-
-.admin-link:hover {
-    background: linear-gradient(135deg, #ff6b35, var(--color-primary-orange));
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 140, 66, 0.3);
-}
-
-.admin-link::before {
-    content: '🔐';
-    margin-right: 0.5rem;
-    font-size: 0.9rem;
-}
-
-/* Mobile adjustments for admin link */
-@media (max-width: 767px) {
-    .admin-link {
-        padding: 0.3rem 0.6rem !important;
-        font-size: 0.85rem;
-    }
-    
-    .admin-link::before {
-        font-size: 0.75rem;
-        margin-right: 0.25rem;
-    }
-}
-
-/* Very small screens - hide admin link text */
-@media (max-width: 480px) {
-    .admin-link {
-        padding: 0.25rem 0.5rem !important;
-        font-size: 0.75rem;
-    }
-    
-    .admin-link::before {
-        margin-right: 0.15rem;
-        font-size: 0.7rem;
-    }
-    
-    .admin-link::after {
-        content: '';
-        display: none;
-    }
-}
 
 /* Prevent horizontal scroll on all screen sizes */
 .nav {
@@ -299,8 +251,12 @@ body {
     overflow-x: hidden;
 }
 
-/* Ensure nav doesn't cause page overflow */
+/* Mobile adjustments */
 @media (max-width: 767px) {
+    .nav {
+        padding: 0 1rem;
+    }
+    
     .nav-list {
         overflow-x: hidden;
         overflow-y: visible;
@@ -308,6 +264,13 @@ body {
     
     .nav-menu {
         overflow-x: hidden;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 480px) {
+    .nav {
+        padding: 0 0.75rem;
     }
 }
 
