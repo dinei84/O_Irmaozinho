@@ -66,6 +66,9 @@ async function loadCronicas() {
         // Ordenar por timestamp (mais recente primeiro)
         cronicas.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
         
+        // Store all cronicas for search functionality
+        allCronicas = cronicas;
+        
         console.log(`Carregadas ${cronicas.length} crônicas publicadas`);
         
         if (cronicas.length === 0) {
@@ -152,5 +155,174 @@ function openPost(id) {
     window.location.href = `/pages/post.html?id=${id}`;
 }
 
+// Search functionality
+let allCronicas = []; // Store all cronicas for search
+let currentSearchTerm = '';
+
+// Initialize search functionality
+function initSearch() {
+    const searchInput = document.getElementById('search-input');
+    const searchBtn = document.getElementById('search-btn');
+    const clearSearchBtn = document.getElementById('clear-search');
+    const searchResultsInfo = document.getElementById('search-results-info');
+    const searchResultsCount = document.getElementById('search-results-count');
+
+    // Search on button click
+    searchBtn.addEventListener('click', performSearch);
+    
+    // Search on Enter key
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            performSearch();
+        }
+    });
+    
+    // Real-time search as user types (with debounce)
+    let searchTimeout;
+    searchInput.addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            if (searchInput.value.trim().length >= 2) {
+                performSearch();
+            } else if (searchInput.value.trim().length === 0) {
+                clearSearch();
+            }
+        }, 300);
+    });
+    
+    // Clear search
+    clearSearchBtn.addEventListener('click', clearSearch);
+}
+
+// Perform search
+function performSearch() {
+    const searchInput = document.getElementById('search-input');
+    const searchTerm = searchInput.value.trim().toLowerCase();
+    
+    if (searchTerm.length < 2) {
+        return;
+    }
+    
+    currentSearchTerm = searchTerm;
+    
+    // Filter cronicas based on search term
+    const filteredCronicas = allCronicas.filter(cronica => {
+        const title = (cronica.title || '').toLowerCase();
+        const content = (cronica.content || '').toLowerCase();
+        const author = (cronica.author || '').toLowerCase();
+        const excerpt = (cronica.excerpt || '').toLowerCase();
+        
+        return title.includes(searchTerm) || 
+               content.includes(searchTerm) || 
+               author.includes(searchTerm) ||
+               excerpt.includes(searchTerm);
+    });
+    
+    // Display search results
+    displaySearchResults(filteredCronicas, searchTerm);
+}
+
+// Display search results
+function displaySearchResults(cronicas, searchTerm) {
+    const cronicasGrid = document.getElementById('cronicas-grid');
+    const noCronicas = document.getElementById('no-cronicas');
+    const searchResultsInfo = document.getElementById('search-results-info');
+    const searchResultsCount = document.getElementById('search-results-count');
+    
+    // Update search results info
+    const count = cronicas.length;
+    searchResultsCount.textContent = `${count} crônica${count !== 1 ? 's' : ''} encontrada${count !== 1 ? 's' : ''} para "${searchTerm}"`;
+    searchResultsInfo.style.display = 'flex';
+    
+    if (cronicas.length === 0) {
+        // Show no results message
+        cronicasGrid.innerHTML = `
+            <div class="no-results">
+                <div class="no-results-icon">🔍</div>
+                <h3>Nenhuma crônica encontrada</h3>
+                <p>Não encontramos crônicas que correspondam à sua busca por "<strong>${searchTerm}</strong>".</p>
+                <p>Tente usar palavras-chave diferentes ou verifique a ortografia.</p>
+            </div>
+        `;
+        noCronicas.style.display = 'none';
+    } else {
+        // Display filtered cronicas with highlighting
+        cronicasGrid.innerHTML = cronicas.map(cronica => createCronicaCard(cronica, searchTerm)).join('');
+        noCronicas.style.display = 'none';
+    }
+}
+
+// Clear search
+function clearSearch() {
+    const searchInput = document.getElementById('search-input');
+    const searchResultsInfo = document.getElementById('search-results-info');
+    const cronicasGrid = document.getElementById('cronicas-grid');
+    const noCronicas = document.getElementById('no-cronicas');
+    
+    searchInput.value = '';
+    currentSearchTerm = '';
+    searchResultsInfo.style.display = 'none';
+    
+    // Restore all cronicas
+    if (allCronicas.length === 0) {
+        cronicasGrid.innerHTML = '';
+        noCronicas.style.display = 'block';
+    } else {
+        cronicasGrid.innerHTML = allCronicas.map(cronica => createCronicaCard(cronica)).join('');
+        noCronicas.style.display = 'none';
+    }
+}
+
+// Highlight search terms in text
+function highlightSearchTerm(text, searchTerm) {
+    if (!searchTerm || !text) return text;
+    
+    const regex = new RegExp(`(${searchTerm})`, 'gi');
+    return text.replace(regex, '<span class="search-highlight">$1</span>');
+}
+
+// Create cronica card with search highlighting
+function createCronicaCard(cronica, searchTerm = '') {
+    const title = searchTerm ? highlightSearchTerm(cronica.title, searchTerm) : cronica.title;
+    const excerpt = searchTerm ? highlightSearchTerm(cronica.excerpt, searchTerm) : cronica.excerpt;
+    const author = searchTerm ? highlightSearchTerm(cronica.author, searchTerm) : cronica.author;
+    
+    return `
+        <article class="article-card">
+            <div class="article-card-image" onclick="openPost('${cronica.id}')">
+                <img src="${cronica.imageUrl || '/assets/images/Podcast.png'}" 
+                     alt="${cronica.title}" 
+                     class="article-img"
+                     onerror="this.src='/assets/images/Podcast.png'">
+            </div>
+            <div class="article-card-content">
+                <div class="article-meta">
+                    <span class="article-category">${cronica.type === 'artigo' ? 'Artigo' : 'Crônica'}</span>
+                    <span class="article-date">${formatDate(cronica.timestamp)}</span>
+                </div>
+                <h2 class="article-title" onclick="openPost('${cronica.id}')">${title}</h2>
+                <p class="article-excerpt">${excerpt}</p>
+                <div class="article-author">
+                    <span class="author-name">${author}</span>
+                </div>
+                ${searchTerm ? `
+                    <div class="article-actions">
+                        <a href="/pages/post.html?id=${cronica.id}" class="read-article-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                            </svg>
+                            Ler ${cronica.type === 'artigo' ? 'artigo' : 'crônica'}
+                        </a>
+                    </div>
+                ` : ''}
+            </div>
+        </article>
+    `;
+}
+
 // Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', initCronicas);
+document.addEventListener('DOMContentLoaded', () => {
+    initCronicas();
+    initSearch();
+});

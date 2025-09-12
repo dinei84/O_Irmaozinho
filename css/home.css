@@ -32,6 +32,7 @@
 .hero-highlight {
     color: var(--color-primary-orange);
     position: relative;
+    white-space: nowrap;
 }
 
 .hero-highlight::after {
