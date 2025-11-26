@@ -18,9 +18,9 @@ const Header = () => {
 
     return (
         <header className="fixed w-full top-0 z-50 bg-surface/95 backdrop-blur-sm shadow-sm transition-all duration-300">
-            <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+            <div className="container mx-auto px-4 h-24 flex items-center justify-between">
                 {/* Logo */}
-                <Link to="/" className="text-2xl font-heading font-bold text-primary">
+                <Link to="/" className="text-3xl font-heading font-bold text-primary">
                     O Irmãozinho
                 </Link>
 
@@ -31,7 +31,7 @@ const Header = () => {
                             key={item.name}
                             to={item.path}
                             className={({ isActive }) =>
-                                `text-sm font-medium transition-colors duration-200 hover:text-primary ${isActive ? 'text-primary' : 'text-text-secondary'
+                                `text-base font-medium transition-colors duration-200 hover:text-primary ${isActive ? 'text-primary' : 'text-text-secondary'
                                 }`
                             }
                         >
@@ -46,7 +46,7 @@ const Header = () => {
                         onClick={openCart}
                         className="relative p-2 text-text-secondary hover:text-primary transition-colors"
                     >
-                        <ShoppingCart size={20} />
+                        <ShoppingCart size={24} />
                         {cartCount > 0 && (
                             <span className="absolute -top-1 -right-1 bg-primary text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                                 {cartCount}
@@ -54,7 +54,7 @@ const Header = () => {
                         )}
                     </button>
                     <Link to="/admin" className="p-2 text-text-secondary hover:text-primary transition-colors">
-                        <User size={20} />
+                        <User size={24} />
                     </Link>
                 </div>
 
@@ -63,7 +63,7 @@ const Header = () => {
                     className="md:hidden p-2 text-text-primary"
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                 >
-                    {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                    {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
                 </button>
             </div>
 
