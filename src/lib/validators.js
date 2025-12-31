@@ -33,6 +33,41 @@ export function sanitizeHtml(html) {
 }
 
 /**
+ * Valida email
+ */
+export function isValidEmail(email) {
+  if (!email || typeof email !== 'string') return false;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email.trim());
+}
+
+/**
+ * Valida senha
+ * Retorna { valid: boolean, errors: string[] }
+ */
+export function validatePassword(password) {
+  const errors = [];
+  
+  if (!password || typeof password !== 'string') {
+    errors.push('Senha é obrigatória');
+    return { valid: false, errors };
+  }
+  
+  if (password.length < 6) {
+    errors.push('Senha deve ter no mínimo 6 caracteres');
+  }
+  
+  if (password.length > 128) {
+    errors.push('Senha deve ter no máximo 128 caracteres');
+  }
+  
+  return {
+    valid: errors.length === 0,
+    errors,
+  };
+}
+
+/**
  * Valida estrutura de um artigo
  */
 export function validateArticle(article) {
@@ -51,29 +86,42 @@ export function validateArticle(article) {
   if (!article.body || typeof article.body !== 'string' || article.body.trim().length === 0) {
     errors.push('Conteúdo é obrigatório');
   } else if (article.body.length > 50000) {
-    errors.push('Conteúdo muito grande (máximo 50.000 caracteres)');
+    errors.push('Conteúdo deve ter no máximo 50000 caracteres');
   } else if (article.body.length < 10) {
     errors.push('Conteúdo deve ter no mínimo 10 caracteres');
   }
   
   // Validação de categoria
-  const validCategories = ['Artigos', 'Crônicas'];
-  if (!article.category || !validCategories.includes(article.category)) {
-    errors.push(`Categoria deve ser uma das seguintes: ${validCategories.join(', ')}`);
+  if (!article.category || typeof article.category !== 'string') {
+    errors.push('Categoria é obrigatória');
+  } else if (!['Artigos', 'Crônicas'].includes(article.category)) {
+    errors.push('Categoria deve ser "Artigos" ou "Crônicas"');
   }
   
   // Validação de URL de imagem (opcional)
-  if (article.imageUrl) {
-    if (typeof article.imageUrl !== 'string' || article.imageUrl.length > 1000) {
-      errors.push('URL de imagem inválida (máximo 1000 caracteres)');
-    } else if (!isValidUrl(article.imageUrl)) {
-      errors.push('URL de imagem deve ser uma URL válida (http:// ou https://)');
+  if (article.imageUrl && typeof article.imageUrl === 'string' && article.imageUrl.trim().length > 0) {
+    if (!isValidUrl(article.imageUrl)) {
+      errors.push('URL de imagem inválida');
+    } else if (article.imageUrl.length > 1000) {
+      errors.push('URL de imagem muito longa (máximo 1000 caracteres)');
     }
   }
   
   return {
-    isValid: errors.length === 0,
-    errors
+    valid: errors.length === 0,
+    errors,
+  };
+}
+
+/**
+ * Normaliza dados de um artigo
+ */
+export function normalizeArticle(article) {
+  return {
+    title: article.title ? article.title.trim() : '',
+    body: article.body ? sanitizeHtml(article.body) : '', // body mantém espaços, apenas sanitiza HTML
+    category: article.category || 'Artigos',
+    imageUrl: article.imageUrl ? article.imageUrl.trim() : '',
   };
 }
 
@@ -88,84 +136,62 @@ export function validateProduct(product) {
     errors.push('Nome do produto é obrigatório');
   } else if (product.name.length > 200) {
     errors.push('Nome do produto deve ter no máximo 200 caracteres');
-  } else if (product.name.length < 2) {
-    errors.push('Nome do produto deve ter no mínimo 2 caracteres');
+  } else if (product.name.length < 3) {
+    errors.push('Nome do produto deve ter no mínimo 3 caracteres');
   }
   
   // Validação de preço
   if (product.price === undefined || product.price === null) {
     errors.push('Preço é obrigatório');
-  } else {
-    const price = typeof product.price === 'string' ? parseFloat(product.price) : product.price;
-    if (isNaN(price) || !isFinite(price)) {
-      errors.push('Preço deve ser um número válido');
-    } else if (price < 0) {
-      errors.push('Preço não pode ser negativo');
-    } else if (price > 1000000) {
-      errors.push('Preço muito alto (máximo R$ 1.000.000,00)');
-    }
+  } else if (typeof product.price !== 'number') {
+    errors.push('Preço deve ser um número');
+  } else if (product.price < 0) {
+    errors.push('Preço não pode ser negativo');
+  } else if (product.price > 1000000) {
+    errors.push('Preço muito alto (máximo R$ 1.000.000,00)');
   }
   
   // Validação de estoque
-  if (product.stock !== undefined && product.stock !== null) {
-    const stock = typeof product.stock === 'string' ? parseInt(product.stock, 10) : product.stock;
-    if (isNaN(stock) || !Number.isInteger(stock)) {
-      errors.push('Estoque deve ser um número inteiro');
-    } else if (stock < 0) {
-      errors.push('Estoque não pode ser negativo');
-    }
+  if (product.stock === undefined || product.stock === null) {
+    errors.push('Estoque é obrigatório');
+  } else if (!Number.isInteger(product.stock)) {
+    errors.push('Estoque deve ser um número inteiro');
+  } else if (product.stock < 0) {
+    errors.push('Estoque não pode ser negativo');
   }
   
   // Validação de status ativo
-  if (product.active !== undefined && typeof product.active !== 'boolean') {
+  if (product.active === undefined || product.active === null) {
+    errors.push('Status ativo é obrigatório');
+  } else if (typeof product.active !== 'boolean') {
     errors.push('Status ativo deve ser verdadeiro ou falso');
   }
   
   // Validação de URL de imagem (opcional)
-  if (product.imageUrl) {
-    if (typeof product.imageUrl !== 'string' || product.imageUrl.length > 1000) {
-      errors.push('URL de imagem inválida (máximo 1000 caracteres)');
-    } else if (!isValidUrl(product.imageUrl)) {
-      errors.push('URL de imagem deve ser uma URL válida (http:// ou https://)');
+  if (product.imageUrl && typeof product.imageUrl === 'string' && product.imageUrl.trim().length > 0) {
+    if (!isValidUrl(product.imageUrl)) {
+      errors.push('URL de imagem inválida');
+    } else if (product.imageUrl.length > 1000) {
+      errors.push('URL de imagem muito longa (máximo 1000 caracteres)');
     }
   }
   
-  // Validação de descrição (opcional)
-  if (product.description && typeof product.description === 'string' && product.description.length > 2000) {
-    errors.push('Descrição deve ter no máximo 2000 caracteres');
-  }
-  
   return {
-    isValid: errors.length === 0,
-    errors
+    valid: errors.length === 0,
+    errors,
   };
 }
 
 /**
- * Normaliza dados de artigo antes de salvar
- * Nota: O campo body mantém espaços preservados pois podem ser importantes para formatação
- */
-export function normalizeArticle(article) {
-  return {
-    title: article.title ? article.title.trim() : '',
-    body: article.body ? sanitizeHtml(article.body) : '', // body mantém espaços, apenas sanitiza HTML
-    category: article.category || 'Artigos',
-    imageUrl: article.imageUrl ? article.imageUrl.trim() : '',
-  };
-}
-
-/**
- * Normaliza dados de produto antes de salvar
+ * Normaliza dados de um produto
  */
 export function normalizeProduct(product) {
   return {
     name: product.name ? product.name.trim() : '',
-    description: product.description ? (product.description.trim() || '') : '',
-    price: typeof product.price === 'string' ? parseFloat(product.price) : (product.price || 0),
-    stock: typeof product.stock === 'string' ? parseInt(product.stock, 10) : (product.stock || 0),
-    category: product.category || 'Outros',
+    description: product.description ? product.description.trim() : '',
+    price: typeof product.price === 'number' ? product.price : 0,
+    stock: Number.isInteger(product.stock) ? product.stock : 0,
+    active: typeof product.active === 'boolean' ? product.active : true,
     imageUrl: product.imageUrl ? product.imageUrl.trim() : '',
-    active: product.active !== undefined ? Boolean(product.active) : true,
   };
 }
-

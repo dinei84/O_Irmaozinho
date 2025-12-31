@@ -13,6 +13,7 @@ import Chronicles from './pages/Chronicles';
 import Store from './pages/Store';
 import Checkout from './pages/Checkout';
 import Login from './pages/Login';
+import SignUp from './pages/SignUp';
 import Dashboard from './pages/admin/Dashboard';
 import ArticleEditor from './pages/admin/ArticleEditor';
 import ProductsManager from './pages/admin/ProductsManager';
@@ -37,6 +38,7 @@ function App() {
                                 <Route path="/checkout" element={<Checkout />} />
                                 <Route path="/sobre" element={<About />} />
                                 <Route path="/login" element={<Login />} />
+                                <Route path="/signup" element={<SignUp />} />
                                 <Route
                                     path="/admin"
                                     element={

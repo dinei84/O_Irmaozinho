@@ -2,11 +2,13 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
     onAuthStateChanged,
     signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
     signOut,
     getIdTokenResult
 } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 import { isAdmin, getUserRole } from '../lib/roles';
+import { createUserProfile, updateLastLogin } from '../services/userService';
 
 const AuthContext = createContext();
 
@@ -26,6 +28,34 @@ export const AuthProvider = ({ children }) => {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         // Força a atualização do token para obter custom claims atualizados
         await refreshUserToken(userCredential.user);
+        // Atualiza último login (não crítico se falhar)
+        updateLastLogin(userCredential.user.uid).catch(() => {});
+        return userCredential;
+    }
+
+    /**
+     * Cria uma nova conta de usuário
+     * @param {string} email - Email do usuário
+     * @param {string} password - Senha
+     * @param {Object} additionalData - Dados adicionais (displayName, etc)
+     */
+    async function signup(email, password, additionalData = {}) {
+        // Criar usuário no Firebase Auth
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // Criar perfil no Firestore
+        await createUserProfile(user.uid, {
+            email: user.email,
+            emailVerified: user.emailVerified,
+            displayName: additionalData.displayName || user.displayName || '',
+            photoURL: additionalData.photoURL || user.photoURL || '',
+            preferences: additionalData.preferences || {},
+        });
+
+        // Atualizar token para obter custom claims
+        await refreshUserToken(user);
+        
         return userCredential;
     }
 
@@ -75,6 +105,7 @@ export const AuthProvider = ({ children }) => {
         isAdmin: userRole === 'admin',
         refreshToken: () => refreshUserToken(currentUser),
         login,
+        signup,
         logout
     };
 

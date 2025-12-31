@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { motion } from 'framer-motion';
 import { Lock, Mail, ArrowRight, AlertCircle } from 'lucide-react';
@@ -132,6 +132,15 @@ const Login = () => {
                             {loading ? 'Entrando...' : 'Entrar'}
                             {!loading && <ArrowRight size={18} className="ml-2" />}
                         </Button>
+                    </div>
+
+                    <div className="text-center">
+                        <p className="text-sm text-text-secondary">
+                            Não tem uma conta?{' '}
+                            <Link to="/signup" className="text-primary font-medium hover:underline">
+                                Criar conta
+                            </Link>
+                        </p>
                     </div>
                 </form>
             </motion.div>

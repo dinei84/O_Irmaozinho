@@ -158,15 +158,20 @@ service cloud.firestore {
       // Admins podem ler todos
       allow read: if isOwner(userId) || isAdmin();
       
-      // Usuários podem criar apenas seu próprio perfil
+      // Usuários podem criar apenas seu próprio perfil durante o cadastro
       // Admins podem criar qualquer perfil
       allow create: if (isOwner(userId) || isAdmin()) &&
-                       request.resource.data.userId == userId &&
-                       request.resource.data.createdAt == request.time;
+                       request.resource.data.email is string &&
+                       request.resource.data.email.size() > 0 &&
+                       request.resource.data.role == 'user' && // Sempre user por padrão
+                       request.resource.data.createdAt == request.time &&
+                       request.resource.data.updatedAt == request.time;
       
       // Usuários podem atualizar apenas seu próprio perfil
       // Admins podem atualizar qualquer perfil
+      // Usuários comuns não podem mudar o role (apenas admin via script/Cloud Function)
       allow update: if (isOwner(userId) || isAdmin()) &&
+                       (isAdmin() || request.resource.data.role == resource.data.role) &&
                        request.resource.data.updatedAt == request.time;
       
       // Apenas admins podem deletar perfis
