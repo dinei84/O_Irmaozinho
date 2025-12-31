@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { doc, getDoc, addDoc, updateDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
+import { useAuth } from '../../contexts/AuthContext';
+import { validateArticle, normalizeArticle } from '../../lib/validators';
+import { logArticleAction, AUDIT_ACTIONS } from '../../services/auditService';
 import { motion } from 'framer-motion';
 import { Save, ArrowLeft, AlertCircle, Image as ImageIcon } from 'lucide-react';
 import Button from '../../components/ui/Button';
@@ -10,6 +13,7 @@ import Card, { CardBody } from '../../components/ui/Card';
 const ArticleEditor = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { currentUser } = useAuth();
     const isEditMode = Boolean(id);
 
     const [formData, setFormData] = useState({
@@ -21,6 +25,7 @@ const ArticleEditor = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [validationErrors, setValidationErrors] = useState([]);
 
     useEffect(() => {
         if (isEditMode) {
@@ -59,30 +64,59 @@ const ArticleEditor = () => {
         e.preventDefault();
         setError('');
         setSuccess('');
+        setValidationErrors([]);
 
-        if (!formData.title || !formData.body) {
-            setError('Título e Conteúdo são obrigatórios.');
+        // Validação client-side
+        const normalized = normalizeArticle(formData);
+        const validation = validateArticle(normalized);
+
+        if (!validation.isValid) {
+            setValidationErrors(validation.errors);
+            setError('Por favor, corrija os erros no formulário.');
             return;
         }
 
         try {
             setLoading(true);
 
+            const articleData = {
+                ...normalized,
+                updatedAt: serverTimestamp()
+            };
+
             if (isEditMode) {
                 // Update existing article
                 const docRef = doc(db, 'content', id);
-                await updateDoc(docRef, {
-                    ...formData,
-                    updatedAt: serverTimestamp()
-                });
+                await updateDoc(docRef, articleData);
+                
+                // Log de auditoria
+                if (currentUser) {
+                    await logArticleAction(
+                        AUDIT_ACTIONS.ARTICLE_UPDATED,
+                        currentUser.uid,
+                        id,
+                        { title: normalized.title }
+                    );
+                }
+                
                 setSuccess('Artigo atualizado com sucesso!');
             } else {
                 // Create new article
-                await addDoc(collection(db, 'content'), {
-                    ...formData,
-                    createdAt: serverTimestamp(),
-                    updatedAt: serverTimestamp()
+                const docRef = await addDoc(collection(db, 'content'), {
+                    ...articleData,
+                    createdAt: serverTimestamp()
                 });
+                
+                // Log de auditoria
+                if (currentUser) {
+                    await logArticleAction(
+                        AUDIT_ACTIONS.ARTICLE_CREATED,
+                        currentUser.uid,
+                        docRef.id,
+                        { title: normalized.title }
+                    );
+                }
+                
                 setSuccess('Artigo criado com sucesso!');
             }
 
@@ -91,7 +125,15 @@ const ArticleEditor = () => {
             }, 1500);
         } catch (err) {
             console.error('Error saving article:', err);
-            setError('Erro ao salvar artigo. Verifique as permissões do Firestore.');
+            
+            // Mensagens de erro mais específicas
+            if (err.code === 'permission-denied') {
+                setError('Você não tem permissão para realizar esta ação.');
+            } else if (err.code === 'unauthenticated') {
+                setError('Você precisa estar autenticado para realizar esta ação.');
+            } else {
+                setError('Erro ao salvar artigo. Verifique as permissões do Firestore.');
+            }
         } finally {
             setLoading(false);
         }
@@ -128,10 +170,23 @@ const ArticleEditor = () => {
                     <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
-                        className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md flex items-center gap-3 mb-6"
+                        className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md mb-6"
                     >
-                        <AlertCircle className="text-red-500" size={20} />
-                        <p className="text-red-700 text-sm">{error}</p>
+                        <div className="flex items-start gap-3">
+                            <AlertCircle className="text-red-500" size={20} />
+                            <div className="flex-1">
+                                <p className="text-red-700 text-sm font-semibold">{error}</p>
+                                {validationErrors.length > 0 && (
+                                    <ul className="mt-2 list-disc list-inside">
+                                        {validationErrors.map((err, index) => (
+                                            <li key={index} className="text-red-600 text-xs">
+                                                {err}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+                        </div>
                     </motion.div>
                 )}
 

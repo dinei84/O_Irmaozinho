@@ -1,0 +1,185 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function para verificar se o usuário está autenticado
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function para verificar se o usuário é admin
+    // Verifica se o custom claim 'role' é 'admin'
+    function isAdmin() {
+      return isAuthenticated() && 
+             request.auth.token.role == 'admin';
+    }
+    
+    // Helper function para verificar se o usuário é o dono do recurso
+    function isOwner(userId) {
+      return isAuthenticated() && 
+             request.auth.uid == userId;
+    }
+    
+    // Helper function para validar estrutura de artigo
+    function isValidArticle(data) {
+      return data.keys().hasAll(['title', 'body', 'category']) &&
+             data.title is string &&
+             data.title.size() > 0 &&
+             data.title.size() <= 200 &&
+             data.body is string &&
+             data.body.size() > 0 &&
+             data.body.size() <= 50000 &&
+             data.category is string &&
+             data.category in ['Artigos', 'Crônicas'] &&
+             (!('imageUrl' in data) || 
+              (data.imageUrl is string && 
+               data.imageUrl.size() <= 1000 &&
+               data.imageUrl.matches('^https?://.*')));
+    }
+    
+    // Helper function para validar estrutura de produto
+    function isValidProduct(data) {
+      return data.keys().hasAll(['name', 'price', 'stock', 'active']) &&
+             data.name is string &&
+             data.name.size() > 0 &&
+             data.name.size() <= 200 &&
+             data.price is number &&
+             data.price >= 0 &&
+             data.price <= 1000000 &&
+             data.stock is int &&
+             data.stock >= 0 &&
+             data.active is bool &&
+             (!('imageUrl' in data) || 
+              (data.imageUrl is string && 
+               data.imageUrl.size() <= 1000 &&
+               data.imageUrl.matches('^https?://.*')));
+    }
+    
+    // ==========================================
+    // REGRAS PARA CONTEÚDO (ARTIGOS/CRÔNICAS)
+    // ==========================================
+    match /content/{contentId} {
+      // Qualquer um (autenticado ou não) pode ler conteúdo
+      // Isso permite que visitantes vejam os artigos públicos
+      allow read: if true;
+      
+      // Apenas admins podem criar artigos
+      allow create: if isAdmin() && 
+                       isValidArticle(request.resource.data) &&
+                       request.resource.data.createdAt == request.time &&
+                       request.resource.data.updatedAt == request.time;
+      
+      // Apenas admins podem atualizar artigos
+      allow update: if isAdmin() && 
+                       isValidArticle(request.resource.data) &&
+                       request.resource.data.updatedAt == request.time;
+      
+      // Apenas admins podem deletar artigos
+      allow delete: if isAdmin();
+    }
+    
+    // ==========================================
+    // REGRAS PARA PRODUTOS
+    // ==========================================
+    match /products/{productId} {
+      // Qualquer um pode ler produtos ativos
+      // Para produtos inativos, apenas admins podem ver
+      allow read: if resource.data.active == true || isAdmin();
+      
+      // Apenas admins podem criar produtos
+      allow create: if isAdmin() && 
+                       isValidProduct(request.resource.data) &&
+                       request.resource.data.createdAt == request.time &&
+                       request.resource.data.updatedAt == request.time;
+      
+      // Apenas admins podem atualizar produtos
+      allow update: if isAdmin() && 
+                       isValidProduct(request.resource.data) &&
+                       request.resource.data.updatedAt == request.time;
+      
+      // Apenas admins podem deletar produtos
+      allow delete: if isAdmin();
+    }
+    
+    // ==========================================
+    // REGRAS PARA PEDIDOS (futuro)
+    // ==========================================
+    match /orders/{orderId} {
+      // Usuários podem ler apenas seus próprios pedidos
+      // Admins podem ler todos
+      allow read: if isOwner(resource.data.userId) || isAdmin();
+      
+      // Qualquer usuário autenticado pode criar pedidos
+      allow create: if isAuthenticated() && 
+                       request.resource.data.userId == request.auth.uid &&
+                       request.resource.data.createdAt == request.time;
+      
+      // Apenas admins podem atualizar pedidos (ex: status)
+      allow update: if isAdmin();
+      
+      // Apenas admins podem deletar pedidos
+      allow delete: if isAdmin();
+    }
+    
+    // ==========================================
+    // REGRAS PARA LOGS DE AUDITORIA
+    // ==========================================
+    match /audit_logs/{logId} {
+      // Apenas admins podem ler logs
+      allow read: if isAdmin();
+      
+      // Apenas o sistema (via Cloud Functions) pode criar logs
+      // No cliente, apenas admins autenticados podem criar logs de suas ações
+      allow create: if isAdmin() && 
+                       request.resource.data.userId == request.auth.uid &&
+                       request.resource.data.timestamp == request.time;
+      
+      // Ninguém pode atualizar ou deletar logs (imutável)
+      allow update, delete: if false;
+    }
+    
+    // ==========================================
+    // REGRAS PARA ADMINS (coleção de controle)
+    // ==========================================
+    match /admins/{adminId} {
+      // Apenas admins podem ler a lista de admins
+      allow read: if isAdmin();
+      
+      // Ninguém pode criar/editar/deletar via cliente
+      // Isso deve ser feito via Cloud Functions ou console do Firebase
+      allow create, update, delete: if false;
+    }
+    
+    // ==========================================
+    // REGRAS PARA USUÁRIOS (perfis)
+    // ==========================================
+    match /users/{userId} {
+      // Usuários podem ler apenas seu próprio perfil
+      // Admins podem ler todos
+      allow read: if isOwner(userId) || isAdmin();
+      
+      // Usuários podem criar apenas seu próprio perfil
+      // Admins podem criar qualquer perfil
+      allow create: if (isOwner(userId) || isAdmin()) &&
+                       request.resource.data.userId == userId &&
+                       request.resource.data.createdAt == request.time;
+      
+      // Usuários podem atualizar apenas seu próprio perfil
+      // Admins podem atualizar qualquer perfil
+      allow update: if (isOwner(userId) || isAdmin()) &&
+                       request.resource.data.updatedAt == request.time;
+      
+      // Apenas admins podem deletar perfis
+      allow delete: if isAdmin();
+    }
+    
+    // ==========================================
+    // REGRAS PADRÃO (negar acesso ao resto)
+    // ==========================================
+    match /{document=**} {
+      // Negar acesso a qualquer coleção não especificada acima
+      allow read, write: if false;
+    }
+  }
+}
+

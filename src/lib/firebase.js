@@ -2,14 +2,36 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
+// Validação das variáveis de ambiente
+const requiredEnvVars = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+};
+
+// Verificar se todas as variáveis necessárias estão definidas
+const missingVars = Object.entries(requiredEnvVars)
+  .filter(([_, value]) => !value)
+  .map(([key]) => key);
+
+if (missingVars.length > 0) {
+  throw new Error(
+    `Variáveis de ambiente do Firebase não configuradas: ${missingVars.join(', ')}\n` +
+    'Crie um arquivo .env com as configurações necessárias. Veja .env.example'
+  );
+}
+
 const firebaseConfig = {
-  apiKey: "AIzaSyAvBppTLTDs8qALcOjSmQgZU_KoPODp1I0",
-  authDomain: "admoirmaozinho.firebaseapp.com",
-  projectId: "admoirmaozinho",
-  storageBucket: "admoirmaozinho.firebasestorage.app",
-  messagingSenderId: "79331048689",
-  appId: "1:79331048689:web:02506c8ddbdd3369f97d50",
-  measurementId: "G-4NF3N0878T"
+  apiKey: requiredEnvVars.apiKey,
+  authDomain: requiredEnvVars.authDomain,
+  projectId: requiredEnvVars.projectId,
+  storageBucket: requiredEnvVars.storageBucket,
+  messagingSenderId: requiredEnvVars.messagingSenderId,
+  appId: requiredEnvVars.appId,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || undefined,
 };
 
 const app = initializeApp(firebaseConfig);
