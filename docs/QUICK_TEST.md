@@ -73,3 +73,5 @@ Se todos os itens acima estão ✅, a aplicação está funcionando!
 
 Para testes mais detalhados, veja [TESTING_GUIDE.md](./TESTING_GUIDE.md)
 
+**Nota:** Esta documentação foi reorganizada. Todos os guias estão na pasta `docs/`.
+

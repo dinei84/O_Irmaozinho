@@ -5,7 +5,7 @@ import { CartProvider } from './contexts/CartContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
-import CartDrawer from './components/CartDrawer';
+import CartDrawer from './components/features/cart/CartDrawer';
 import Home from './pages/Home';
 import About from './pages/About';
 import Articles from './pages/Articles';

@@ -167,26 +167,47 @@ firestore/
 
 ```
 O_Irmaozinho/
-├── src/
-│   ├── components/       # Componentes React
-│   │   ├── auth/        # Componentes de autenticação
-│   │   ├── layout/      # Layout (Header, Footer)
-│   │   └── ui/          # Componentes UI reutilizáveis
-│   ├── contexts/        # Context API (Auth, Cart)
-│   ├── lib/            # Bibliotecas e utilitários
-│   │   ├── firebase.js # Configuração Firebase
-│   │   ├── validators.js # Validações
-│   │   ├── roles.js    # Sistema de roles
-│   │   └── __tests__/  # Testes unitários
-│   ├── pages/          # Páginas da aplicação
-│   │   └── admin/      # Páginas administrativas
-│   ├── services/       # Serviços (API, auditoria)
-│   └── test/           # Configuração de testes
-├── firestore.rules     # Regras de segurança
-├── firestore.indexes.json # Índices do Firestore
-├── firebase.json       # Configuração Firebase
-└── vitest.config.js    # Configuração Vitest
+├── 📚 docs/                    # Documentação completa
+│   ├── SETUP.md               # Guia de setup
+│   ├── TESTING_GUIDE.md       # Guia de testes
+│   ├── TROUBLESHOOTING.md     # Solução de problemas
+│   └── ...                    # Outros documentos
+│
+├── 🛠️ scripts/                 # Scripts utilitários
+│   ├── setAdminRole.js        # Script para configurar admin
+│   └── README.md
+│
+├── 📂 src/
+│   ├── components/            # Componentes React
+│   │   ├── auth/             # Componentes de autenticação
+│   │   ├── layout/           # Layout (Header, Footer)
+│   │   ├── ui/               # Componentes UI reutilizáveis
+│   │   └── features/         # Componentes de features
+│   │       └── cart/         # Componentes do carrinho
+│   ├── contexts/             # Context API (Auth, Cart)
+│   ├── hooks/                # Custom hooks (futuro)
+│   ├── lib/                  # Bibliotecas e utilitários
+│   │   ├── firebase.js       # Configuração Firebase
+│   │   ├── validators.js     # Validações
+│   │   ├── roles.js          # Sistema de roles
+│   │   └── __tests__/        # Testes unitários
+│   ├── pages/                # Páginas da aplicação
+│   │   └── admin/            # Páginas administrativas
+│   ├── services/             # Serviços (API, auditoria)
+│   └── test/                 # Configuração de testes
+│
+├── 🔥 Firebase/
+│   ├── firestore.rules       # Regras de segurança
+│   ├── firestore.indexes.json # Índices do Firestore
+│   └── firebase.json         # Configuração Firebase
+│
+└── ⚙️ Configuração/
+    ├── vite.config.js
+    ├── vitest.config.js
+    └── tailwind.config.js
 ```
+
+Para mais detalhes sobre a estrutura, veja a [documentação completa](./docs/README.md).
 
 ## 🔒 Segurança
 

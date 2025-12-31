@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { useCart } from '../contexts/CartContext';
+import { useCart } from '../../../contexts/CartContext';
 import { X, Plus, Minus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react';
-import Button from './ui/Button';
+import Button from '../../ui/Button';
 
 const CartDrawer = () => {
     const { cartItems, cartCount, cartTotal, isCartOpen, closeCart, updateQuantity, removeFromCart } = useCart();
