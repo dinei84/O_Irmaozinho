@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, deleteDoc, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { useAuth } from '../../contexts/AuthContext';
+import { logArticleAction, AUDIT_ACTIONS } from '../../services/auditService';
 import { motion } from 'framer-motion';
 import { Plus, Edit2, Trash2, LogOut, FileText, AlertCircle, Search, Package } from 'lucide-react';
 import Button from '../../components/ui/Button';
@@ -39,13 +40,41 @@ const Dashboard = () => {
     }
 
     async function handleDelete(id) {
-        if (window.confirm('Tem certeza que deseja deletar este artigo?')) {
-            try {
-                await deleteDoc(doc(db, 'content', id));
-                setArticles(articles.filter(article => article.id !== id));
-            } catch (err) {
-                console.error('Error deleting article:', err);
-                alert('Erro ao deletar artigo.');
+        if (!window.confirm('Tem certeza que deseja deletar este artigo?')) {
+            return;
+        }
+
+        try {
+            // Buscar informações do artigo antes de deletar (para o log)
+            const articleRef = doc(db, 'content', id);
+            const articleSnap = await getDoc(articleRef);
+            const articleData = articleSnap.exists() ? articleSnap.data() : null;
+
+            // Deletar o artigo
+            await deleteDoc(articleRef);
+            
+            // Remover da lista local
+            setArticles(articles.filter(article => article.id !== id));
+
+            // Log de auditoria
+            if (currentUser) {
+                await logArticleAction(
+                    AUDIT_ACTIONS.ARTICLE_DELETED,
+                    currentUser.uid,
+                    id,
+                    { title: articleData?.title || 'Artigo desconhecido' }
+                );
+            }
+        } catch (err) {
+            console.error('Error deleting article:', err);
+            
+            // Mensagens de erro mais específicas
+            if (err.code === 'permission-denied') {
+                alert('Você não tem permissão para deletar este artigo.');
+            } else if (err.code === 'unauthenticated') {
+                alert('Você precisa estar autenticado para realizar esta ação.');
+            } else {
+                alert('Erro ao deletar artigo. Tente novamente.');
             }
         }
     }

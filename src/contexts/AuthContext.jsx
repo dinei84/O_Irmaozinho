@@ -72,7 +72,7 @@ export const AuthProvider = ({ children }) => {
     const value = {
         currentUser,
         userRole,
-        isAdmin: currentUser ? isAdmin(currentUser) : false,
+        isAdmin: userRole === 'admin',
         refreshToken: () => refreshUserToken(currentUser),
         login,
         logout

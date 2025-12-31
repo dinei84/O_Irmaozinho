@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { motion } from 'framer-motion';
@@ -10,8 +10,21 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const { login } = useAuth();
+    const { login, isAdmin, currentUser, userRole, loading: authLoading } = useAuth();
     const navigate = useNavigate();
+
+    // Redirecionar se já estiver logado
+    useEffect(() => {
+        if (!authLoading && currentUser && userRole !== null) {
+            // Usar userRole diretamente para verificar se é admin
+            const isUserAdmin = userRole === 'admin';
+            if (isUserAdmin) {
+                navigate('/admin', { replace: true });
+            } else {
+                navigate('/', { replace: true });
+            }
+        }
+    }, [currentUser, userRole, authLoading, navigate]);
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -20,13 +33,14 @@ const Login = () => {
             setError('');
             setLoading(true);
             await login(email, password);
-            navigate('/admin');
+            
+            // Aguardar um pouco para garantir que o token foi atualizado e o contexto atualizado
+            // O useEffect acima vai cuidar do redirecionamento quando userRole for atualizado
         } catch (err) {
-            console.error(err);
+            console.error('Erro no login:', err);
             setError('Falha ao fazer login. Verifique suas credenciais.');
+            setLoading(false);
         }
-
-        setLoading(false);
     }
 
     return (

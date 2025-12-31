@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, deleteDoc, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { useAuth } from '../../contexts/AuthContext';
+import { logProductAction, AUDIT_ACTIONS } from '../../services/auditService';
 import { motion } from 'framer-motion';
 import { Plus, Edit2, Trash2, Package, AlertCircle, Search, ShoppingBag } from 'lucide-react';
 import Button from '../../components/ui/Button';
@@ -39,13 +40,41 @@ const ProductsManager = () => {
     }
 
     async function handleDelete(id) {
-        if (window.confirm('Tem certeza que deseja deletar este produto?')) {
-            try {
-                await deleteDoc(doc(db, 'products', id));
-                setProducts(products.filter(product => product.id !== id));
-            } catch (err) {
-                console.error('Error deleting product:', err);
-                alert('Erro ao deletar produto.');
+        if (!window.confirm('Tem certeza que deseja deletar este produto?')) {
+            return;
+        }
+
+        try {
+            // Buscar informações do produto antes de deletar (para o log)
+            const productRef = doc(db, 'products', id);
+            const productSnap = await getDoc(productRef);
+            const productData = productSnap.exists() ? productSnap.data() : null;
+
+            // Deletar o produto
+            await deleteDoc(productRef);
+            
+            // Remover da lista local
+            setProducts(products.filter(product => product.id !== id));
+
+            // Log de auditoria
+            if (currentUser) {
+                await logProductAction(
+                    AUDIT_ACTIONS.PRODUCT_DELETED,
+                    currentUser.uid,
+                    id,
+                    { name: productData?.name || 'Produto desconhecido', price: productData?.price }
+                );
+            }
+        } catch (err) {
+            console.error('Error deleting product:', err);
+            
+            // Mensagens de erro mais específicas
+            if (err.code === 'permission-denied') {
+                alert('Você não tem permissão para deletar este produto.');
+            } else if (err.code === 'unauthenticated') {
+                alert('Você precisa estar autenticado para realizar esta ação.');
+            } else {
+                alert('Erro ao deletar produto. Tente novamente.');
             }
         }
     }

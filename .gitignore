@@ -8,3 +8,7 @@ dist
 coverage
 .vscode
 .idea
+
+# Firebase Admin Service Account Key
+serviceAccountKey.json
+scripts/serviceAccountKey.json

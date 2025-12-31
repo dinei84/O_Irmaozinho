@@ -108,44 +108,46 @@ firebase deploy --only firestore:rules
 
 #### Configurar Custom Claims (Admin)
 
-Para definir um usuário como admin, você precisa usar o **Firebase Admin SDK** (não disponível no cliente). Opções:
+Para definir um usuário como admin, use o script fornecido:
 
-**Opção 1: Cloud Function (Recomendado)**
-```javascript
-// functions/src/index.ts
-import { onCall } from 'firebase-functions/v2/https';
-import { getAuth } from 'firebase-admin/auth';
+**1. Obter Service Account Key**
 
-export const setAdminRole = onCall(async (request) => {
-  // Verificar se quem chama é admin
-  if (request.auth?.token.role !== 'admin') {
-    throw new Error('Não autorizado');
-  }
+1. Acesse [Firebase Console](https://console.firebase.google.com/)
+2. Selecione seu projeto
+3. Vá em **Configurações do Projeto** (ícone de engrenagem)
+4. Na aba **"Contas de serviço"**, clique em **"Gerar nova chave privada"**
+5. Salve o arquivo JSON como `serviceAccountKey.json` na **raiz do projeto**
+6. ⚠️ **IMPORTANTE**: Este arquivo está no `.gitignore` e **NÃO deve ser commitado**!
 
-  const { uid } = request.data;
-  await getAuth().setCustomUserClaims(uid, { role: 'admin' });
-  
-  return { success: true };
-});
+**2. Instalar dependências (se necessário)**
+
+```bash
+npm install
 ```
 
-**Opção 2: Script Node.js (Desenvolvimento)**
-```javascript
-// scripts/setAdmin.js
-const admin = require('firebase-admin');
-const serviceAccount = require('./serviceAccountKey.json');
+**3. Executar o script**
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
+```bash
+# Via npm script (recomendado)
+npm run admin:set <uid>
 
-async function setAdmin(uid) {
-  await admin.auth().setCustomUserClaims(uid, { role: 'admin' });
-  console.log(`Usuário ${uid} agora é admin!`);
-}
-
-setAdmin('USER_ID_AQUI');
+# Ou diretamente
+node scripts/setAdminRole.js <uid>
 ```
+
+**Onde obter o UID:**
+1. Acesse Firebase Console > Authentication > Users
+2. Encontre o usuário desejado
+3. Copie o UID
+
+**Exemplo:**
+```bash
+npm run admin:set abc123def456ghi789
+```
+
+**⚠️ Importante:** Após configurar, o usuário precisa fazer **logout e login novamente** para que o token JWT seja atualizado.
+
+Para mais detalhes, consulte [scripts/README.md](./scripts/README.md).
 
 ### 3. Estrutura do Firestore
 

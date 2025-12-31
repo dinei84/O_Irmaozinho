@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { doc, getDoc, addDoc, updateDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
+import { useAuth } from '../../contexts/AuthContext';
+import { validateProduct, normalizeProduct } from '../../lib/validators';
+import { logProductAction, AUDIT_ACTIONS } from '../../services/auditService';
 import { motion } from 'framer-motion';
 import { Save, ArrowLeft, AlertCircle, Image as ImageIcon, Package } from 'lucide-react';
 import Button from '../../components/ui/Button';
@@ -10,6 +13,7 @@ import Card, { CardBody } from '../../components/ui/Card';
 const ProductEditor = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { currentUser } = useAuth();
     const isEditMode = Boolean(id);
 
     const [formData, setFormData] = useState({
@@ -24,6 +28,7 @@ const ProductEditor = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [validationErrors, setValidationErrors] = useState([]);
 
     useEffect(() => {
         if (isEditMode) {
@@ -62,9 +67,15 @@ const ProductEditor = () => {
         e.preventDefault();
         setError('');
         setSuccess('');
+        setValidationErrors([]);
 
-        if (!formData.name || !formData.price) {
-            setError('Nome e Preço são obrigatórios.');
+        // Validação client-side
+        const normalized = normalizeProduct(formData);
+        const validation = validateProduct(normalized);
+
+        if (!validation.isValid) {
+            setValidationErrors(validation.errors);
+            setError('Por favor, corrija os erros no formulário.');
             return;
         }
 
@@ -72,9 +83,7 @@ const ProductEditor = () => {
             setLoading(true);
 
             const productData = {
-                ...formData,
-                price: parseFloat(formData.price),
-                stock: parseInt(formData.stock) || 0,
+                ...normalized,
                 updatedAt: serverTimestamp()
             };
 
@@ -82,13 +91,35 @@ const ProductEditor = () => {
                 // Update existing product
                 const docRef = doc(db, 'products', id);
                 await updateDoc(docRef, productData);
+                
+                // Log de auditoria
+                if (currentUser) {
+                    await logProductAction(
+                        AUDIT_ACTIONS.PRODUCT_UPDATED,
+                        currentUser.uid,
+                        id,
+                        { name: normalized.name, price: normalized.price }
+                    );
+                }
+                
                 setSuccess('Produto atualizado com sucesso!');
             } else {
                 // Create new product
-                await addDoc(collection(db, 'products'), {
+                const docRef = await addDoc(collection(db, 'products'), {
                     ...productData,
                     createdAt: serverTimestamp()
                 });
+                
+                // Log de auditoria
+                if (currentUser) {
+                    await logProductAction(
+                        AUDIT_ACTIONS.PRODUCT_CREATED,
+                        currentUser.uid,
+                        docRef.id,
+                        { name: normalized.name, price: normalized.price }
+                    );
+                }
+                
                 setSuccess('Produto criado com sucesso!');
             }
 
@@ -97,7 +128,15 @@ const ProductEditor = () => {
             }, 1500);
         } catch (err) {
             console.error('Error saving product:', err);
-            setError('Erro ao salvar produto. Verifique as permissões do Firestore.');
+            
+            // Mensagens de erro mais específicas
+            if (err.code === 'permission-denied') {
+                setError('Você não tem permissão para realizar esta ação.');
+            } else if (err.code === 'unauthenticated') {
+                setError('Você precisa estar autenticado para realizar esta ação.');
+            } else {
+                setError('Erro ao salvar produto. Verifique as permissões do Firestore.');
+            }
         } finally {
             setLoading(false);
         }
@@ -134,10 +173,23 @@ const ProductEditor = () => {
                     <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
-                        className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md flex items-center gap-3 mb-6"
+                        className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md mb-6"
                     >
-                        <AlertCircle className="text-red-500" size={20} />
-                        <p className="text-red-700 text-sm">{error}</p>
+                        <div className="flex items-start gap-3">
+                            <AlertCircle className="text-red-500" size={20} />
+                            <div className="flex-1">
+                                <p className="text-red-700 text-sm font-semibold">{error}</p>
+                                {validationErrors.length > 0 && (
+                                    <ul className="mt-2 list-disc list-inside">
+                                        {validationErrors.map((err, index) => (
+                                            <li key={index} className="text-red-600 text-xs">
+                                                {err}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+                        </div>
                     </motion.div>
                 )}
 

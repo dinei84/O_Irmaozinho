@@ -86,41 +86,31 @@ Você precisa definir um usuário como admin. Existem duas formas:
 3. Copie o UID do usuário que deseja tornar admin
 4. Vá em Cloud Functions e crie uma função (ou use um script Node.js)
 
-#### Opção B: Script Node.js (Recomendado para desenvolvimento)
+#### Opção B: Script fornecido (Recomendado)
 
-1. Instale o Firebase Admin SDK:
+Use o script fornecido no projeto:
 
-```bash
-npm install firebase-admin
-```
+1. **Obter Service Account Key:**
+   - Acesse [Firebase Console](https://console.firebase.google.com/)
+   - Vá em Configurações do Projeto > Contas de serviço
+   - Clique em "Gerar nova chave privada"
+   - Salve como `serviceAccountKey.json` na raiz do projeto
 
-2. Crie um arquivo `scripts/setAdmin.js`:
+2. **Instalar dependências (se necessário):**
+   ```bash
+   npm install
+   ```
 
-```javascript
-const admin = require('firebase-admin');
-const serviceAccount = require('./serviceAccountKey.json'); // Baixe do Firebase Console
+3. **Executar o script:**
+   ```bash
+   npm run admin:set <uid>
+   ```
+   
+   Onde `<uid>` é o UID do usuário (encontre em Authentication > Users)
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
+4. **⚠️ Importante:** O usuário precisa fazer **logout e login** novamente!
 
-const uid = 'COLE_O_UID_AQUI'; // UID do usuário que quer tornar admin
-
-admin.auth().setCustomUserClaims(uid, { role: 'admin' })
-  .then(() => {
-    console.log(`✅ Usuário ${uid} agora é admin!`);
-    console.log('⚠️  O usuário precisa fazer logout e login novamente para ver as mudanças.');
-  })
-  .catch((error) => {
-    console.error('❌ Erro:', error);
-  });
-```
-
-3. Execute:
-
-```bash
-node scripts/setAdmin.js
-```
+Para mais detalhes, consulte [scripts/README.md](./scripts/README.md).
 
 ### Passo 5: Testar a Configuração
 
