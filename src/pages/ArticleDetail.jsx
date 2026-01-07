@@ -164,25 +164,9 @@ const ArticleDetail = () => {
 
                     {/* Article Content */}
                     <div className="prose prose-lg max-w-none mb-12">
-                        <div 
-                            className="text-text-primary leading-relaxed text-lg font-sans article-content"
-                            style={{ 
-                                wordBreak: 'break-word',
-                                overflowWrap: 'break-word'
-                            }}
-                            dangerouslySetInnerHTML={{ __html: article.body }}
-                        />
-                        <style>{`
-                            .article-content p {
-                                margin-bottom: 1rem;
-                            }
-                            .article-content p:last-child {
-                                margin-bottom: 0;
-                            }
-                            .article-content br {
-                                line-height: 1.6;
-                            }
-                        `}</style>
+                        <div className="text-text-primary leading-relaxed whitespace-pre-wrap text-lg">
+                            {article.body}
+                        </div>
                     </div>
 
                     {/* Divider */}
