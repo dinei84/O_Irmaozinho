@@ -22,6 +22,9 @@ Esta pasta contém toda a documentação técnica do projeto.
 ### 🔧 Troubleshooting
 - **[TROUBLESHOOTING.md](./TROUBLESHOOTING.md)** - Solução de problemas comuns
 
+### 🚀 Deploy
+- **[VERCEL_DEPLOY.md](./VERCEL_DEPLOY.md)** - Guia completo de deploy na Vercel (configurar variáveis de ambiente)
+
 ---
 
 ## 📖 Documentação Principal
