@@ -18,18 +18,99 @@ export function isValidUrl(string) {
 }
 
 /**
- * Sanitiza HTML básico (remove tags potencialmente perigosas)
- * Para produção, considere usar uma biblioteca como DOMPurify
+ * Sanitiza HTML preservando formatação básica segura (negrito, itálico, etc)
+ * Remove apenas tags e atributos perigosos
+ * Para produção, considere usar uma biblioteca como DOMPurify para maior segurança
  */
 export function sanitizeHtml(html) {
   if (typeof html !== 'string') return '';
   
-  // Remove scripts e tags perigosas
-  return html
+  // Se o texto não contém tags HTML, retorna como está
+  if (!/<[^>]+>/.test(html)) {
+    return html;
+  }
+  
+  // Tags permitidas para formatação
+  const allowedTags = ['b', 'strong', 'i', 'em', 'u', 'p', 'br', 'span', 'div'];
+  
+  // Atributos permitidos (nenhum por enquanto, para segurança)
+  const allowedAttributes = [];
+  
+  // Usa DOM para sanitizar (mais seguro e preciso)
+  try {
+    if (typeof document !== 'undefined') {
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = html;
+      
+      // Remove scripts e elementos perigosos
+      const dangerousTags = ['script', 'iframe', 'object', 'embed', 'link', 'style'];
+      dangerousTags.forEach(tag => {
+        tempDiv.querySelectorAll(tag).forEach(el => el.remove());
+      });
+      
+      // Remove todos os elementos que não estão na lista de permitidos
+      const allElements = tempDiv.querySelectorAll('*');
+      allElements.forEach(el => {
+        const tagName = el.tagName.toLowerCase();
+        
+        // Se a tag não está permitida, substitui pelo conteúdo
+        if (!allowedTags.includes(tagName)) {
+          const parent = el.parentNode;
+          while (el.firstChild) {
+            parent.insertBefore(el.firstChild, el);
+          }
+          parent.removeChild(el);
+        } else {
+          // Remove atributos perigosos, mantendo apenas os permitidos
+          Array.from(el.attributes).forEach(attr => {
+            // Remove event handlers (onclick, onload, etc)
+            if (attr.name.startsWith('on')) {
+              el.removeAttribute(attr.name);
+            }
+            // Remove atributos de estilo e script
+            else if (['style', 'class', 'id'].includes(attr.name.toLowerCase())) {
+              // Permite class, id, mas remove style (pode conter javascript)
+              if (attr.name.toLowerCase() === 'style') {
+                el.removeAttribute(attr.name);
+              }
+            }
+            // Remove outros atributos não permitidos
+            else if (!allowedAttributes.includes(attr.name)) {
+              el.removeAttribute(attr.name);
+            }
+          });
+        }
+      });
+      
+      return tempDiv.innerHTML;
+    }
+  } catch (e) {
+    console.warn('Erro ao sanitizar HTML:', e);
+  }
+  
+  // Fallback: sanitização via regex (menos precisa, mas funciona sem DOM)
+  let sanitized = html;
+  
+  // Remove scripts e iframes
+  sanitized = sanitized
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
     .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
-    .replace(/on\w+="[^"]*"/gi, '') // Remove event handlers
-    .replace(/on\w+='[^']*'/gi, '');
+    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '');
+  
+  // Remove event handlers de todas as tags
+  sanitized = sanitized
+    .replace(/\son\w+\s*=\s*["'][^"']*["']/gi, '')
+    .replace(/\son\w+\s*=\s*[^\s>]*/gi, '');
+  
+  // Remove atributos style (pode conter javascript)
+  sanitized = sanitized.replace(/\sstyle\s*=\s*["'][^"']*["']/gi, '');
+  
+  // Remove tags não permitidas, mas preserva conteúdo
+  // Mantém apenas tags de formatação básica
+  const tagPattern = new RegExp(`<(?!\/?(${allowedTags.join('|')})\b)[^>]+>`, 'gi');
+  sanitized = sanitized.replace(tagPattern, '');
+  
+  return sanitized;
 }
 
 /**
@@ -119,7 +200,8 @@ export function validateArticle(article) {
 export function normalizeArticle(article) {
   return {
     title: article.title ? article.title.trim() : '',
-    body: article.body ? sanitizeHtml(article.body) : '', // body mantém espaços, apenas sanitiza HTML
+    // sanitizeHtml agora preserva formatação básica (negrito, itálico) e remove apenas código perigoso
+    body: article.body ? sanitizeHtml(article.body) : '',
     category: article.category || 'Artigos',
     imageUrl: article.imageUrl ? article.imageUrl.trim() : '',
   };
