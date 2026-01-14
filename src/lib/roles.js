@@ -1,52 +1,50 @@
+import { getIdTokenResult } from 'firebase/auth';
+
 /**
  * Sistema de roles e permissões
- * Centraliza a lógica de verificação de roles
+ * Usa Custom Claims do Firebase Auth
  */
-
-export const ROLES = {
-  ADMIN: 'admin',
-  USER: 'user',
-};
-
-/**
- * Verifica se o usuário tem um determinado role
- */
-export function hasRole(user, role) {
-  if (!user) return false;
-  
-  // Verifica custom claims (definidos no backend via Cloud Functions)
-  const customClaims = user.customClaims || {};
-  return customClaims.role === role;
-}
 
 /**
  * Verifica se o usuário é admin
+ * @param {Object} user - Objeto do usuário do Firebase Auth
+ * @returns {Promise<boolean>}
  */
-export function isAdmin(user) {
-  return hasRole(user, ROLES.ADMIN);
-}
-
-/**
- * Verifica se o usuário é um usuário comum
- */
-export function isUser(user) {
-  return hasRole(user, ROLES.USER) || (!hasRole(user, ROLES.ADMIN) && user !== null);
+export async function isAdmin(user) {
+    if (!user) return false;
+    
+    try {
+        const tokenResult = await getIdTokenResult(user, false);
+        return tokenResult.claims.role === 'admin';
+    } catch (error) {
+        console.error('Erro ao verificar role:', error);
+        return false;
+    }
 }
 
 /**
  * Obtém o role do usuário
+ * @param {Object} user - Objeto do usuário do Firebase Auth
+ * @returns {Promise<string>} - 'admin' ou 'user'
  */
-export function getUserRole(user) {
-  if (!user) return null;
-  
-  const customClaims = user.customClaims || {};
-  return customClaims.role || ROLES.USER;
+export async function getUserRole(user) {
+    if (!user) return null;
+    
+    try {
+        const tokenResult = await getIdTokenResult(user, false);
+        return tokenResult.claims.role || 'user';
+    } catch (error) {
+        console.error('Erro ao obter role:', error);
+        return 'user';
+    }
 }
 
 /**
- * Verifica se o usuário pode acessar uma rota administrativa
+ * Verifica se o usuário pode acessar área administrativa
+ * @param {Object} user - Objeto do usuário do Firebase Auth
+ * @returns {Promise<boolean>}
  */
-export function canAccessAdmin(user) {
-  return isAdmin(user);
+export async function canAccessAdmin(user) {
+    return await isAdmin(user);
 }
 

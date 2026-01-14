@@ -1,103 +1,63 @@
-/**
- * Serviço para gerenciar usuários no Firestore
- * Centraliza operações relacionadas à coleção users
- */
-
-import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
+import { doc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
 /**
- * Cria um documento de usuário no Firestore
- * @param {string} uid - User ID do Firebase Auth
+ * Cria perfil de usuário no Firestore
+ * @param {string} userId - UID do usuário
  * @param {Object} userData - Dados do usuário
  * @returns {Promise<void>}
  */
-export async function createUserProfile(uid, userData) {
-  try {
-    const userDoc = {
-      email: userData.email || '',
-      emailVerified: userData.emailVerified || false,
-      displayName: userData.displayName || '',
-      photoURL: userData.photoURL || '',
-      role: 'user', // Sempre user por padrão
-      preferences: {
-        newsletter: userData.preferences?.newsletter || false,
-        emailNotifications: userData.preferences?.emailNotifications || true,
-      },
-      stats: {
-        articlesRead: 0,
-        commentsCount: 0,
-        lastActivityAt: serverTimestamp(),
-      },
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-      lastLoginAt: serverTimestamp(),
-    };
-
-    await setDoc(doc(db, 'users', uid), userDoc, { merge: false });
-    return userDoc;
-  } catch (error) {
-    console.error('Erro ao criar perfil de usuário:', error);
-    throw error;
-  }
-}
-
-/**
- * Busca o perfil de um usuário
- * @param {string} uid - User ID
- * @returns {Promise<Object|null>}
- */
-export async function getUserProfile(uid) {
-  try {
-    const userDoc = await getDoc(doc(db, 'users', uid));
-    if (userDoc.exists()) {
-      return { id: userDoc.id, ...userDoc.data() };
+export async function createUserProfile(userId, userData) {
+    try {
+        const userRef = doc(db, 'users', userId);
+        
+        await setDoc(userRef, {
+            ...userData,
+            role: 'user', // Sempre user por padrão
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+            lastLoginAt: serverTimestamp()
+        });
+    } catch (error) {
+        console.error('Erro ao criar perfil de usuário:', error);
+        throw error;
     }
-    return null;
-  } catch (error) {
-    console.error('Erro ao buscar perfil de usuário:', error);
-    throw error;
-  }
 }
 
 /**
- * Atualiza o perfil de um usuário
- * @param {string} uid - User ID
- * @param {Object} updates - Campos para atualizar
+ * Atualiza último login do usuário
+ * @param {string} userId - UID do usuário
  * @returns {Promise<void>}
  */
-export async function updateUserProfile(uid, updates) {
-  try {
-    const docRef = doc(db, 'users', uid);
-    await setDoc(
-      docRef,
-      {
-        ...updates,
-        updatedAt: serverTimestamp(),
-      },
-      { merge: true }
-    );
-  } catch (error) {
-    console.error('Erro ao atualizar perfil de usuário:', error);
-    throw error;
-  }
+export async function updateLastLogin(userId) {
+    try {
+        const userRef = doc(db, 'users', userId);
+        await updateDoc(userRef, {
+            lastLoginAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+        });
+    } catch (error) {
+        // Não crítico se falhar, apenas loga o erro
+        console.warn('Erro ao atualizar último login:', error);
+    }
 }
 
 /**
- * Atualiza o último login do usuário
- * @param {string} uid - User ID
+ * Atualiza perfil do usuário
+ * @param {string} userId - UID do usuário
+ * @param {Object} updates - Dados para atualizar
  * @returns {Promise<void>}
  */
-export async function updateLastLogin(uid) {
-  try {
-    await updateUserProfile(uid, {
-      lastLoginAt: serverTimestamp(),
-      'stats.lastActivityAt': serverTimestamp(),
-    });
-  } catch (error) {
-    console.error('Erro ao atualizar último login:', error);
-    // Não lançar erro, pois não é crítico
-  }
+export async function updateUserProfile(userId, updates) {
+    try {
+        const userRef = doc(db, 'users', userId);
+        await updateDoc(userRef, {
+            ...updates,
+            updatedAt: serverTimestamp()
+        });
+    } catch (error) {
+        console.error('Erro ao atualizar perfil:', error);
+        throw error;
+    }
 }
-
 

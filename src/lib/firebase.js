@@ -1,40 +1,44 @@
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
-// Validação das variáveis de ambiente
-const requiredEnvVars = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+// Configuração do Firebase usando variáveis de ambiente
+const firebaseConfig = {
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-// Verificar se todas as variáveis necessárias estão definidas
-const missingVars = Object.entries(requiredEnvVars)
-  .filter(([_, value]) => !value)
-  .map(([key]) => key);
+// Validar se todas as variáveis de ambiente estão configuradas
+const requiredEnvVars = [
+    'VITE_FIREBASE_API_KEY',
+    'VITE_FIREBASE_AUTH_DOMAIN',
+    'VITE_FIREBASE_PROJECT_ID',
+    'VITE_FIREBASE_STORAGE_BUCKET',
+    'VITE_FIREBASE_MESSAGING_SENDER_ID',
+    'VITE_FIREBASE_APP_ID'
+];
+
+const missingVars = requiredEnvVars.filter(
+    varName => !import.meta.env[varName]
+);
 
 if (missingVars.length > 0) {
-  throw new Error(
-    `Variáveis de ambiente do Firebase não configuradas: ${missingVars.join(', ')}\n` +
-    'Crie um arquivo .env com as configurações necessárias. Veja .env.example'
-  );
+    console.error('❌ Variáveis de ambiente do Firebase não configuradas:', missingVars);
+    console.error('Por favor, crie um arquivo .env na raiz do projeto com as credenciais do Firebase.');
+    throw new Error(`Variáveis de ambiente do Firebase faltando: ${missingVars.join(', ')}`);
 }
 
-const firebaseConfig = {
-  apiKey: requiredEnvVars.apiKey,
-  authDomain: requiredEnvVars.authDomain,
-  projectId: requiredEnvVars.projectId,
-  storageBucket: requiredEnvVars.storageBucket,
-  messagingSenderId: requiredEnvVars.messagingSenderId,
-  appId: requiredEnvVars.appId,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || undefined,
-};
-
+// Inicializar Firebase
 const app = initializeApp(firebaseConfig);
+
+// Exportar serviços do Firebase
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
 export default app;
+

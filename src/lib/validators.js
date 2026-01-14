@@ -1,197 +1,222 @@
 /**
  * Biblioteca de validação de dados
- * Centraliza todas as validações para garantir consistência
+ * Validações client-side para melhor UX
+ * Validações server-side são feitas via Firestore Rules
  */
 
 /**
- * Valida se uma string é uma URL válida
- */
-export function isValidUrl(string) {
-  if (!string || typeof string !== 'string') return false;
-  
-  try {
-    const url = new URL(string);
-    return url.protocol === 'http:' || url.protocol === 'https:';
-  } catch (_) {
-    return false;
-  }
-}
-
-/**
- * Sanitiza HTML básico (remove tags potencialmente perigosas)
- * Para produção, considere usar uma biblioteca como DOMPurify
- */
-export function sanitizeHtml(html) {
-  if (typeof html !== 'string') return '';
-  
-  // Remove scripts e tags perigosas
-  return html
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
-    .replace(/on\w+="[^"]*"/gi, '') // Remove event handlers
-    .replace(/on\w+='[^']*'/gi, '');
-}
-
-/**
- * Valida email
+ * Valida formato de email
  */
 export function isValidEmail(email) {
-  if (!email || typeof email !== 'string') return false;
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email.trim());
+    if (!email || typeof email !== 'string') return false;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email.trim());
 }
 
 /**
  * Valida senha
- * Retorna { valid: boolean, errors: string[] }
  */
 export function validatePassword(password) {
-  const errors = [];
-  
-  if (!password || typeof password !== 'string') {
-    errors.push('Senha é obrigatória');
-    return { valid: false, errors };
-  }
-  
-  if (password.length < 6) {
-    errors.push('Senha deve ter no mínimo 6 caracteres');
-  }
-  
-  if (password.length > 128) {
-    errors.push('Senha deve ter no máximo 128 caracteres');
-  }
-  
-  return {
-    valid: errors.length === 0,
-    errors,
-  };
-}
-
-/**
- * Valida estrutura de um artigo
- */
-export function validateArticle(article) {
-  const errors = [];
-  
-  // Validação de título
-  if (!article.title || typeof article.title !== 'string' || article.title.trim().length === 0) {
-    errors.push('Título é obrigatório');
-  } else if (article.title.length > 200) {
-    errors.push('Título deve ter no máximo 200 caracteres');
-  } else if (article.title.length < 3) {
-    errors.push('Título deve ter no mínimo 3 caracteres');
-  }
-  
-  // Validação de conteúdo
-  if (!article.body || typeof article.body !== 'string' || article.body.trim().length === 0) {
-    errors.push('Conteúdo é obrigatório');
-  } else if (article.body.length > 50000) {
-    errors.push('Conteúdo deve ter no máximo 50000 caracteres');
-  } else if (article.body.length < 10) {
-    errors.push('Conteúdo deve ter no mínimo 10 caracteres');
-  }
-  
-  // Validação de categoria
-  if (!article.category || typeof article.category !== 'string') {
-    errors.push('Categoria é obrigatória');
-  } else if (!['Artigos', 'Crônicas'].includes(article.category)) {
-    errors.push('Categoria deve ser "Artigos" ou "Crônicas"');
-  }
-  
-  // Validação de URL de imagem (opcional)
-  if (article.imageUrl && typeof article.imageUrl === 'string' && article.imageUrl.trim().length > 0) {
-    if (!isValidUrl(article.imageUrl)) {
-      errors.push('URL de imagem inválida');
-    } else if (article.imageUrl.length > 1000) {
-      errors.push('URL de imagem muito longa (máximo 1000 caracteres)');
+    const errors = [];
+    
+    if (!password) {
+        return { valid: false, errors: ['Senha é obrigatória'] };
     }
-  }
-  
-  return {
-    valid: errors.length === 0,
-    errors,
-  };
-}
-
-/**
- * Normaliza dados de um artigo
- */
-export function normalizeArticle(article) {
-  return {
-    title: article.title ? article.title.trim() : '',
-    body: article.body ? sanitizeHtml(article.body) : '', // body mantém espaços, apenas sanitiza HTML
-    category: article.category || 'Artigos',
-    imageUrl: article.imageUrl ? article.imageUrl.trim() : '',
-  };
-}
-
-/**
- * Valida estrutura de um produto
- */
-export function validateProduct(product) {
-  const errors = [];
-  
-  // Validação de nome
-  if (!product.name || typeof product.name !== 'string' || product.name.trim().length === 0) {
-    errors.push('Nome do produto é obrigatório');
-  } else if (product.name.length > 200) {
-    errors.push('Nome do produto deve ter no máximo 200 caracteres');
-  } else if (product.name.length < 3) {
-    errors.push('Nome do produto deve ter no mínimo 3 caracteres');
-  }
-  
-  // Validação de preço
-  if (product.price === undefined || product.price === null) {
-    errors.push('Preço é obrigatório');
-  } else if (typeof product.price !== 'number') {
-    errors.push('Preço deve ser um número');
-  } else if (product.price < 0) {
-    errors.push('Preço não pode ser negativo');
-  } else if (product.price > 1000000) {
-    errors.push('Preço muito alto (máximo R$ 1.000.000,00)');
-  }
-  
-  // Validação de estoque
-  if (product.stock === undefined || product.stock === null) {
-    errors.push('Estoque é obrigatório');
-  } else if (!Number.isInteger(product.stock)) {
-    errors.push('Estoque deve ser um número inteiro');
-  } else if (product.stock < 0) {
-    errors.push('Estoque não pode ser negativo');
-  }
-  
-  // Validação de status ativo
-  if (product.active === undefined || product.active === null) {
-    errors.push('Status ativo é obrigatório');
-  } else if (typeof product.active !== 'boolean') {
-    errors.push('Status ativo deve ser verdadeiro ou falso');
-  }
-  
-  // Validação de URL de imagem (opcional)
-  if (product.imageUrl && typeof product.imageUrl === 'string' && product.imageUrl.trim().length > 0) {
-    if (!isValidUrl(product.imageUrl)) {
-      errors.push('URL de imagem inválida');
-    } else if (product.imageUrl.length > 1000) {
-      errors.push('URL de imagem muito longa (máximo 1000 caracteres)');
+    
+    if (password.length < 6) {
+        errors.push('Senha deve ter no mínimo 6 caracteres');
     }
-  }
-  
-  return {
-    valid: errors.length === 0,
-    errors,
-  };
+    
+    if (password.length > 100) {
+        errors.push('Senha deve ter no máximo 100 caracteres');
+    }
+    
+    return {
+        valid: errors.length === 0,
+        errors
+    };
 }
 
 /**
- * Normaliza dados de um produto
+ * Valida e normaliza artigo
  */
-export function normalizeProduct(product) {
-  return {
-    name: product.name ? product.name.trim() : '',
-    description: product.description ? product.description.trim() : '',
-    price: typeof product.price === 'number' ? product.price : 0,
-    stock: Number.isInteger(product.stock) ? product.stock : 0,
-    active: typeof product.active === 'boolean' ? product.active : true,
-    imageUrl: product.imageUrl ? product.imageUrl.trim() : '',
-  };
+export function validateArticle(data) {
+    const errors = [];
+    
+    if (!data.title || typeof data.title !== 'string' || data.title.trim().length === 0) {
+        errors.push('Título é obrigatório');
+    } else if (data.title.length > 200) {
+        errors.push('Título deve ter no máximo 200 caracteres');
+    }
+    
+    if (!data.body || typeof data.body !== 'string' || data.body.trim().length === 0) {
+        errors.push('Conteúdo é obrigatório');
+    } else if (data.body.length > 50000) {
+        errors.push('Conteúdo deve ter no máximo 50000 caracteres');
+    }
+    
+    if (!data.category || !['Artigos', 'Crônicas'].includes(data.category)) {
+        errors.push('Categoria deve ser "Artigos" ou "Crônicas"');
+    }
+    
+    if (data.imageUrl && typeof data.imageUrl === 'string') {
+        if (data.imageUrl.length > 1000) {
+            errors.push('URL da imagem deve ter no máximo 1000 caracteres');
+        }
+        if (!data.imageUrl.match(/^https?:\/\//)) {
+            errors.push('URL da imagem deve começar com http:// ou https://');
+        }
+    }
+    
+    return {
+        valid: errors.length === 0,
+        errors
+    };
 }
+
+/**
+ * Normaliza dados de artigo
+ */
+export function normalizeArticle(data) {
+    return {
+        title: (data.title || '').trim(),
+        body: (data.body || '').trim(),
+        category: data.category || 'Artigos',
+        imageUrl: data.imageUrl ? data.imageUrl.trim() : '',
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt
+    };
+}
+
+/**
+ * Valida e normaliza produto
+ */
+export function validateProduct(data) {
+    const errors = [];
+    
+    if (!data.name || typeof data.name !== 'string' || data.name.trim().length === 0) {
+        errors.push('Nome é obrigatório');
+    } else if (data.name.length > 200) {
+        errors.push('Nome deve ter no máximo 200 caracteres');
+    }
+    
+    if (data.price === undefined || data.price === null || isNaN(data.price)) {
+        errors.push('Preço é obrigatório');
+    } else if (data.price < 0) {
+        errors.push('Preço não pode ser negativo');
+    } else if (data.price > 1000000) {
+        errors.push('Preço não pode ser maior que 1.000.000');
+    }
+    
+    if (data.stock === undefined || data.stock === null || isNaN(data.stock)) {
+        errors.push('Estoque é obrigatório');
+    } else if (data.stock < 0 || !Number.isInteger(Number(data.stock))) {
+        errors.push('Estoque deve ser um número inteiro não negativo');
+    }
+    
+    if (typeof data.active !== 'boolean') {
+        errors.push('Status ativo deve ser verdadeiro ou falso');
+    }
+    
+    if (data.imageUrl && typeof data.imageUrl === 'string') {
+        if (data.imageUrl.length > 1000) {
+            errors.push('URL da imagem deve ter no máximo 1000 caracteres');
+        }
+        if (!data.imageUrl.match(/^https?:\/\//)) {
+            errors.push('URL da imagem deve começar com http:// ou https://');
+        }
+    }
+    
+    if (data.supplierId && typeof data.supplierId === 'string') {
+        if (data.supplierId.length > 200) {
+            errors.push('ID do fornecedor deve ter no máximo 200 caracteres');
+        }
+    }
+    
+    return {
+        valid: errors.length === 0,
+        errors
+    };
+}
+
+/**
+ * Normaliza dados de produto
+ */
+export function normalizeProduct(data) {
+    return {
+        name: (data.name || '').trim(),
+        description: (data.description || '').trim() || '',
+        price: Number(data.price) || 0,
+        stock: Number.isInteger(Number(data.stock)) ? Number(data.stock) : 0,
+        imageUrl: data.imageUrl ? data.imageUrl.trim() : '',
+        category: data.category ? data.category.trim() : '',
+        supplierId: data.supplierId ? data.supplierId.trim() : '',
+        supplierName: data.supplierName ? data.supplierName.trim() : '',
+        active: data.active !== undefined ? Boolean(data.active) : true,
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt
+    };
+}
+
+/**
+ * Valida e normaliza fornecedor
+ */
+export function validateSupplier(data) {
+    const errors = [];
+    
+    if (!data.name || typeof data.name !== 'string' || data.name.trim().length === 0) {
+        errors.push('Nome é obrigatório');
+    } else if (data.name.length > 200) {
+        errors.push('Nome deve ter no máximo 200 caracteres');
+    }
+    
+    if (!data.email || typeof data.email !== 'string' || data.email.trim().length === 0) {
+        errors.push('Email é obrigatório');
+    } else if (!isValidEmail(data.email)) {
+        errors.push('Email inválido');
+    } else if (data.email.length > 200) {
+        errors.push('Email deve ter no máximo 200 caracteres');
+    }
+    
+    if (data.commissionRate === undefined || data.commissionRate === null || isNaN(data.commissionRate)) {
+        errors.push('Taxa de comissão é obrigatória');
+    } else if (data.commissionRate < 0 || data.commissionRate > 1) {
+        errors.push('Taxa de comissão deve estar entre 0 e 1');
+    }
+    
+    if (data.paymentMethod !== 'centralized') {
+        errors.push('Método de pagamento deve ser "centralized" na Fase 1');
+    }
+    
+    if (typeof data.active !== 'boolean') {
+        errors.push('Status ativo deve ser verdadeiro ou falso');
+    }
+    
+    if (data.phone && typeof data.phone === 'string') {
+        if (data.phone.length > 50) {
+            errors.push('Telefone deve ter no máximo 50 caracteres');
+        }
+    }
+    
+    return {
+        valid: errors.length === 0,
+        errors
+    };
+}
+
+/**
+ * Normaliza dados de fornecedor
+ */
+export function normalizeSupplier(data) {
+    return {
+        name: (data.name || '').trim(),
+        email: (data.email || '').trim().toLowerCase(),
+        phone: data.phone ? data.phone.trim() : '',
+        commissionRate: Number(data.commissionRate) || 0.15,
+        paymentMethod: 'centralized',
+        active: data.active !== undefined ? Boolean(data.active) : true,
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt
+    };
+}
+

@@ -52,7 +52,34 @@ service cloud.firestore {
              (!('imageUrl' in data) || 
               (data.imageUrl is string && 
                data.imageUrl.size() <= 1000 &&
-               data.imageUrl.matches('^https?://.*')));
+               data.imageUrl.matches('^https?://.*'))) &&
+             (!('supplierId' in data) || 
+              (data.supplierId is string && 
+               data.supplierId.size() > 0 &&
+               data.supplierId.size() <= 200)) &&
+             (!('supplierName' in data) || 
+              (data.supplierName is string && 
+               data.supplierName.size() <= 200));
+    }
+    
+    // Helper function para validar estrutura de fornecedor
+    function isValidSupplier(data) {
+      return data.keys().hasAll(['name', 'email', 'commissionRate', 'paymentMethod', 'active']) &&
+             data.name is string &&
+             data.name.size() > 0 &&
+             data.name.size() <= 200 &&
+             data.email is string &&
+             data.email.size() > 0 &&
+             data.email.size() <= 200 &&
+             data.commissionRate is number &&
+             data.commissionRate >= 0 &&
+             data.commissionRate <= 1 &&
+             data.paymentMethod is string &&
+             data.paymentMethod == 'centralized' &&
+             data.active is bool &&
+             (!('phone' in data) || 
+              (data.phone is string && 
+               data.phone.size() <= 50));
     }
     
     // ==========================================
@@ -98,6 +125,29 @@ service cloud.firestore {
                        request.resource.data.updatedAt == request.time;
       
       // Apenas admins podem deletar produtos
+      allow delete: if isAdmin();
+    }
+    
+    // ==========================================
+    // REGRAS PARA FORNECEDORES
+    // ==========================================
+    match /suppliers/{supplierId} {
+      // Qualquer um autenticado pode ler fornecedores ativos (para seleção em produtos)
+      // Admins podem ler todos
+      allow read: if isAuthenticated() && (resource.data.active == true || isAdmin());
+      
+      // Apenas admins podem criar fornecedores
+      allow create: if isAdmin() && 
+                       isValidSupplier(request.resource.data) &&
+                       request.resource.data.createdAt == request.time &&
+                       request.resource.data.updatedAt == request.time;
+      
+      // Apenas admins podem atualizar fornecedores
+      allow update: if isAdmin() && 
+                       isValidSupplier(request.resource.data) &&
+                       request.resource.data.updatedAt == request.time;
+      
+      // Apenas admins podem deletar fornecedores (soft delete via update)
       allow delete: if isAdmin();
     }
     

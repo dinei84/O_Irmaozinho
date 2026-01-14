@@ -5,6 +5,7 @@ import { db } from '../../lib/firebase';
 import { useAuth } from '../../contexts/AuthContext';
 import { validateProduct, normalizeProduct } from '../../lib/validators';
 import { logProductAction, AUDIT_ACTIONS } from '../../services/auditService';
+import { getAllSuppliers } from '../../services/supplierService';
 import { motion } from 'framer-motion';
 import { Save, ArrowLeft, AlertCircle, Image as ImageIcon, Package } from 'lucide-react';
 import Button from '../../components/ui/Button';
@@ -23,18 +24,30 @@ const ProductEditor = () => {
         imageUrl: '',
         category: '',
         stock: '',
+        supplierId: '',
         active: true
     });
+    const [suppliers, setSuppliers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [validationErrors, setValidationErrors] = useState([]);
 
     useEffect(() => {
+        fetchSuppliers();
         if (isEditMode) {
             fetchProduct();
         }
     }, [id]);
+
+    async function fetchSuppliers() {
+        try {
+            const suppliersData = await getAllSuppliers(true); // Apenas ativos
+            setSuppliers(suppliersData);
+        } catch (err) {
+            console.error('Error fetching suppliers:', err);
+        }
+    }
 
     async function fetchProduct() {
         try {
@@ -69,8 +82,15 @@ const ProductEditor = () => {
         setSuccess('');
         setValidationErrors([]);
 
+        // Buscar nome do fornecedor selecionado
+        const selectedSupplier = suppliers.find(s => s.id === formData.supplierId);
+        const supplierName = selectedSupplier?.name || '';
+
         // Validação client-side
-        const normalized = normalizeProduct(formData);
+        const normalized = normalizeProduct({
+            ...formData,
+            supplierName
+        });
         const validation = validateProduct(normalized);
 
         if (!validation.isValid) {
@@ -334,6 +354,33 @@ const ProductEditor = () => {
                                     <option value="Decoração">Decoração</option>
                                     <option value="Outros">Outros</option>
                                 </select>
+                            </div>
+
+                            {/* Supplier */}
+                            <div>
+                                <label htmlFor="supplierId" className="block text-sm font-semibold text-secondary mb-2">
+                                    Fornecedor *
+                                </label>
+                                <select
+                                    id="supplierId"
+                                    name="supplierId"
+                                    value={formData.supplierId}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+                                    required
+                                >
+                                    <option value="">Selecione um fornecedor</option>
+                                    {suppliers.map((supplier) => (
+                                        <option key={supplier.id} value={supplier.id}>
+                                            {supplier.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                {suppliers.length === 0 && (
+                                    <p className="mt-2 text-sm text-text-secondary">
+                                        Nenhum fornecedor cadastrado. <a href="/admin/suppliers/new" className="text-primary hover:underline">Criar fornecedor</a>
+                                    </p>
+                                )}
                             </div>
 
                             {/* Active Status */}

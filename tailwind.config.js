@@ -7,31 +7,32 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Cores principais
         primary: {
-          DEFAULT: '#D35400', // Terracotta
-          dark: '#A04000',
-          light: '#E59866',
+          DEFAULT: '#4A90E2',
+          dark: '#357ABD',
+          light: '#6BA3E8',
         },
         secondary: {
-          DEFAULT: '#2C3E50', // Navy
+          DEFAULT: '#2C3E50',
           light: '#34495E',
+          dark: '#1A252F',
         },
-        accent: {
-          DEFAULT: '#F1C40F', // Gold
-          hover: '#D4AC0D',
-        },
-        background: '#FDFBF7', // Cream
+        // Cores de fundo e texto
+        background: '#F8F9FA',
         surface: '#FFFFFF',
-        text: {
-          primary: '#2D3436',
-          secondary: '#636E72',
-        }
+        'text-primary': '#2C3E50',
+        'text-secondary': '#7F8C8D',
       },
       fontFamily: {
         sans: ['Open Sans', 'sans-serif'],
         heading: ['Poppins', 'sans-serif'],
       },
+      animation: {
+        'spin-slow': 'spin 20s linear infinite',
+      },
     },
   },
   plugins: [],
 }
+

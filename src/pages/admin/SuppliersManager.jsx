@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { collection, getDocs, deleteDoc, doc, getDoc } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
 import { useAuth } from '../../contexts/AuthContext';
-import { logProductAction, AUDIT_ACTIONS } from '../../services/auditService';
+import { getAllSuppliers, deleteSupplier } from '../../services/supplierService';
 import { motion } from 'framer-motion';
-import { Plus, Edit2, Trash2, Package, AlertCircle, Search, ShoppingBag } from 'lucide-react';
+import { Plus, Edit2, Trash2, AlertCircle, Search, Truck } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import Card, { CardBody } from '../../components/ui/Card';
 
-const ProductsManager = () => {
-    const [products, setProducts] = useState([]);
+const SuppliersManager = () => {
+    const [suppliers, setSuppliers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
@@ -18,74 +16,54 @@ const ProductsManager = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchProducts();
+        fetchSuppliers();
     }, []);
 
-    async function fetchProducts() {
+    async function fetchSuppliers() {
         try {
             setLoading(true);
-            const querySnapshot = await getDocs(collection(db, 'products'));
-            const productsData = querySnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
-            setProducts(productsData);
+            const suppliersData = await getAllSuppliers(false); // Buscar todos, incluindo inativos
+            setSuppliers(suppliersData);
             setError('');
         } catch (err) {
-            console.error('Error fetching products:', err);
-            setError('Erro ao carregar produtos. Verifique as permissões do Firestore.');
+            console.error('Error fetching suppliers:', err);
+            setError('Erro ao carregar fornecedores. Verifique as permissões do Firestore.');
         } finally {
             setLoading(false);
         }
     }
 
     async function handleDelete(id) {
-        if (!window.confirm('Tem certeza que deseja deletar este produto?')) {
+        if (!window.confirm('Tem certeza que deseja desativar este fornecedor?')) {
             return;
         }
 
         try {
-            // Buscar informações do produto antes de deletar (para o log)
-            const productRef = doc(db, 'products', id);
-            const productSnap = await getDoc(productRef);
-            const productData = productSnap.exists() ? productSnap.data() : null;
-
-            // Deletar o produto
-            await deleteDoc(productRef);
-            
-            // Remover da lista local
-            setProducts(products.filter(product => product.id !== id));
-
-            // Log de auditoria
-            if (currentUser) {
-                await logProductAction(
-                    AUDIT_ACTIONS.PRODUCT_DELETED,
-                    currentUser.uid,
-                    id,
-                    { name: productData?.name || 'Produto desconhecido', price: productData?.price }
-                );
-            }
+            await deleteSupplier(id);
+            // Atualizar lista local
+            setSuppliers(suppliers.map(supplier => 
+                supplier.id === id ? { ...supplier, active: false } : supplier
+            ));
         } catch (err) {
-            console.error('Error deleting product:', err);
+            console.error('Error deleting supplier:', err);
             
-            // Mensagens de erro mais específicas
             if (err.code === 'permission-denied') {
-                alert('Você não tem permissão para deletar este produto.');
+                alert('Você não tem permissão para deletar este fornecedor.');
             } else if (err.code === 'unauthenticated') {
                 alert('Você precisa estar autenticado para realizar esta ação.');
             } else {
-                alert('Erro ao deletar produto. Tente novamente.');
+                alert('Erro ao deletar fornecedor. Tente novamente.');
             }
         }
     }
 
-    // Filter products based on search query
-    const filteredProducts = products.filter(product => {
+    // Filtrar fornecedores baseado na busca
+    const filteredSuppliers = suppliers.filter(supplier => {
         const query = searchQuery.toLowerCase();
         return (
-            product.name?.toLowerCase().includes(query) ||
-            product.category?.toLowerCase().includes(query) ||
-            product.description?.toLowerCase().includes(query)
+            supplier.name?.toLowerCase().includes(query) ||
+            supplier.email?.toLowerCase().includes(query) ||
+            supplier.phone?.toLowerCase().includes(query)
         );
     });
 
@@ -96,20 +74,20 @@ const ProductsManager = () => {
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <div>
                         <h1 className="text-4xl font-heading font-bold text-secondary mb-2">
-                            Gerenciar Produtos
+                            Gerenciar Fornecedores
                         </h1>
                         <p className="text-text-secondary">
-                            Gerencie os produtos da sua loja
+                            Gerencie os fornecedores da plataforma
                         </p>
                     </div>
                     <div className="flex gap-3">
                         <Button
-                            to="/admin/products/new"
+                            to="/admin/suppliers/new"
                             variant="primary"
                             className="flex items-center gap-2"
                         >
                             <Plus size={20} />
-                            Novo Produto
+                            Novo Fornecedor
                         </Button>
                         <Button
                             to="/admin"
@@ -145,24 +123,50 @@ const ProductsManager = () => {
                             <Card>
                                 <CardBody className="flex items-center gap-4">
                                     <div className="p-3 bg-primary/10 rounded-lg">
-                                        <ShoppingBag className="text-primary" size={24} />
+                                        <Truck className="text-primary" size={24} />
                                     </div>
                                     <div>
-                                        <p className="text-text-secondary text-sm">Total de Produtos</p>
+                                        <p className="text-text-secondary text-sm">Total de Fornecedores</p>
                                         <p className="text-3xl font-bold text-secondary">
-                                            {searchQuery ? `${filteredProducts.length} / ${products.length}` : products.length}
+                                            {searchQuery ? `${filteredSuppliers.length} / ${suppliers.length}` : suppliers.length}
+                                        </p>
+                                    </div>
+                                </CardBody>
+                            </Card>
+                            <Card>
+                                <CardBody className="flex items-center gap-4">
+                                    <div className="p-3 bg-green-100 rounded-lg">
+                                        <Truck className="text-green-600" size={24} />
+                                    </div>
+                                    <div>
+                                        <p className="text-text-secondary text-sm">Ativos</p>
+                                        <p className="text-3xl font-bold text-secondary">
+                                            {suppliers.filter(s => s.active !== false).length}
+                                        </p>
+                                    </div>
+                                </CardBody>
+                            </Card>
+                            <Card>
+                                <CardBody className="flex items-center gap-4">
+                                    <div className="p-3 bg-gray-100 rounded-lg">
+                                        <Truck className="text-gray-600" size={24} />
+                                    </div>
+                                    <div>
+                                        <p className="text-text-secondary text-sm">Inativos</p>
+                                        <p className="text-3xl font-bold text-secondary">
+                                            {suppliers.filter(s => s.active === false).length}
                                         </p>
                                     </div>
                                 </CardBody>
                             </Card>
                         </div>
 
-                        {/* Products List */}
+                        {/* Suppliers List */}
                         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
                             <div className="p-6 border-b border-gray-200">
                                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                                     <h2 className="text-2xl font-heading font-bold text-secondary">
-                                        Todos os Produtos
+                                        Todos os Fornecedores
                                     </h2>
                                     <div className="relative w-full md:w-96">
                                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -170,7 +174,7 @@ const ProductsManager = () => {
                                         </div>
                                         <input
                                             type="text"
-                                            placeholder="Pesquisar por nome, categoria ou descrição..."
+                                            placeholder="Pesquisar por nome, email ou telefone..."
                                             value={searchQuery}
                                             onChange={(e) => setSearchQuery(e.target.value)}
                                             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all text-sm"
@@ -179,14 +183,14 @@ const ProductsManager = () => {
                                 </div>
                             </div>
 
-                            {filteredProducts.length === 0 ? (
+                            {filteredSuppliers.length === 0 ? (
                                 <div className="p-12 text-center">
-                                    <Package className="mx-auto text-gray-300 mb-4" size={48} />
+                                    <Truck className="mx-auto text-gray-300 mb-4" size={48} />
                                     <p className="text-text-secondary">
-                                        {searchQuery ? 'Nenhum produto encontrado para sua pesquisa.' : 'Nenhum produto cadastrado.'}
+                                        {searchQuery ? 'Nenhum fornecedor encontrado para sua pesquisa.' : 'Nenhum fornecedor cadastrado.'}
                                     </p>
-                                    <Button to="/admin/products/new" variant="primary" className="mt-4">
-                                        Criar Primeiro Produto
+                                    <Button to="/admin/suppliers/new" variant="primary" className="mt-4">
+                                        Criar Primeiro Fornecedor
                                     </Button>
                                 </div>
                             ) : (
@@ -195,16 +199,13 @@ const ProductsManager = () => {
                                         <thead className="bg-gray-50">
                                             <tr>
                                                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                                    Produto
+                                                    Fornecedor
                                                 </th>
                                                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                                    Categoria
+                                                    Contato
                                                 </th>
                                                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                                    Preço
-                                                </th>
-                                                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                                    Estoque
+                                                    Comissão
                                                 </th>
                                                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                                     Status
@@ -215,62 +216,51 @@ const ProductsManager = () => {
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-200">
-                                            {filteredProducts.map((product) => (
+                                            {filteredSuppliers.map((supplier) => (
                                                 <motion.tr
-                                                    key={product.id}
+                                                    key={supplier.id}
                                                     initial={{ opacity: 0 }}
                                                     animate={{ opacity: 1 }}
                                                     className="hover:bg-gray-50 transition-colors"
                                                 >
                                                     <td className="px-6 py-4">
-                                                        <div className="flex items-center gap-3">
-                                                            {product.imageUrl && (
-                                                                <img
-                                                                    src={product.imageUrl}
-                                                                    alt={product.name}
-                                                                    className="w-12 h-12 rounded-lg object-cover"
-                                                                    onError={(e) => { e.target.style.display = 'none' }}
-                                                                />
+                                                        <div>
+                                                            <p className="font-semibold text-secondary">
+                                                                {supplier.name || 'Sem nome'}
+                                                            </p>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="text-sm">
+                                                            <p className="text-secondary">{supplier.email}</p>
+                                                            {supplier.phone && (
+                                                                <p className="text-text-secondary">{supplier.phone}</p>
                                                             )}
-                                                            <div>
-                                                                <p className="font-semibold text-secondary">
-                                                                    {product.name || 'Sem nome'}
-                                                                </p>
-                                                                <p className="text-sm text-text-secondary line-clamp-1">
-                                                                    {product.description?.substring(0, 50)}...
-                                                                </p>
-                                                            </div>
                                                         </div>
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                                                            {product.category || 'Sem categoria'}
+                                                            {(supplier.commissionRate * 100).toFixed(0)}%
                                                         </span>
                                                     </td>
-                                                    <td className="px-6 py-4 text-sm text-secondary font-semibold">
-                                                        R$ {product.price?.toFixed(2).replace('.', ',') || '0,00'}
-                                                    </td>
-                                                    <td className="px-6 py-4 text-sm text-text-secondary">
-                                                        {product.stock || 0} un.
-                                                    </td>
                                                     <td className="px-6 py-4">
-                                                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${product.active
+                                                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${supplier.active !== false
                                                                 ? 'bg-green-100 text-green-700'
                                                                 : 'bg-gray-100 text-gray-700'
                                                             }`}>
-                                                            {product.active ? 'Ativo' : 'Inativo'}
+                                                            {supplier.active !== false ? 'Ativo' : 'Inativo'}
                                                         </span>
                                                     </td>
                                                     <td className="px-6 py-4 text-right">
                                                         <div className="flex justify-end gap-2">
                                                             <Link
-                                                                to={`/admin/products/edit/${product.id}`}
+                                                                to={`/admin/suppliers/edit/${supplier.id}`}
                                                                 className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
                                                             >
                                                                 <Edit2 size={18} />
                                                             </Link>
                                                             <button
-                                                                onClick={() => handleDelete(product.id)}
+                                                                onClick={() => handleDelete(supplier.id)}
                                                                 className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                                                             >
                                                                 <Trash2 size={18} />
@@ -291,4 +281,4 @@ const ProductsManager = () => {
     );
 };
 
-export default ProductsManager;
+export default SuppliersManager;
