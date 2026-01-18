@@ -12,11 +12,6 @@ import {
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
-/**
- * Busca todos os fornecedores
- * @param {boolean} activeOnly - Se true, retorna apenas fornecedores ativos
- * @returns {Promise<Array>}
- */
 export async function getAllSuppliers(activeOnly = true) {
     try {
         let q;
@@ -38,11 +33,6 @@ export async function getAllSuppliers(activeOnly = true) {
     }
 }
 
-/**
- * Busca um fornecedor por ID
- * @param {string} id - ID do fornecedor
- * @returns {Promise<Object|null>}
- */
 export async function getSupplier(id) {
     try {
         const docRef = doc(db, 'suppliers', id);
@@ -62,11 +52,6 @@ export async function getSupplier(id) {
     }
 }
 
-/**
- * Cria um novo fornecedor
- * @param {Object} supplierData - Dados do fornecedor
- * @returns {Promise<string>} - ID do fornecedor criado
- */
 export async function createSupplier(supplierData) {
     try {
         const data = {
@@ -83,12 +68,6 @@ export async function createSupplier(supplierData) {
     }
 }
 
-/**
- * Atualiza um fornecedor
- * @param {string} id - ID do fornecedor
- * @param {Object} supplierData - Dados atualizados
- * @returns {Promise<void>}
- */
 export async function updateSupplier(id, supplierData) {
     try {
         const data = {
@@ -96,7 +75,6 @@ export async function updateSupplier(id, supplierData) {
             updatedAt: serverTimestamp()
         };
         
-        // Remove campos que não devem ser atualizados
         delete data.createdAt;
         delete data.id;
         
@@ -108,14 +86,8 @@ export async function updateSupplier(id, supplierData) {
     }
 }
 
-/**
- * Deleta um fornecedor (soft delete - marca como inativo)
- * @param {string} id - ID do fornecedor
- * @returns {Promise<void>}
- */
 export async function deleteSupplier(id) {
     try {
-        // Soft delete - marca como inativo
         const docRef = doc(db, 'suppliers', id);
         await updateDoc(docRef, {
             active: false,

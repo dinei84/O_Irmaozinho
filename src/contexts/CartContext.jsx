@@ -14,7 +14,6 @@ export function CartProvider({ children }) {
     const [cartItems, setCartItems] = useState([]);
     const [isCartOpen, setIsCartOpen] = useState(false);
 
-    // Load cart from localStorage on mount
     useEffect(() => {
         const savedCart = localStorage.getItem('cart');
         if (savedCart) {
@@ -26,7 +25,6 @@ export function CartProvider({ children }) {
         }
     }, []);
 
-    // Save cart to localStorage whenever it changes
     useEffect(() => {
         localStorage.setItem('cart', JSON.stringify(cartItems));
     }, [cartItems]);
@@ -36,18 +34,16 @@ export function CartProvider({ children }) {
             const existingItem = prevItems.find(item => item.id === product.id);
 
             if (existingItem) {
-                // Update quantity if item already exists
                 return prevItems.map(item =>
                     item.id === product.id
                         ? { ...item, quantity: item.quantity + quantity }
                         : item
                 );
             } else {
-                // Add new item
                 return [...prevItems, { ...product, quantity }];
             }
         });
-        setIsCartOpen(true); // Open cart drawer when item is added
+        setIsCartOpen(true);
     }
 
     function removeFromCart(productId) {
@@ -81,7 +77,6 @@ export function CartProvider({ children }) {
         setIsCartOpen(false);
     }
 
-    // Calculate totals
     const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
     const cartTotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
 

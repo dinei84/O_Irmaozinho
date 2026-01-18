@@ -1,21 +1,9 @@
-/**
- * Biblioteca de validação de dados
- * Validações client-side para melhor UX
- * Validações server-side são feitas via Firestore Rules
- */
-
-/**
- * Valida formato de email
- */
 export function isValidEmail(email) {
     if (!email || typeof email !== 'string') return false;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email.trim());
 }
 
-/**
- * Valida senha
- */
 export function validatePassword(password) {
     const errors = [];
     
@@ -37,9 +25,6 @@ export function validatePassword(password) {
     };
 }
 
-/**
- * Valida e normaliza artigo
- */
 export function validateArticle(data) {
     const errors = [];
     
@@ -74,9 +59,6 @@ export function validateArticle(data) {
     };
 }
 
-/**
- * Normaliza dados de artigo
- */
 export function normalizeArticle(data) {
     return {
         title: (data.title || '').trim(),
@@ -88,9 +70,6 @@ export function normalizeArticle(data) {
     };
 }
 
-/**
- * Valida e normaliza produto
- */
 export function validateProduct(data) {
     const errors = [];
     
@@ -139,9 +118,6 @@ export function validateProduct(data) {
     };
 }
 
-/**
- * Normaliza dados de produto
- */
 export function normalizeProduct(data) {
     return {
         name: (data.name || '').trim(),
@@ -158,9 +134,6 @@ export function normalizeProduct(data) {
     };
 }
 
-/**
- * Valida e normaliza fornecedor
- */
 export function validateSupplier(data) {
     const errors = [];
     
@@ -204,9 +177,6 @@ export function validateSupplier(data) {
     };
 }
 
-/**
- * Normaliza dados de fornecedor
- */
 export function normalizeSupplier(data) {
     return {
         name: (data.name || '').trim(),

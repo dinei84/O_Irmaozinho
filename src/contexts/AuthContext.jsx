@@ -21,30 +21,17 @@ export const AuthProvider = ({ children }) => {
     const [userRole, setUserRole] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    /**
-     * Faz login e atualiza o token para obter custom claims
-     */
     async function login(email, password) {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        // Força a atualização do token para obter custom claims atualizados
         await refreshUserToken(userCredential.user);
-        // Atualiza último login (não crítico se falhar)
         updateLastLogin(userCredential.user.uid).catch(() => {});
         return userCredential;
     }
 
-    /**
-     * Cria uma nova conta de usuário
-     * @param {string} email - Email do usuário
-     * @param {string} password - Senha
-     * @param {Object} additionalData - Dados adicionais (displayName, etc)
-     */
     async function signup(email, password, additionalData = {}) {
-        // Criar usuário no Firebase Auth
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        // Criar perfil no Firestore
         await createUserProfile(user.uid, {
             email: user.email,
             emailVerified: user.emailVerified,
@@ -53,7 +40,6 @@ export const AuthProvider = ({ children }) => {
             preferences: additionalData.preferences || {},
         });
 
-        // Atualizar token para obter custom claims
         await refreshUserToken(user);
         
         return userCredential;
@@ -64,21 +50,17 @@ export const AuthProvider = ({ children }) => {
         return signOut(auth);
     }
 
-    /**
-     * Atualiza o token do usuário para obter custom claims atualizados
-     * Útil quando os claims são atualizados no backend
-     */
     async function refreshUserToken(user) {
         if (!user) return null;
         
         try {
-            const tokenResult = await getIdTokenResult(user, true); // true força refresh
+            const tokenResult = await getIdTokenResult(user, true);
             const role = tokenResult.claims.role || 'user';
             setUserRole(role);
             return tokenResult;
         } catch (error) {
             console.error('Erro ao obter token:', error);
-            setUserRole('user'); // Fallback para user comum
+            setUserRole('user');
             return null;
         }
     }
@@ -86,7 +68,6 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // Quando o usuário faz login, atualiza o token para obter custom claims
                 await refreshUserToken(user);
             } else {
                 setUserRole(null);
