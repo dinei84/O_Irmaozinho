@@ -11,7 +11,9 @@ export const AUDIT_ACTIONS = {
     SUPPLIER_CREATED: 'supplier_created',
     SUPPLIER_UPDATED: 'supplier_updated',
     SUPPLIER_DELETED: 'supplier_deleted',
-    USER_ROLE_CHANGED: 'user_role_changed'
+    USER_ROLE_CHANGED: 'user_role_changed',
+    LIKE_CREATED: 'like_created',
+    LIKE_REMOVED: 'like_removed'
 };
 
 export async function logArticleAction(action, userId, targetId, metadata = {}) {

@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Calendar, Tag, Share2 } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Card, { CardBody } from '../components/ui/Card';
+import LikeButton from '../components/features/likes/LikeButton';
 
 const ArticleDetail = () => {
     const { id } = useParams();
@@ -138,8 +139,8 @@ const ArticleDetail = () => {
                         {article.title}
                     </h1>
 
-                    {/* Share Button */}
-                    <div className="mb-8">
+                    {/* Share Button and Like Button */}
+                    <div className="mb-8 flex items-center justify-between gap-4">
                         <Button
                             onClick={handleShare}
                             variant="outline"
@@ -148,6 +149,10 @@ const ArticleDetail = () => {
                             <Share2 size={18} />
                             Compartilhar
                         </Button>
+                        <LikeButton
+                            contentId={article.id}
+                            initialLikesCount={article.likesCount || 0}
+                        />
                     </div>
 
                     {/* Featured Image */}

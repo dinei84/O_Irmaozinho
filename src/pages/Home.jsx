@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Star, Sparkles } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Card, { CardBody } from '../components/ui/Card';
+import LikeButton from '../components/features/likes/LikeButton';
 
 const Home = () => {
     const [featuredArticle, setFeaturedArticle] = useState(null);
@@ -181,16 +182,23 @@ const Home = () => {
                                     <h3 className="text-3xl md:text-4xl font-heading font-bold text-secondary mb-6 leading-tight">
                                         {featuredArticle.title}
                                     </h3>
-                                    <p className="text-text-secondary text-lg mb-10 leading-relaxed line-clamp-4">
+                                    <p className="text-text-secondary text-lg mb-8 leading-relaxed line-clamp-4">
                                         {featuredArticle.body}
                                     </p>
-                                    <Button
-                                        to={`/${featuredArticle.category === 'Crônicas' ? 'cronica' : 'artigo'}/${featuredArticle.id}`}
-                                        variant="secondary"
-                                        className="self-start text-lg px-8 py-4"
-                                    >
-                                        Ler Artigo Completo <ArrowRight size={20} className="ml-2" />
-                                    </Button>
+                                    <div className="flex items-center justify-between gap-4">
+                                        <Button
+                                            to={`/${featuredArticle.category === 'Crônicas' ? 'cronica' : 'artigo'}/${featuredArticle.id}`}
+                                            variant="secondary"
+                                            className="self-start text-lg px-8 py-4"
+                                        >
+                                            Ler Artigo Completo <ArrowRight size={20} className="ml-2" />
+                                        </Button>
+                                        <LikeButton
+                                            contentId={featuredArticle.id}
+                                            initialLikesCount={featuredArticle.likesCount || 0}
+                                            className="flex-shrink-0"
+                                        />
+                                    </div>
                                 </CardBody>
                             </Card>
                         </motion.div>
@@ -239,7 +247,7 @@ const Home = () => {
                                         {article.body}
                                     </p>
                                 </CardBody>
-                                <div className="p-6 pt-0 mt-auto">
+                                <div className="p-6 pt-0 mt-auto flex items-center justify-between gap-4">
                                     <Button
                                         to={`/${article.category === 'Crônicas' ? 'cronica' : 'artigo'}/${article.id}`}
                                         variant="ghost"
@@ -247,6 +255,11 @@ const Home = () => {
                                     >
                                         Ler mais <ArrowRight size={16} className="ml-1" />
                                     </Button>
+                                    <LikeButton
+                                        contentId={article.id}
+                                        initialLikesCount={article.likesCount || 0}
+                                        className="flex-shrink-0"
+                                    />
                                 </div>
                             </Card>
                         ))}

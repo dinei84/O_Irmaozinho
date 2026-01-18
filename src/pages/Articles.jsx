@@ -4,6 +4,7 @@ import { db } from '../lib/firebase';
 import { motion } from 'framer-motion';
 import Card, { CardBody } from '../components/ui/Card';
 import Button from '../components/ui/Button';
+import LikeButton from '../components/features/likes/LikeButton';
 import { ArrowRight, Star } from 'lucide-react';
 
 const Articles = () => {
@@ -96,12 +97,19 @@ const Articles = () => {
                                 <h3 className="text-2xl md:text-3xl font-heading font-bold text-secondary mb-4">
                                     {featuredArticle.title}
                                 </h3>
-                                <p className="text-text-secondary mb-8 leading-relaxed line-clamp-4">
+                                <p className="text-text-secondary mb-6 leading-relaxed line-clamp-4">
                                     {featuredArticle.body}
                                 </p>
-                                <Button to={`/artigo/${featuredArticle.id}`} variant="secondary" className="self-start">
-                                    Ler Artigo Completo <ArrowRight size={18} className="ml-2" />
-                                </Button>
+                                <div className="flex items-center justify-between gap-4">
+                                    <Button to={`/artigo/${featuredArticle.id}`} variant="secondary" className="self-start">
+                                        Ler Artigo Completo <ArrowRight size={18} className="ml-2" />
+                                    </Button>
+                                    <LikeButton
+                                        contentId={featuredArticle.id}
+                                        initialLikesCount={featuredArticle.likesCount || 0}
+                                        className="flex-shrink-0"
+                                    />
+                                </div>
                             </CardBody>
                         </Card>
                     </motion.div>
@@ -140,10 +148,15 @@ const Articles = () => {
                                                 {article.body}
                                             </p>
                                         </CardBody>
-                                        <div className="p-6 pt-0 mt-auto">
+                                        <div className="p-6 pt-0 mt-auto flex items-center justify-between gap-4">
                                             <Button to={`/artigo/${article.id}`} variant="ghost" className="pl-0 hover:bg-transparent hover:text-primary-dark">
                                                 Ler mais <ArrowRight size={16} className="ml-1" />
                                             </Button>
+                                            <LikeButton
+                                                contentId={article.id}
+                                                initialLikesCount={article.likesCount || 0}
+                                                className="flex-shrink-0"
+                                            />
                                         </div>
                                     </Card>
                                 </motion.div>

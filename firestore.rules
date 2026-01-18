@@ -85,6 +85,21 @@ service cloud.firestore {
     // ==========================================
     // REGRAS PARA CONTEÚDO (ARTIGOS/CRÔNICAS)
     // ==========================================
+    // Helper function para validar incremento/decremento de likesCount
+    // Nota: FieldValue.increment() é resolvido pelo Firestore antes das regras
+    // Validamos apenas que apenas likesCount e updatedAt foram alterados
+    function isValidLikesCountUpdate() {
+      let affectedKeys = request.resource.data.diff(resource.data).affectedKeys();
+      let currentLikes = resource.data.get('likesCount', 0);
+      let newLikes = request.resource.data.likesCount;
+      
+      return affectedKeys.hasOnly(['likesCount', 'updatedAt']) &&
+             request.resource.data.likesCount is number &&
+             request.resource.data.likesCount >= 0 &&
+             // Permite incremento ou decremento de 1 (pode variar em transações concorrentes)
+             (newLikes == currentLikes + 1 || newLikes == currentLikes - 1);
+    }
+    
     match /content/{contentId} {
       // Qualquer um (autenticado ou não) pode ler conteúdo
       // Isso permite que visitantes vejam os artigos públicos
@@ -96,10 +111,12 @@ service cloud.firestore {
                        request.resource.data.createdAt == request.time &&
                        request.resource.data.updatedAt == request.time;
       
-      // Apenas admins podem atualizar artigos
-      allow update: if isAdmin() && 
+      // Admins podem atualizar artigos completos
+      // Usuários autenticados podem apenas incrementar/decrementar likesCount
+      allow update: if (isAdmin() && 
                        isValidArticle(request.resource.data) &&
-                       request.resource.data.updatedAt == request.time;
+                       request.resource.data.updatedAt == request.time) ||
+                      (isAuthenticated() && isValidLikesCountUpdate());
       
       // Apenas admins podem deletar artigos
       allow delete: if isAdmin();
@@ -198,6 +215,38 @@ service cloud.firestore {
       // Ninguém pode criar/editar/deletar via cliente
       // Isso deve ser feito via Cloud Functions ou console do Firebase
       allow create, update, delete: if false;
+    }
+    
+    // ==========================================
+    // REGRAS PARA CURTIDAS (LIKES)
+    // ==========================================
+    match /likes/{likeId} {
+      // Qualquer um pode ler curtidas (público)
+      allow read: if true;
+      
+      // Validar formato do ID (deve ser contentId_userId)
+      function isValidLikeId() {
+        return likeId.matches('^[a-zA-Z0-9_-]+_[a-zA-Z0-9_-]+$');
+      }
+      
+      // Usuários autenticados podem criar curtidas
+      // Validar que o userId no documento corresponde ao usuário logado
+      // Validar que o ID do documento segue o padrão contentId_userId
+      allow create: if isAuthenticated() &&
+                       isValidLikeId() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       request.resource.data.contentId is string &&
+                       request.resource.data.contentId.size() > 0 &&
+                       request.resource.data.createdAt == request.time &&
+                       (!exists(/databases/$(database)/documents/likes/$(likeId)));
+      
+      // Usuários podem deletar apenas suas próprias curtidas
+      // Validar que o userId no documento corresponde ao usuário logado
+      allow delete: if isAuthenticated() &&
+                      resource.data.userId == request.auth.uid;
+      
+      // Não permitir atualizações (imutável)
+      allow update: if false;
     }
     
     // ==========================================
