@@ -7,6 +7,7 @@ import { ArrowLeft, Calendar, Tag, Share2 } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Card, { CardBody } from '../components/ui/Card';
 import LikeButton from '../components/features/likes/LikeButton';
+import CommentsSection from '../components/features/comments/CommentsSection';
 
 const ArticleDetail = () => {
     const { id } = useParams();
@@ -176,6 +177,16 @@ const ArticleDetail = () => {
 
                     {/* Divider */}
                     <div className="border-t border-gray-200 my-12"></div>
+                </motion.div>
+
+                {/* Comments Section */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                    className="mb-12"
+                >
+                    <CommentsSection articleId={article.id} />
                 </motion.div>
 
                 {/* Related Articles */}

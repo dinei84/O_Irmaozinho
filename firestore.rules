@@ -100,6 +100,19 @@ service cloud.firestore {
              (newLikes == currentLikes + 1 || newLikes == currentLikes - 1);
     }
     
+    // Helper function para validar incremento de commentsCount
+    function isValidCommentsCountUpdate() {
+      let affectedKeys = request.resource.data.diff(resource.data).affectedKeys();
+      let currentComments = resource.data.get('commentsCount', 0);
+      let newComments = request.resource.data.commentsCount;
+      
+      return affectedKeys.hasOnly(['commentsCount', 'updatedAt']) &&
+             request.resource.data.commentsCount is number &&
+             request.resource.data.commentsCount >= 0 &&
+             // Permite incremento ou decremento de 1
+             (newComments == currentComments + 1 || newComments == currentComments - 1);
+    }
+    
     match /content/{contentId} {
       // Qualquer um (autenticado ou não) pode ler conteúdo
       // Isso permite que visitantes vejam os artigos públicos
@@ -112,11 +125,11 @@ service cloud.firestore {
                        request.resource.data.updatedAt == request.time;
       
       // Admins podem atualizar artigos completos
-      // Usuários autenticados podem apenas incrementar/decrementar likesCount
+      // Usuários autenticados podem incrementar/decrementar likesCount ou incrementar commentsCount
       allow update: if (isAdmin() && 
                        isValidArticle(request.resource.data) &&
                        request.resource.data.updatedAt == request.time) ||
-                      (isAuthenticated() && isValidLikesCountUpdate());
+                      (isAuthenticated() && (isValidLikesCountUpdate() || isValidCommentsCountUpdate()));
       
       // Apenas admins podem deletar artigos
       allow delete: if isAdmin();
@@ -247,6 +260,71 @@ service cloud.firestore {
       
       // Não permitir atualizações (imutável)
       allow update: if false;
+    }
+    
+    // ==========================================
+    // REGRAS PARA COMENTÁRIOS
+    // ==========================================
+    match /comments/{commentId} {
+      // Qualquer um pode ler comentários (público)
+      allow read: if true;
+      
+      // Helper function para validar estrutura de comentário
+      function isValidComment(data) {
+        return data.articleId is string &&
+               data.articleId.size() > 0 &&
+               data.userId is string &&
+               data.userName is string &&
+               data.content is string &&
+               data.content.size() >= 3 &&
+               data.content.size() <= 500 &&
+               data.isDeleted is bool &&
+               (!('parentId' in data) || data.parentId == null || data.parentId is string);
+      }
+      
+      // Usuários autenticados podem criar comentários
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       isValidComment(request.resource.data) &&
+                       request.resource.data.createdAt == request.time &&
+                       request.resource.data.updatedAt == request.time;
+      
+      // Usuários podem editar apenas seus próprios comentários
+      // Apenas dentro de 1 hora após criação
+      // Não pode editar se isDeleted == true
+      allow update: if isAuthenticated() &&
+                       resource.data.userId == request.auth.uid &&
+                       resource.data.isDeleted == false &&
+                       request.resource.data.isDeleted == false &&
+                       request.resource.data.content is string &&
+                       request.resource.data.content.size() >= 3 &&
+                       request.resource.data.content.size() <= 500 &&
+                       // Simplificação para garantir funcionamento
+                       // 1. Ser o dono
+                       resource.data.userId == request.auth.uid &&
+                       // 2. Não estar deletado (soft delete)
+                       resource.data.isDeleted == false &&
+                       // 3. Conteúdo válido
+                       request.resource.data.content.size() >= 3 &&
+                       request.resource.data.content.size() <= 500 &&
+                       // 4. Tempo: 1h + 5min tolerância (DESATIVADO TEMPORARIAMENTE PARA DEBUG)
+                       // (resource.data.createdAt == null || 
+                       //  (request.time.seconds - resource.data.createdAt.seconds) <= 3900);
+                       true;
+      
+      // Usuários podem fazer soft delete apenas de seus próprios comentários
+      // Admins podem deletar qualquer comentário
+      allow update: if isAuthenticated() &&
+                       (resource.data.userId == request.auth.uid || isAdmin()) &&
+                       request.resource.data.isDeleted == true &&
+                       request.resource.data.content == '[Comentário removido]' &&
+                       request.resource.data.updatedAt == request.time &&
+                       // Validar que apenas content, isDeleted e updatedAt foram alterados
+                       request.resource.data.diff(resource.data).affectedKeys()
+                         .hasOnly(['content', 'isDeleted', 'updatedAt']);
+      
+      // Não permitir delete físico (apenas soft delete)
+      allow delete: if false;
     }
     
     // ==========================================

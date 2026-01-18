@@ -190,3 +190,29 @@ export function normalizeSupplier(data) {
     };
 }
 
+export function validateComment(content) {
+    const errors = [];
+    
+    if (!content || typeof content !== 'string') {
+        return { valid: false, errors: ['Comentário é obrigatório'] };
+    }
+    
+    const trimmed = content.trim();
+    
+    if (trimmed.length < 3) {
+        errors.push('Comentário deve ter no mínimo 3 caracteres');
+    }
+    
+    if (trimmed.length > 500) {
+        errors.push('Comentário deve ter no máximo 500 caracteres');
+    }
+    
+    return {
+        valid: errors.length === 0,
+        errors
+    };
+}
+
+export function normalizeComment(content) {
+    return (content || '').trim();
+}

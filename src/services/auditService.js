@@ -13,7 +13,10 @@ export const AUDIT_ACTIONS = {
     SUPPLIER_DELETED: 'supplier_deleted',
     USER_ROLE_CHANGED: 'user_role_changed',
     LIKE_CREATED: 'like_created',
-    LIKE_REMOVED: 'like_removed'
+    LIKE_REMOVED: 'like_removed',
+    COMMENT_CREATED: 'comment_created',
+    COMMENT_UPDATED: 'comment_updated',
+    COMMENT_DELETED: 'comment_deleted'
 };
 
 export async function logArticleAction(action, userId, targetId, metadata = {}) {
