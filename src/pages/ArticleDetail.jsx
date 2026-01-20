@@ -8,6 +8,9 @@ import Button from '../components/ui/Button';
 import Card, { CardBody } from '../components/ui/Card';
 import LikeButton from '../components/features/likes/LikeButton';
 import CommentsSection from '../components/features/comments/CommentsSection';
+import TextToSpeechPlayer from '../components/features/textToSpeech/TextToSpeechPlayer';
+import TextSelectionControls from '../components/features/textToSpeech/TextSelectionControls';
+import HighlightableText from '../components/features/textToSpeech/HighlightableText';
 
 const ArticleDetail = () => {
     const { id } = useParams();
@@ -141,7 +144,7 @@ const ArticleDetail = () => {
                     </h1>
 
                     {/* Share Button and Like Button */}
-                    <div className="mb-8 flex items-center justify-between gap-4">
+                    <div className="mb-6 flex items-center justify-between gap-4">
                         <Button
                             onClick={handleShare}
                             variant="outline"
@@ -153,6 +156,14 @@ const ArticleDetail = () => {
                         <LikeButton
                             contentId={article.id}
                             initialLikesCount={article.likesCount || 0}
+                        />
+                    </div>
+
+                    {/* Text-to-Speech Player */}
+                    <div className="mb-8">
+                        <TextToSpeechPlayer
+                            text={article.body}
+                            title={article.title}
                         />
                     </div>
 
@@ -169,10 +180,12 @@ const ArticleDetail = () => {
                     )}
 
                     {/* Article Content */}
-                    <div className="prose prose-lg max-w-none mb-12">
-                        <div className="text-text-primary leading-relaxed whitespace-pre-wrap text-lg">
-                            {article.body}
-                        </div>
+                    <div className="prose prose-lg max-w-none mb-12 relative">
+                        <TextSelectionControls />
+                        <HighlightableText 
+                            text={article.body} 
+                            className="text-text-primary leading-relaxed text-lg"
+                        />
                     </div>
 
                     {/* Divider */}
