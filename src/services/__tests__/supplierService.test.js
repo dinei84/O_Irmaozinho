@@ -4,7 +4,8 @@ import {
     getSupplier,
     createSupplier,
     updateSupplier,
-    deleteSupplier
+    deleteSupplier,
+    getOrCreateDefaultSupplier
 } from '../supplierService';
 import { db } from '../../lib/firebase';
 import {
@@ -16,6 +17,8 @@ import {
     updateDoc,
     query,
     where,
+    orderBy,
+    limit,
     serverTimestamp
 } from 'firebase/firestore';
 
@@ -31,6 +34,8 @@ vi.mock('firebase/firestore', async () => {
         updateDoc: vi.fn(),
         query: vi.fn(),
         where: vi.fn(),
+        orderBy: vi.fn(),
+        limit: vi.fn(),
         serverTimestamp: vi.fn(() => 'MOCK_TIMESTAMP')
     };
 });
@@ -46,6 +51,10 @@ describe('supplierService', () => {
     const mockSupplierData = {
         name: 'Fornecedor Teste',
         email: 'fornecedor@example.com',
+        type: 'third_party',
+        isDefault: false,
+        orderMethod: 'email',
+        orderEmail: 'pedidos@example.com',
         commissionRate: 0.15,
         paymentMethod: 'centralized',
         active: true
@@ -246,6 +255,79 @@ describe('supplierService', () => {
             const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
             await expect(deleteSupplier(mockSupplierId)).rejects.toThrow(mockError);
+
+            consoleErrorSpy.mockRestore();
+        });
+    });
+
+    describe('getOrCreateDefaultSupplier', () => {
+        it('deve retornar fornecedor padrão se já existir', async () => {
+            const mockDefaultSupplier = {
+                id: 'default123',
+                name: 'O Irmaozinho',
+                type: 'own',
+                isDefault: true,
+                orderMethod: 'direct_sale',
+                commissionRate: 0,
+                paymentMethod: 'none',
+                active: true
+            };
+
+            const mockDocs = [
+                { id: 'default123', data: () => mockDefaultSupplier }
+            ];
+            const mockQuerySnapshot = {
+                docs: mockDocs,
+                empty: false
+            };
+
+            const mockQuery = {};
+            query.mockReturnValue(mockQuery);
+            where.mockReturnValue(mockQuery);
+            getDocs.mockResolvedValue(mockQuerySnapshot);
+
+            const result = await getOrCreateDefaultSupplier();
+
+            expect(query).toHaveBeenCalled();
+            expect(where).toHaveBeenCalledWith('isDefault', '==', true);
+            expect(where).toHaveBeenCalledWith('active', '==', true);
+            expect(result).toEqual(mockDefaultSupplier);
+        });
+
+        it('deve criar fornecedor padrão se não existir', async () => {
+            const mockQuerySnapshot = {
+                docs: [],
+                empty: true
+            };
+
+            const mockQuery = {};
+            query.mockReturnValue(mockQuery);
+            where.mockReturnValue(mockQuery);
+            getDocs.mockResolvedValue(mockQuerySnapshot);
+
+            const mockDocRef = { id: 'new-default-id' };
+            addDoc.mockResolvedValue(mockDocRef);
+
+            const result = await getOrCreateDefaultSupplier();
+
+            expect(addDoc).toHaveBeenCalled();
+            expect(result.id).toBe('new-default-id');
+            expect(result.name).toBe('O Irmaozinho');
+            expect(result.type).toBe('own');
+            expect(result.isDefault).toBe(true);
+            expect(result.commissionRate).toBe(0);
+            expect(result.paymentMethod).toBe('none');
+        });
+
+        it('deve lançar erro quando getDocs falha', async () => {
+            const mockError = new Error('Firestore error');
+            const mockQuery = {};
+            query.mockReturnValue(mockQuery);
+            where.mockReturnValue(mockQuery);
+            getDocs.mockRejectedValue(mockError);
+            const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+            await expect(getOrCreateDefaultSupplier()).rejects.toThrow(mockError);
 
             consoleErrorSpy.mockRestore();
         });

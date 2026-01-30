@@ -12,6 +12,57 @@ import {
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
+/**
+ * Busca o fornecedor padrão (O Irmaozinho) ou cria se não existir
+ */
+export async function getOrCreateDefaultSupplier() {
+    try {
+        // Buscar fornecedor padrão
+        const q = query(
+            collection(db, 'suppliers'),
+            where('isDefault', '==', true),
+            where('active', '==', true)
+        );
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+            const doc = querySnapshot.docs[0];
+            return {
+                id: doc.id,
+                ...doc.data()
+            };
+        }
+
+        // Se não existe, criar fornecedor padrão
+        const defaultSupplier = {
+            name: 'O Irmaozinho',
+            email: 'contato@oirmaozinho.com',
+            phone: '',
+            type: 'own',
+            isDefault: true,
+            orderMethod: 'direct_sale',
+            orderEmail: '',
+            orderEmailTemplate: '',
+            commissionRate: 0,
+            paymentMethod: 'none',
+            bankAccount: null,
+            verified: true,
+            active: true,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+        };
+
+        const docRef = await addDoc(collection(db, 'suppliers'), defaultSupplier);
+        return {
+            id: docRef.id,
+            ...defaultSupplier
+        };
+    } catch (error) {
+        console.error('Erro ao buscar/criar fornecedor padrão:', error);
+        throw error;
+    }
+}
+
 export async function getAllSuppliers(activeOnly = true) {
     try {
         let q;

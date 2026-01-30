@@ -5,7 +5,7 @@ import { db } from '../../lib/firebase';
 import { useAuth } from '../../contexts/AuthContext';
 import { validateProduct, normalizeProduct } from '../../lib/validators';
 import { logProductAction, AUDIT_ACTIONS } from '../../services/auditService';
-import { getAllSuppliers } from '../../services/supplierService';
+import { getAllSuppliers, getOrCreateDefaultSupplier } from '../../services/supplierService';
 import { motion } from 'framer-motion';
 import { Save, ArrowLeft, AlertCircle, Image as ImageIcon, Package } from 'lucide-react';
 import Button from '../../components/ui/Button';
@@ -37,13 +37,45 @@ const ProductEditor = () => {
         fetchSuppliers();
         if (isEditMode) {
             fetchProduct();
+        } else {
+            // Em modo de criação, garantir que há fornecedor padrão e pré-selecionar
+            ensureDefaultSupplier();
         }
     }, [id]);
+
+    async function ensureDefaultSupplier() {
+        try {
+            const defaultSupplier = await getOrCreateDefaultSupplier();
+            if (defaultSupplier) {
+                // Pré-selecionar fornecedor padrão
+                setFormData(prev => ({
+                    ...prev,
+                    supplierId: defaultSupplier.id
+                }));
+            }
+        } catch (err) {
+            console.error('Error ensuring default supplier:', err);
+            // Se não conseguir criar, ainda pode prosseguir
+            // O usuário pode selecionar manualmente quando criar fornecedor
+        }
+    }
 
     async function fetchSuppliers() {
         try {
             const suppliersData = await getAllSuppliers(true); // Apenas ativos
             setSuppliers(suppliersData);
+            
+            // Se não há fornecedores, criar o padrão
+            if (suppliersData.length === 0) {
+                const defaultSupplier = await getOrCreateDefaultSupplier();
+                setSuppliers([defaultSupplier]);
+                if (!isEditMode) {
+                    setFormData(prev => ({
+                        ...prev,
+                        supplierId: defaultSupplier.id
+                    }));
+                }
+            }
         } catch (err) {
             console.error('Error fetching suppliers:', err);
         }
@@ -93,7 +125,7 @@ const ProductEditor = () => {
         });
         const validation = validateProduct(normalized);
 
-        if (!validation.isValid) {
+        if (!validation.valid) {
             setValidationErrors(validation.errors);
             setError('Por favor, corrija os erros no formulário.');
             return;

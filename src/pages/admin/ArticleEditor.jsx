@@ -13,13 +13,13 @@ import Card, { CardBody } from '../../components/ui/Card';
 const ArticleEditor = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { currentUser } = useAuth();
+    const { currentUser, isAdmin, userRole } = useAuth();
     const isEditMode = Boolean(id);
 
     const [formData, setFormData] = useState({
         title: '',
         imageUrl: '',
-        category: '',
+        category: 'Artigos',
         body: ''
     });
     const [loading, setLoading] = useState(false);
@@ -77,9 +77,11 @@ const ArticleEditor = () => {
     function handleEditorChange() {
         if (editorRef.current) {
             const htmlContent = editorRef.current.innerHTML;
+            // Ensure we're not storing just whitespace or empty tags
+            const cleanContent = htmlContent.replace(/<[^>]*>/g, '').trim() === '' ? '' : htmlContent;
             setFormData(prev => ({
                 ...prev,
-                body: htmlContent
+                body: cleanContent
             }));
         }
     }
@@ -90,22 +92,22 @@ const ArticleEditor = () => {
      */
     function handleEditorPaste(e) {
         e.preventDefault();
-        
+
         const pastedData = e.clipboardData || window.clipboardData;
         let htmlData = pastedData.getData('text/html');
         const plainText = pastedData.getData('text/plain');
-        
+
         // Se tiver HTML, usa ele (preserva formatação)
         // Se não, usa texto plano
         if (htmlData) {
             // Cria elemento temporário para sanitizar HTML
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = htmlData;
-            
+
             // Remove scripts e elementos perigosos, mas preserva formatação básica
             const scripts = tempDiv.querySelectorAll('script, iframe, style');
             scripts.forEach(el => el.remove());
-            
+
             // Remove atributos de evento
             const allElements = tempDiv.querySelectorAll('*');
             allElements.forEach(el => {
@@ -115,9 +117,9 @@ const ArticleEditor = () => {
                     }
                 });
             });
-            
+
             htmlData = tempDiv.innerHTML;
-            
+
             // Insere HTML no editor
             document.execCommand('insertHTML', false, htmlData);
         } else if (plainText) {
@@ -125,9 +127,9 @@ const ArticleEditor = () => {
             const formattedText = plainText.replace(/\r\n/g, '<br>').replace(/\n/g, '<br>').replace(/\r/g, '<br>');
             document.execCommand('insertHTML', false, formattedText);
         }
-        
+
         // Atualiza estado após colar
-        handleEditorChange();
+        setTimeout(handleEditorChange, 0);
     }
 
     /**
@@ -136,7 +138,7 @@ const ArticleEditor = () => {
     function formatText(command, value = null) {
         document.execCommand(command, false, value);
         editorRef.current?.focus();
-        handleEditorChange();
+        setTimeout(handleEditorChange, 0);
     }
 
     function handleFormatButton(command) {
@@ -152,14 +154,16 @@ const ArticleEditor = () => {
         // Garantir que o conteúdo do editor está sincronizado
         if (editorRef.current) {
             const htmlContent = editorRef.current.innerHTML;
-            formData.body = htmlContent;
+            // Ensure we're not storing just whitespace or empty tags
+            const cleanContent = htmlContent.replace(/<[^>]*>/g, '').trim() === '' ? '' : htmlContent;
+            formData.body = cleanContent;
         }
 
         // Validação client-side
         const normalized = normalizeArticle(formData);
         const validation = validateArticle(normalized);
 
-        if (!validation.isValid) {
+        if (!validation.valid) {
             setValidationErrors(validation.errors);
             setError('Por favor, corrija os erros no formulário.');
             return;
@@ -168,10 +172,22 @@ const ArticleEditor = () => {
         try {
             setLoading(true);
 
+            // Debug: Verificar se usuário é admin
+            console.log('Current user:', currentUser);
+            console.log('User role from context:', userRole);
+            console.log('Is admin:', isAdmin);
+
             const articleData = {
                 ...normalized,
                 updatedAt: serverTimestamp()
             };
+
+            // Debug: Verificar dados sendo enviados
+            console.log('Article data to save:', {
+                ...normalized,
+                updatedAt: 'serverTimestamp()'
+            });
+            console.log('Is edit mode:', isEditMode);
 
             if (isEditMode) {
                 // Update existing article

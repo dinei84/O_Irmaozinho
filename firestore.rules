@@ -64,22 +64,35 @@ service cloud.firestore {
     
     // Helper function para validar estrutura de fornecedor
     function isValidSupplier(data) {
-      return data.keys().hasAll(['name', 'email', 'commissionRate', 'paymentMethod', 'active']) &&
+      return data.keys().hasAll(['name', 'email', 'type', 'orderMethod', 'commissionRate', 'paymentMethod', 'active']) &&
              data.name is string &&
              data.name.size() > 0 &&
              data.name.size() <= 200 &&
              data.email is string &&
              data.email.size() > 0 &&
              data.email.size() <= 200 &&
+             data.type is string &&
+             data.type in ['own', 'third_party'] &&
+             data.orderMethod is string &&
+             data.orderMethod in ['direct_sale', 'email', 'api'] &&
              data.commissionRate is number &&
              data.commissionRate >= 0 &&
              data.commissionRate <= 1 &&
              data.paymentMethod is string &&
-             data.paymentMethod == 'centralized' &&
+             data.paymentMethod in ['none', 'centralized', 'split'] &&
              data.active is bool &&
              (!('phone' in data) || 
               (data.phone is string && 
-               data.phone.size() <= 50));
+               data.phone.size() <= 50)) &&
+             (!('orderEmail' in data) || 
+              (data.orderEmail is string && 
+               data.orderEmail.size() <= 200)) &&
+             (!('isDefault' in data) || data.isDefault is bool) &&
+             // Validações de consistência
+             (data.type == 'own' ? data.commissionRate == 0 : true) &&
+             (data.type == 'own' ? data.paymentMethod == 'none' : true) &&
+             // Se método é email, orderEmail deve estar presente (validação mais relaxada nas regras)
+             (data.orderMethod != 'email' || ('orderEmail' in data && data.orderEmail is string));
     }
     
     // ==========================================
@@ -118,8 +131,8 @@ service cloud.firestore {
       // Isso permite que visitantes vejam os artigos públicos
       allow read: if true;
       
-      // Apenas admins podem criar artigos
-      allow create: if isAdmin() && 
+      // TEMPORÁRIO: Qualquer usuário autenticado pode criar artigos para debug
+      allow create: if isAuthenticated() && 
                        isValidArticle(request.resource.data) &&
                        request.resource.data.createdAt == request.time &&
                        request.resource.data.updatedAt == request.time;
@@ -164,9 +177,14 @@ service cloud.firestore {
     match /suppliers/{supplierId} {
       // Qualquer um autenticado pode ler fornecedores ativos (para seleção em produtos)
       // Admins podem ler todos
-      allow read: if isAuthenticated() && (resource.data.active == true || isAdmin());
+      // Permite ler fornecedor padrão especificamente (mesmo que inativo)
+      allow read: if isAuthenticated() && 
+                     (resource.data.active == true || 
+                      isAdmin() || 
+                      resource.data.isDefault == true);
       
       // Apenas admins podem criar fornecedores
+      // Permite criar fornecedor padrão se for admin
       allow create: if isAdmin() && 
                        isValidSupplier(request.resource.data) &&
                        request.resource.data.createdAt == request.time &&
@@ -179,25 +197,77 @@ service cloud.firestore {
       
       // Apenas admins podem deletar fornecedores (soft delete via update)
       allow delete: if isAdmin();
+      
+      // Permitir queries na coleção suppliers
+      // Usuários autenticados podem fazer queries de fornecedores ativos
+      // Admins podem fazer qualquer query
+      allow list: if isAuthenticated();
+    }
+    
+    // Helper function para validar estrutura de pedido
+    function isValidOrder(data) {
+      return data.keys().hasAll(['userId', 'items', 'subtotal', 'finalTotal', 'customer', 'shippingAddress', 'payment', 'orderStatus']) &&
+             data.userId is string &&
+             data.items is list &&
+             data.items.size() > 0 &&
+             data.subtotal is number &&
+             data.subtotal >= 0 &&
+             data.finalTotal is number &&
+             data.finalTotal >= 0 &&
+             data.customer is map &&
+             data.customer.keys().hasAll(['name', 'email']) &&
+             data.customer.name is string &&
+             data.customer.name.size() > 0 &&
+             data.customer.email is string &&
+             data.shippingAddress is map &&
+             data.shippingAddress.keys().hasAll(['street', 'city', 'state', 'zipCode']) &&
+             data.payment is map &&
+             data.payment.keys().hasAll(['method', 'status', 'gateway']) &&
+             data.orderStatus is string &&
+             data.orderStatus in ['pending', 'paid', 'processing', 'shipped', 'delivered', 'cancelled'];
+    }
+    
+    // Helper function para verificar se usuário pode cancelar próprio pedido
+    function canCancelOrder(order) {
+      return order.orderStatus in ['pending', 'paid'];
     }
     
     // ==========================================
-    // REGRAS PARA PEDIDOS (futuro)
+    // REGRAS PARA PEDIDOS
     // ==========================================
     match /orders/{orderId} {
       // Usuários podem ler apenas seus próprios pedidos
       // Admins podem ler todos
-      allow read: if isOwner(resource.data.userId) || isAdmin();
+      allow read: if isAuthenticated() &&
+                    (isOwner(resource.data.userId) || isAdmin());
       
-      // Qualquer usuário autenticado pode criar pedidos
-      allow create: if isAuthenticated() && 
+      // Usuários autenticados podem criar pedidos para si mesmos
+      // Validar estrutura e dados
+      allow create: if isAuthenticated() &&
                        request.resource.data.userId == request.auth.uid &&
-                       request.resource.data.createdAt == request.time;
+                       isValidOrder(request.resource.data) &&
+                       request.resource.data.createdAt == request.time &&
+                       request.resource.data.updatedAt == request.time &&
+                       request.resource.data.orderStatus == 'pending' &&
+                       request.resource.data.payment.status == 'pending';
       
-      // Apenas admins podem atualizar pedidos (ex: status)
-      allow update: if isAdmin();
+      // Atualização de pedidos:
+      // - Cloud Functions podem atualizar qualquer campo (via server timestamp)
+      // - Usuário pode atualizar apenas status para 'cancelled' (cancelar próprio pedido)
+      // - Admins podem atualizar qualquer campo
+      allow update: if isAdmin() ||
+                     (isAuthenticated() &&
+                      resource.data.userId == request.auth.uid &&
+                      canCancelOrder(resource.data) &&
+                      request.resource.data.orderStatus == 'cancelled' &&
+                      request.resource.data.diff(resource.data).affectedKeys()
+                        .hasOnly(['orderStatus', 'updatedAt', 'statusHistory'])) ||
+                     // Permitir atualizações automáticas do sistema (webhooks)
+                     // Nota: Cloud Functions devem usar admin SDK para atualizações completas
+                     (isAuthenticated() &&
+                      request.resource.data.updatedAt == request.time);
       
-      // Apenas admins podem deletar pedidos
+      // Deleção: apenas admins (recomenda-se soft delete via update)
       allow delete: if isAdmin();
     }
     

@@ -64,9 +64,7 @@ export function normalizeArticle(data) {
         title: (data.title || '').trim(),
         body: (data.body || '').trim(),
         category: data.category || 'Artigos',
-        imageUrl: data.imageUrl ? data.imageUrl.trim() : '',
-        createdAt: data.createdAt,
-        updatedAt: data.updatedAt
+        imageUrl: data.imageUrl ? data.imageUrl.trim() : ''
     };
 }
 
@@ -79,18 +77,22 @@ export function validateProduct(data) {
         errors.push('Nome deve ter no máximo 200 caracteres');
     }
     
-    if (data.price === undefined || data.price === null || isNaN(data.price)) {
+    // Preço é obrigatório
+    const priceNum = Number(data.price);
+    if (data.price === undefined || data.price === null || data.price === '' || isNaN(priceNum)) {
         errors.push('Preço é obrigatório');
-    } else if (data.price < 0) {
+    } else if (priceNum < 0) {
         errors.push('Preço não pode ser negativo');
-    } else if (data.price > 1000000) {
+    } else if (priceNum > 1000000) {
         errors.push('Preço não pode ser maior que 1.000.000');
     }
     
-    if (data.stock === undefined || data.stock === null || isNaN(data.stock)) {
-        errors.push('Estoque é obrigatório');
-    } else if (data.stock < 0 || !Number.isInteger(Number(data.stock))) {
-        errors.push('Estoque deve ser um número inteiro não negativo');
+    // Estoque é opcional, mas se fornecido deve ser válido
+    if (data.stock !== undefined && data.stock !== null && data.stock !== '') {
+        const stockNum = Number(data.stock);
+        if (isNaN(stockNum) || stockNum < 0 || !Number.isInteger(stockNum)) {
+            errors.push('Estoque deve ser um número inteiro não negativo');
+        }
     }
     
     if (typeof data.active !== 'boolean') {
@@ -106,10 +108,11 @@ export function validateProduct(data) {
         }
     }
     
-    if (data.supplierId && typeof data.supplierId === 'string') {
-        if (data.supplierId.length > 200) {
-            errors.push('ID do fornecedor deve ter no máximo 200 caracteres');
-        }
+    // SupplierId é obrigatório
+    if (!data.supplierId || typeof data.supplierId !== 'string' || data.supplierId.trim().length === 0) {
+        errors.push('Fornecedor é obrigatório');
+    } else if (data.supplierId.length > 200) {
+        errors.push('ID do fornecedor deve ter no máximo 200 caracteres');
     }
     
     return {
@@ -137,6 +140,7 @@ export function normalizeProduct(data) {
 export function validateSupplier(data) {
     const errors = [];
     
+    // Validações básicas
     if (!data.name || typeof data.name !== 'string' || data.name.trim().length === 0) {
         errors.push('Nome é obrigatório');
     } else if (data.name.length > 200) {
@@ -151,24 +155,68 @@ export function validateSupplier(data) {
         errors.push('Email deve ter no máximo 200 caracteres');
     }
     
+    if (data.phone && typeof data.phone === 'string') {
+        if (data.phone.length > 50) {
+            errors.push('Telefone deve ter no máximo 50 caracteres');
+        }
+    }
+    
+    // Tipo de fornecedor
+    const validTypes = ['own', 'third_party'];
+    if (!data.type || !validTypes.includes(data.type)) {
+        errors.push('Tipo de fornecedor deve ser "own" (próprio) ou "third_party" (terceiro)');
+    }
+    
+    // Taxa de comissão
     if (data.commissionRate === undefined || data.commissionRate === null || isNaN(data.commissionRate)) {
         errors.push('Taxa de comissão é obrigatória');
     } else if (data.commissionRate < 0 || data.commissionRate > 1) {
         errors.push('Taxa de comissão deve estar entre 0 e 1');
     }
     
-    if (data.paymentMethod !== 'centralized') {
-        errors.push('Método de pagamento deve ser "centralized" na Fase 1');
+    // Validação: fornecedor próprio deve ter comissão 0
+    if (data.type === 'own' && data.commissionRate !== 0) {
+        errors.push('Fornecedor próprio deve ter comissão de 0%');
     }
     
+    // Método de pedido
+    const validOrderMethods = ['direct_sale', 'email', 'api'];
+    if (!data.orderMethod || !validOrderMethods.includes(data.orderMethod)) {
+        errors.push('Método de pedido é obrigatório (direct_sale, email ou api)');
+    }
+    
+    // Se método é email, precisa ter orderEmail
+    if (data.orderMethod === 'email') {
+        if (!data.orderEmail || !isValidEmail(data.orderEmail)) {
+            errors.push('Email para pedidos é obrigatório quando método é "email"');
+        }
+    }
+    
+    // Forma de pagamento
+    const validPaymentMethods = ['none', 'centralized', 'split'];
+    if (!data.paymentMethod || !validPaymentMethods.includes(data.paymentMethod)) {
+        errors.push('Forma de pagamento deve ser "none", "centralized" ou "split"');
+    }
+    
+    // Validação: fornecedor próprio deve ter paymentMethod "none"
+    if (data.type === 'own' && data.paymentMethod !== 'none') {
+        errors.push('Fornecedor próprio deve ter forma de pagamento "none"');
+    }
+    
+    // Se paymentMethod é centralized, validar bankAccount (opcional, mas recomendado)
+    // Nota: Dados bancários são opcionais para permitir cadastro inicial
+    // Admin pode preencher depois se necessário
+    if (data.paymentMethod === 'centralized' && data.bankAccount && 
+        (data.bankAccount.accountHolder || data.bankAccount.account)) {
+        // Se começou a preencher, valida que os campos essenciais estão preenchidos
+        if (!data.bankAccount.accountHolder || !data.bankAccount.account) {
+            errors.push('Dados bancários incompletos: preencha pelo menos Titular e Conta');
+        }
+    }
+    
+    // Status
     if (typeof data.active !== 'boolean') {
         errors.push('Status ativo deve ser verdadeiro ou falso');
-    }
-    
-    if (data.phone && typeof data.phone === 'string') {
-        if (data.phone.length > 50) {
-            errors.push('Telefone deve ter no máximo 50 caracteres');
-        }
     }
     
     return {
@@ -178,12 +226,47 @@ export function validateSupplier(data) {
 }
 
 export function normalizeSupplier(data) {
+    // Determinar valores padrão baseados no tipo
+    const type = data.type || (data.isDefault ? 'own' : 'third_party');
+    const isDefault = data.isDefault || (type === 'own');
+    
+    // Comissão padrão: 0 para próprio, 0.15 para terceiro
+    const defaultCommissionRate = type === 'own' ? 0 : 0.15;
+    
+    // Payment method padrão: none para próprio, centralized para terceiro
+    const defaultPaymentMethod = type === 'own' ? 'none' : 'centralized';
+    
+    // Order method padrão: direct_sale para próprio, email para terceiro
+    const defaultOrderMethod = type === 'own' ? 'direct_sale' : (data.orderMethod || 'email');
+    
+    // Se tipo é 'own', forçar valores corretos
+    const finalCommissionRate = type === 'own' ? 0 : (data.commissionRate !== undefined ? Number(data.commissionRate) : defaultCommissionRate);
+    const finalPaymentMethod = type === 'own' ? 'none' : (data.paymentMethod || defaultPaymentMethod);
+    const finalOrderMethod = type === 'own' ? 'direct_sale' : (data.orderMethod || defaultOrderMethod);
+    
     return {
         name: (data.name || '').trim(),
         email: (data.email || '').trim().toLowerCase(),
         phone: data.phone ? data.phone.trim() : '',
-        commissionRate: Number(data.commissionRate) || 0.15,
-        paymentMethod: 'centralized',
+        type: type,
+        isDefault: isDefault,
+        orderMethod: finalOrderMethod,
+        orderEmail: data.orderEmail ? data.orderEmail.trim().toLowerCase() : '',
+        orderEmailTemplate: data.orderEmailTemplate ? data.orderEmailTemplate.trim() : '',
+        commissionRate: finalCommissionRate,
+        paymentMethod: finalPaymentMethod,
+        bankAccount: (data.bankAccount && typeof data.bankAccount === 'object' && 
+                      (data.bankAccount.accountHolder || data.bankAccount.account || 
+                       data.bankAccount.agency || data.bankAccount.bank)) ? {
+            bank: (data.bankAccount.bank || '').trim(),
+            agency: (data.bankAccount.agency || '').trim(),
+            account: (data.bankAccount.account || '').trim(),
+            accountType: data.bankAccount.accountType || 'checking',
+            accountHolder: (data.bankAccount.accountHolder || '').trim(),
+            taxId: (data.bankAccount.taxId || '').trim(),
+            pixKey: data.bankAccount.pixKey ? (data.bankAccount.pixKey || '').trim() : null
+        } : null,
+        verified: data.verified !== undefined ? Boolean(data.verified) : false,
         active: data.active !== undefined ? Boolean(data.active) : true,
         createdAt: data.createdAt,
         updatedAt: data.updatedAt

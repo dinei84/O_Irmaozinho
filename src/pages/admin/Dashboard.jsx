@@ -5,7 +5,7 @@ import { db } from '../../lib/firebase';
 import { useAuth } from '../../contexts/AuthContext';
 import { logArticleAction, AUDIT_ACTIONS } from '../../services/auditService';
 import { motion } from 'framer-motion';
-import { Plus, Edit2, Trash2, LogOut, FileText, AlertCircle, Search, Package } from 'lucide-react';
+import { Plus, Edit2, Trash2, LogOut, FileText, AlertCircle, Search, Package, Truck } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import Card, { CardBody } from '../../components/ui/Card';
 
@@ -127,6 +127,14 @@ const Dashboard = () => {
                         >
                             <Package size={20} />
                             Produtos
+                        </Button>
+                        <Button
+                            to="/admin/suppliers"
+                            variant="secondary"
+                            className="flex items-center gap-2"
+                        >
+                            <Truck size={20} />
+                            Fornecedores
                         </Button>
                         <Button
                             onClick={handleLogout}

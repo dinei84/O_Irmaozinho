@@ -334,6 +334,9 @@ describe('validators', () => {
         const validSupplier = {
             name: 'Fornecedor Teste',
             email: 'fornecedor@example.com',
+            type: 'third_party',
+            orderMethod: 'email',
+            orderEmail: 'pedidos@example.com',
             commissionRate: 0.15,
             paymentMethod: 'centralized',
             active: true
@@ -395,11 +398,60 @@ describe('validators', () => {
             expect(validateSupplier({ ...validSupplier, commissionRate: 1 }).valid).toBe(true);
         });
 
-        it('deve rejeitar paymentMethod diferente de centralized', () => {
-            const supplier = { ...validSupplier, paymentMethod: 'direct' };
+        it('deve rejeitar tipo inválido', () => {
+            const supplier = { ...validSupplier, type: 'invalid' };
             const result = validateSupplier(supplier);
             expect(result.valid).toBe(false);
-            expect(result.errors).toContain('Método de pagamento deve ser "centralized" na Fase 1');
+            expect(result.errors).toContain('Tipo de fornecedor deve ser "own" (próprio) ou "third_party" (terceiro)');
+        });
+
+        it('deve rejeitar fornecedor próprio com comissão diferente de 0', () => {
+            const supplier = { ...validSupplier, type: 'own', commissionRate: 0.15 };
+            const result = validateSupplier(supplier);
+            expect(result.valid).toBe(false);
+            expect(result.errors).toContain('Fornecedor próprio deve ter comissão de 0%');
+        });
+
+        it('deve validar fornecedor próprio com comissão 0', () => {
+            const supplier = {
+                ...validSupplier,
+                type: 'own',
+                commissionRate: 0,
+                paymentMethod: 'none',
+                orderMethod: 'direct_sale',
+                orderEmail: ''
+            };
+            const result = validateSupplier(supplier);
+            expect(result.valid).toBe(true);
+        });
+
+        it('deve rejeitar método de pedido inválido', () => {
+            const supplier = { ...validSupplier, orderMethod: 'invalid' };
+            const result = validateSupplier(supplier);
+            expect(result.valid).toBe(false);
+            // Verificar se tem erro relacionado a método de pedido (mensagem completa contém mais texto)
+            expect(result.errors.some(err => err.includes('Método de pedido'))).toBe(true);
+        });
+
+        it('deve rejeitar orderMethod email sem orderEmail', () => {
+            const supplier = { ...validSupplier, orderMethod: 'email', orderEmail: '' };
+            const result = validateSupplier(supplier);
+            expect(result.valid).toBe(false);
+            expect(result.errors).toContain('Email para pedidos é obrigatório quando método é "email"');
+        });
+
+        it('deve rejeitar paymentMethod inválido', () => {
+            const supplier = { ...validSupplier, paymentMethod: 'invalid' };
+            const result = validateSupplier(supplier);
+            expect(result.valid).toBe(false);
+            expect(result.errors).toContain('Forma de pagamento deve ser "none", "centralized" ou "split"');
+        });
+
+        it('deve rejeitar fornecedor próprio com paymentMethod diferente de none', () => {
+            const supplier = { ...validSupplier, type: 'own', paymentMethod: 'centralized' };
+            const result = validateSupplier(supplier);
+            expect(result.valid).toBe(false);
+            expect(result.errors).toContain('Fornecedor próprio deve ter forma de pagamento "none"');
         });
 
         it('deve rejeitar active não booleano', () => {
@@ -424,11 +476,14 @@ describe('validators', () => {
     });
 
     describe('normalizeSupplier', () => {
-        it('deve normalizar dados de fornecedor', () => {
+        it('deve normalizar dados de fornecedor terceiro', () => {
             const data = {
                 name: '  Fornecedor  ',
                 email: '  FORNECEDOR@EXAMPLE.COM  ',
                 phone: '  11999999999  ',
+                type: 'third_party',
+                orderMethod: 'email',
+                orderEmail: '  PEDIDOS@EXAMPLE.COM  ',
                 commissionRate: '0.15',
                 paymentMethod: 'centralized',
                 active: true
@@ -437,6 +492,9 @@ describe('validators', () => {
             expect(result.name).toBe('Fornecedor');
             expect(result.email).toBe('fornecedor@example.com');
             expect(result.phone).toBe('11999999999');
+            expect(result.type).toBe('third_party');
+            expect(result.orderMethod).toBe('email');
+            expect(result.orderEmail).toBe('pedidos@example.com');
             expect(result.commissionRate).toBe(0.15);
             expect(result.paymentMethod).toBe('centralized');
             expect(result.active).toBe(true);
@@ -445,16 +503,35 @@ describe('validators', () => {
         it('deve usar valores padrão quando não informados', () => {
             const data = { name: 'Fornecedor', email: 'test@example.com' };
             const result = normalizeSupplier(data);
+            expect(result.type).toBe('third_party');
+            expect(result.isDefault).toBe(false);
+            expect(result.orderMethod).toBe('email');
             expect(result.phone).toBe('');
             expect(result.commissionRate).toBe(0.15);
             expect(result.paymentMethod).toBe('centralized');
             expect(result.active).toBe(true);
         });
 
+        it('deve normalizar fornecedor próprio corretamente', () => {
+            const data = {
+                name: 'O Irmaozinho',
+                email: 'contato@oirmaozinho.com',
+                type: 'own',
+                isDefault: true
+            };
+            const result = normalizeSupplier(data);
+            expect(result.type).toBe('own');
+            expect(result.isDefault).toBe(true);
+            expect(result.commissionRate).toBe(0);
+            expect(result.paymentMethod).toBe('none');
+            expect(result.orderMethod).toBe('direct_sale');
+        });
+
         it('deve converter email para lowercase', () => {
-            const data = { name: 'Fornecedor', email: 'TEST@EXAMPLE.COM' };
+            const data = { name: 'Fornecedor', email: 'TEST@EXAMPLE.COM', type: 'third_party', orderMethod: 'email', orderEmail: 'PEDIDOS@EXAMPLE.COM' };
             const result = normalizeSupplier(data);
             expect(result.email).toBe('test@example.com');
+            expect(result.orderEmail).toBe('pedidos@example.com');
         });
     });
 });

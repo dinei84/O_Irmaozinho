@@ -12,6 +12,8 @@ import Articles from './pages/Articles';
 import Chronicles from './pages/Chronicles';
 import Store from './pages/Store';
 import Checkout from './pages/Checkout';
+import Orders from './pages/Orders';
+import OrderDetail from './pages/OrderDetail';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import Dashboard from './pages/admin/Dashboard';
@@ -20,6 +22,8 @@ import ProductsManager from './pages/admin/ProductsManager';
 import ProductEditor from './pages/admin/ProductEditor';
 import SuppliersManager from './pages/admin/SuppliersManager';
 import SupplierEditor from './pages/admin/SupplierEditor';
+import OrdersManager from './pages/admin/OrdersManager';
+import OrderDetailAdmin from './pages/admin/OrderDetailAdmin';
 import ArticleDetail from './pages/ArticleDetail';
 
 function App() {
@@ -38,6 +42,8 @@ function App() {
                                 <Route path="/cronica/:id" element={<ArticleDetail />} />
                                 <Route path="/store" element={<Store />} />
                                 <Route path="/checkout" element={<Checkout />} />
+                                <Route path="/orders" element={<Orders />} />
+                                <Route path="/orders/:orderId" element={<OrderDetail />} />
                                 <Route path="/sobre" element={<About />} />
                                 <Route path="/login" element={<Login />} />
                                 <Route path="/signup" element={<SignUp />} />
@@ -110,6 +116,22 @@ function App() {
                                     element={
                                         <ProtectedRoute requireAdmin={true}>
                                             <SupplierEditor />
+                                        </ProtectedRoute>
+                                    }
+                                />
+                                <Route
+                                    path="/admin/orders"
+                                    element={
+                                        <ProtectedRoute requireAdmin={true}>
+                                            <OrdersManager />
+                                        </ProtectedRoute>
+                                    }
+                                />
+                                <Route
+                                    path="/admin/orders/:orderId"
+                                    element={
+                                        <ProtectedRoute requireAdmin={true}>
+                                            <OrderDetailAdmin />
                                         </ProtectedRoute>
                                     }
                                 />
