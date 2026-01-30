@@ -169,11 +169,11 @@ const ArticleDetail = () => {
 
                     {/* Featured Image */}
                     {article.imageUrl && (
-                        <div className="mb-8 rounded-2xl overflow-hidden shadow-xl">
+                        <div className="mb-8 rounded-2xl overflow-hidden shadow-xl bg-gray-100 flex justify-center">
                             <img
                                 src={article.imageUrl}
                                 alt={article.title}
-                                className="w-full h-auto object-cover"
+                                className="w-full max-h-[60vh] object-contain"
                                 onError={(e) => { e.target.style.display = 'none' }}
                             />
                         </div>

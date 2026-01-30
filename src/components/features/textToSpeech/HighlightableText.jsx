@@ -53,10 +53,10 @@ const HighlightableText = ({ text, children, className = '' }) => {
             paragraphs.forEach((para, index) => {
                 if (index > 0) {
                     accumulatedTime += calculateParagraphDuration(paragraphs[index - 1]);
-                    
+
                     const timeout = setTimeout(() => {
                         setCurrentParagraphIndex(index);
-                        
+
                         // Scroll automático para manter parágrafo visível
                         const paraElement = paragraphRefs.current[index] || containerRef.current;
                         if (paraElement) {
@@ -66,7 +66,7 @@ const HighlightableText = ({ text, children, className = '' }) => {
                             });
                         }
                     }, accumulatedTime);
-                    
+
                     timeoutsRef.current.push(timeout);
                 }
             });
@@ -87,11 +87,10 @@ const HighlightableText = ({ text, children, className = '' }) => {
         return (
             <div
                 ref={containerRef}
-                className={`${className} ${
-                    isPlaying
+                className={`${className} ${isPlaying
                         ? 'bg-yellow-50 dark:bg-yellow-900/20 px-3 py-2 rounded-md transition-all duration-500'
                         : ''
-                }`}
+                    }`}
             >
                 {children}
             </div>
@@ -103,24 +102,19 @@ const HighlightableText = ({ text, children, className = '' }) => {
         <div ref={containerRef} className={className}>
             {paragraphs.map((paragraph, index) => {
                 const isHighlighted = currentParagraphIndex === index && isPlaying;
-                
+
                 return (
                     <p
                         key={index}
                         ref={(el) => {
                             paragraphRefs.current[index] = el;
                         }}
-                        className={`mb-4 last:mb-0 transition-all duration-500 ${
-                            isHighlighted
+                        className={`mb-4 last:mb-0 transition-all duration-500 ${isHighlighted
                                 ? 'bg-yellow-50 dark:bg-yellow-900/20 px-4 py-3 rounded-md shadow-sm border-l-4 border-primary'
                                 : ''
-                        }`}
-                        style={{
-                            whiteSpace: 'pre-wrap',
-                        }}
-                    >
-                        {paragraph.trim()}
-                    </p>
+                            }`}
+                        dangerouslySetInnerHTML={{ __html: paragraph.trim() }}
+                    />
                 );
             })}
         </div>

@@ -35,7 +35,11 @@ const TextToSpeechPlayer = ({ text, title, className = '' }) => {
         } else {
             completeText = text;
         }
-        setFullText(completeText);
+
+        // Remove HTML tags for speech
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = completeText;
+        setFullText(tempDiv.textContent || tempDiv.innerText || '');
     }, [text, title]);
 
     const handlePlay = () => {
@@ -199,9 +203,8 @@ const TextToSpeechPlayer = ({ text, title, className = '' }) => {
                                 <div className="pt-2 border-t border-gray-200">
                                     <div className="flex items-center gap-2 text-sm text-text-secondary">
                                         <div
-                                            className={`w-2 h-2 rounded-full ${
-                                                isPlaying ? 'bg-green-500 animate-pulse' : 'bg-yellow-500'
-                                            }`}
+                                            className={`w-2 h-2 rounded-full ${isPlaying ? 'bg-green-500 animate-pulse' : 'bg-yellow-500'
+                                                }`}
                                         />
                                         <span>
                                             {isPlaying ? 'Reproduzindo...' : 'Pausado'}

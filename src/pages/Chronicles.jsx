@@ -6,6 +6,7 @@ import Card, { CardBody } from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import LikeButton from '../components/features/likes/LikeButton';
 import { ArrowRight, Star } from 'lucide-react';
+import { stripHtml } from '../lib/stringUtils';
 
 const Chronicles = () => {
     const [chronicles, setChronicles] = useState([]);
@@ -98,7 +99,7 @@ const Chronicles = () => {
                                     {featuredChronicle.title}
                                 </h3>
                                 <p className="text-text-secondary mb-6 leading-relaxed line-clamp-4">
-                                    {featuredChronicle.body}
+                                    {stripHtml(featuredChronicle.body)}
                                 </p>
                                 <div className="flex items-center justify-between gap-4">
                                     <Button to={`/cronica/${featuredChronicle.id}`} variant="secondary" className="self-start">
@@ -145,7 +146,7 @@ const Chronicles = () => {
                                                 {chronicle.title}
                                             </h3>
                                             <p className="text-text-secondary text-sm line-clamp-3">
-                                                {chronicle.body}
+                                                {stripHtml(chronicle.body)}
                                             </p>
                                         </CardBody>
                                         <div className="p-6 pt-0 mt-auto flex items-center justify-between gap-4">

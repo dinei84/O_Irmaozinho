@@ -6,6 +6,7 @@ import { ArrowRight, Star, Sparkles } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Card, { CardBody } from '../components/ui/Card';
 import LikeButton from '../components/features/likes/LikeButton';
+import { stripHtml } from '../lib/stringUtils';
 
 const Home = () => {
     const [featuredArticle, setFeaturedArticle] = useState(null);
@@ -183,7 +184,7 @@ const Home = () => {
                                         {featuredArticle.title}
                                     </h3>
                                     <p className="text-text-secondary text-lg mb-8 leading-relaxed line-clamp-4">
-                                        {featuredArticle.body}
+                                        {stripHtml(featuredArticle.body)}
                                     </p>
                                     <div className="flex items-center justify-between gap-4">
                                         <Button
@@ -244,7 +245,7 @@ const Home = () => {
                                         {article.title}
                                     </h3>
                                     <p className="text-text-secondary text-sm line-clamp-3">
-                                        {article.body}
+                                        {stripHtml(article.body)}
                                     </p>
                                 </CardBody>
                                 <div className="p-6 pt-0 mt-auto flex items-center justify-between gap-4">

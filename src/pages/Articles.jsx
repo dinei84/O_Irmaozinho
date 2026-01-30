@@ -6,6 +6,7 @@ import Card, { CardBody } from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import LikeButton from '../components/features/likes/LikeButton';
 import { ArrowRight, Star } from 'lucide-react';
+import { stripHtml } from '../lib/stringUtils';
 
 const Articles = () => {
     const [articles, setArticles] = useState([]);
@@ -98,7 +99,7 @@ const Articles = () => {
                                     {featuredArticle.title}
                                 </h3>
                                 <p className="text-text-secondary mb-6 leading-relaxed line-clamp-4">
-                                    {featuredArticle.body}
+                                    {stripHtml(featuredArticle.body)}
                                 </p>
                                 <div className="flex items-center justify-between gap-4">
                                     <Button to={`/artigo/${featuredArticle.id}`} variant="secondary" className="self-start">
@@ -145,7 +146,7 @@ const Articles = () => {
                                                 {article.title}
                                             </h3>
                                             <p className="text-text-secondary text-sm line-clamp-3">
-                                                {article.body}
+                                                {stripHtml(article.body)}
                                             </p>
                                         </CardBody>
                                         <div className="p-6 pt-0 mt-auto flex items-center justify-between gap-4">

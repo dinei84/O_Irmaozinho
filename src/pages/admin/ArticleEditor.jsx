@@ -90,6 +90,10 @@ const ArticleEditor = () => {
      * Handler para eventos de colar no editor
      * Preserva formatação HTML (negrito, itálico) mas sanitiza conteúdo perigoso
      */
+    /**
+     * Handler para eventos de colar no editor
+     * Preserva formatação HTML básica mas remove comentários e atributos inseguros
+     */
     function handleEditorPaste(e) {
         e.preventDefault();
 
@@ -97,38 +101,50 @@ const ArticleEditor = () => {
         let htmlData = pastedData.getData('text/html');
         const plainText = pastedData.getData('text/plain');
 
-        // Se tiver HTML, usa ele (preserva formatação)
-        // Se não, usa texto plano
         if (htmlData) {
             // Cria elemento temporário para sanitizar HTML
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = htmlData;
 
-            // Remove scripts e elementos perigosos, mas preserva formatação básica
-            const scripts = tempDiv.querySelectorAll('script, iframe, style');
-            scripts.forEach(el => el.remove());
+            // 1. Remove comentários (como <!--StartFragment-->)
+            const removeComments = (node) => {
+                const children = Array.from(node.childNodes);
+                children.forEach(child => {
+                    if (child.nodeType === 8) { // Node.COMMENT_NODE
+                        child.remove();
+                    } else if (child.nodeType === 1) { // Node.ELEMENT_NODE
+                        removeComments(child);
+                    }
+                });
+            };
+            removeComments(tempDiv);
 
-            // Remove atributos de evento
+            // 2. Remove tags perigosas ou indesejadas
+            const tagsToRemove = ['script', 'iframe', 'style', 'meta', 'link'];
+            tagsToRemove.forEach(tag => {
+                tempDiv.querySelectorAll(tag).forEach(el => el.remove());
+            });
+
+            // 3. Limpa atributos de TODOS os elementos
+            const allowedAttributes = ['href', 'src', 'alt', 'title', 'target'];
             const allElements = tempDiv.querySelectorAll('*');
             allElements.forEach(el => {
-                Array.from(el.attributes).forEach(attr => {
-                    if (attr.name.startsWith('on')) {
+                const attributes = Array.from(el.attributes);
+                attributes.forEach(attr => {
+                    if (!allowedAttributes.includes(attr.name)) {
                         el.removeAttribute(attr.name);
                     }
                 });
             });
 
             htmlData = tempDiv.innerHTML;
-
-            // Insere HTML no editor
             document.execCommand('insertHTML', false, htmlData);
         } else if (plainText) {
-            // Se não tiver HTML, insere como texto plano (preserva quebras de linha)
+            // Se não tiver HTML, insere como texto plano
             const formattedText = plainText.replace(/\r\n/g, '<br>').replace(/\n/g, '<br>').replace(/\r/g, '<br>');
             document.execCommand('insertHTML', false, formattedText);
         }
 
-        // Atualiza estado após colar
         setTimeout(handleEditorChange, 0);
     }
 
