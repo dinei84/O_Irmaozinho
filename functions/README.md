@@ -14,14 +14,14 @@ npm install
 **Opção A: Via Firebase Functions Config (Recomendado)**
 
 ```bash
-firebase functions:config:set mercadopago.access_token="APP_USR-6100227058561724-112512-f41f80b6d106f4b806b344bc2aef4316-3015030772"
+firebase functions:config:set mercadopago.access_token="YOUR_ACCESS_TOKEN"
 ```
 
 **Opção B: Via variáveis de ambiente**
 
 Criar arquivo `.env.local`:
 ```
-MERCADOPAGO_ACCESS_TOKEN=APP_USR-6100227058561724-112512-f41f80b6d106f4b806b344bc2aef4316-3015030772
+MERCADOPAGO_ACCESS_TOKEN=YOUR_ACCESS_TOKEN
 ```
 
 ### 3. Deploy das Functions

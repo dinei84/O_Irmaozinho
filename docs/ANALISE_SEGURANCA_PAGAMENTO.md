@@ -223,7 +223,7 @@ firebase deploy --only firestore:rules
 
 ### **2. Fallback Token no Código**
 ```javascript
-|| 'APP_USR-4455998573983950-112511-dad71f8e74f1bfcb357c85cbd1b96aa5-15105017'
+|| 'YOUR_ACCESS_TOKEN'
 ```
 - ⚠️ Token hardcoded como fallback
 - ✅ Só é usado se Secret não estiver configurado

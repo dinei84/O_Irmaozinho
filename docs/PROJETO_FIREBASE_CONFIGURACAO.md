@@ -136,7 +136,7 @@ Se as functions não estiverem deployadas no projeto `oirmaozinho`:
    
    Criar arquivo `functions/.env`:
    ```env
-   MERCADOPAGO_ACCESS_TOKEN=APP_USR-6100227058561724-112512-f41f80b6d106f4b806b344bc2aef4316-3015030772
+   MERCADOPAGO_ACCESS_TOKEN=YOUR_ACCESS_TOKEN
    ```
 
    Ou configurar via Firebase Console:

@@ -33,12 +33,12 @@ Para habilitar **PIX, Boleto e Cartão de Crédito**, você precisa configurar:
 
 1. **Public Key:**
    - Já está visível
-   - Copie o valor completo (ex: `APP_USR-479d2b30-7b32-44a0-b8f3-b2b52ae31c87`)
+   - Copie o valor completo (ex: `YOUR_PUBLIC_KEY`)
 
 2. **Access Token:**
    - Clique no **ícone de olho** 👁️ para revelar
    - Clique no **ícone de copiar** 📋
-   - Salve em local seguro (ex: `APP_USR-4455998573983950-112511-dad71f8e74f1bfcb357c85cbd1b96aa5-15105017`)
+   - Salve em local seguro (ex: `YOUR_ACCESS_TOKEN`)
 
 ---
 
@@ -75,10 +75,10 @@ Se algum método não estiver disponível, entre em contato com o suporte do Mer
 Crie o arquivo `.env` na raiz do projeto (mesmo nível do `package.json`):
 
 ```env
-VITE_MERCADOPAGO_PUBLIC_KEY=APP_USR-479d2b30-7b32-44a0-b8f3-b2b52ae31c87
+VITE_MERCADOPAGO_PUBLIC_KEY=YOUR_PUBLIC_KEY
 ```
 
-⚠️ **Substitua** `APP_USR-479d2b30-7b32-44a0-b8f3-b2b52ae31c87` pela sua Public Key real.
+⚠️ **Substitua** `YOUR_PUBLIC_KEY` pela sua Public Key real.
 
 ### **3.2 Adicionar ao `.gitignore`**
 
@@ -120,7 +120,7 @@ firebase functions:secrets:set MERCADOPAGO_ACCESS_TOKEN
 
 Quando solicitado, cole o Access Token de produção:
 ```
-APP_USR-4455998573983950-112511-dad71f8e74f1bfcb357c85cbd1b96aa5-15105017
+YOUR_ACCESS_TOKEN
 ```
 
 ⚠️ **Substitua** pelo seu Access Token real.
@@ -164,12 +164,12 @@ firebase deploy --only functions
 
 ### **Frontend (`.env`):**
 ```env
-VITE_MERCADOPAGO_PUBLIC_KEY=APP_USR-479d2b30-7b32-44a0-b8f3-b2b52ae31c87
+VITE_MERCADOPAGO_PUBLIC_KEY=YOUR_PUBLIC_KEY
 ```
 
 ### **Backend (Firebase Secrets):**
 ```bash
-MERCADOPAGO_ACCESS_TOKEN=APP_USR-4455998573983950-112511-dad71f8e74f1bfcb357c85cbd1b96aa5-15105017
+MERCADOPAGO_ACCESS_TOKEN=YOUR_ACCESS_TOKEN
 ```
 
 ---

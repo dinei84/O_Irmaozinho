@@ -4,7 +4,7 @@
 
 ### **Teste 1: Verificar se Access Token está no Frontend** ✅
 ```bash
-grep -r "APP_USR-4455998573983950-112511-dad71f8e74f1bfcb357c85cbd1b96aa5-15105017" src/
+grep -r "YOUR_ACCESS_TOKEN" src/
 grep -r "MERCADOPAGO_ACCESS_TOKEN" src/
 ```
 

@@ -2,8 +2,8 @@
 
 ## 📋 Credenciais Fornecidas
 
-- **Public Key:** `APP_USR-479d2b30-7b32-44a0-b8f3-b2b52ae31c87`
-- **Access Token:** `APP_USR-4455998573983950-112511-dad71f8e74f1bfcb357c85cbd1b96aa5-15105017`
+- **Public Key:** `YOUR_PUBLIC_KEY`
+- **Access Token:** `YOUR_ACCESS_TOKEN`
 - **Client ID:** `4455998573983950`
 - **Client Secret:** `j1pm4cnDJvbzA8kY5jBnwQ7mgrU2Z6Yi`
 
@@ -17,7 +17,7 @@ firebase functions:secrets:set MERCADOPAGO_ACCESS_TOKEN
 
 Quando solicitado, cole o Access Token:
 ```
-APP_USR-4455998573983950-112511-dad71f8e74f1bfcb357c85cbd1b96aa5-15105017
+YOUR_ACCESS_TOKEN
 ```
 
 ### **Atualizar o código para usar Secrets:**
@@ -29,7 +29,7 @@ Em `functions/index.js`, você precisa atualizar para usar secrets. Mas por enqu
 ### **Configurar Access Token:**
 
 ```bash
-firebase functions:config:set mercadopago.access_token="APP_USR-4455998573983950-112511-dad71f8e74f1bfcb357c85cbd1b96aa5-15105017"
+firebase functions:config:set mercadopago.access_token="YOUR_ACCESS_TOKEN"
 ```
 
 ⚠️ **Nota:** Este método está deprecado, mas ainda funciona e é mais simples.
@@ -39,7 +39,7 @@ firebase functions:config:set mercadopago.access_token="APP_USR-4455998573983950
 Criar arquivo `functions/.env`:
 
 ```env
-MERCADOPAGO_ACCESS_TOKEN=APP_USR-4455998573983950-112511-dad71f8e74f1bfcb357c85cbd1b96aa5-15105017
+MERCADOPAGO_ACCESS_TOKEN=YOUR_ACCESS_TOKEN
 ```
 
 Mas isso só funciona localmente, não em produção.

@@ -31,10 +31,10 @@
 
 As credenciais já foram adicionadas ao `.env`:
 ```bash
-VITE_MERCADOPAGO_PUBLIC_KEY=APP_USR-a23d81b3-3e57-4ed5-983e-7152db3da54b
+VITE_MERCADOPAGO_PUBLIC_KEY=YOUR_PUBLIC_KEY
 ```
 
-**IMPORTANTE**: O Access Token (`APP_USR-6100227058561724-112512-f41f80b6d106f4b806b344bc2aef4316-3015030772`) deve ser configurado apenas nas Cloud Functions (não no frontend).
+**IMPORTANTE**: O Access Token (`YOUR_ACCESS_TOKEN`) deve ser configurado apenas nas Cloud Functions (não no frontend).
 
 ### **2. Instalar Dependências das Cloud Functions**
 
@@ -62,7 +62,7 @@ Para começar rapidamente, o token já está configurado diretamente no código 
 1. Acesse: https://console.firebase.google.com/project/admoirmaozinho/functions/config
 2. Clique em **"Adicionar variável"**
 3. Nome: `MERCADOPAGO_ACCESS_TOKEN`
-4. Valor: `APP_USR-6100227058561724-112512-f41f80b6d106f4b806b344bc2aef4316-3015030772`
+4. Valor: `YOUR_ACCESS_TOKEN`
 5. Salve
 
 **Opção C: Via arquivo .env (para desenvolvimento local)**

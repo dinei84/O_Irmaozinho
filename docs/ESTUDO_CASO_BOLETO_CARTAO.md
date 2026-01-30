@@ -418,7 +418,7 @@ A implementação de **boleto** e **cartão de crédito** foi feita conforme est
 
 - No `.env` do projeto (raiz), adicione:
   ```bash
-  VITE_MERCADOPAGO_PUBLIC_KEY=APP_USR-xxx  # Chave pública do Mercado Pago (painel Developers)
+  VITE_MERCADOPAGO_PUBLIC_KEY=YOUR_PUBLIC_KEY  # Chave pública do Mercado Pago (painel Developers)
   ```
 - Sem essa variável, o pagamento por cartão aparece como “indisponível” no checkout.
 
