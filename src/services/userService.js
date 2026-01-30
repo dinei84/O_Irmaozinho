@@ -4,7 +4,7 @@ import { db } from '../lib/firebase';
 export async function createUserProfile(userId, userData) {
     try {
         const userRef = doc(db, 'users', userId);
-        
+
         await setDoc(userRef, {
             ...userData,
             role: 'user',
@@ -21,10 +21,10 @@ export async function createUserProfile(userId, userData) {
 export async function updateLastLogin(userId) {
     try {
         const userRef = doc(db, 'users', userId);
-        await updateDoc(userRef, {
+        await setDoc(userRef, {
             lastLoginAt: serverTimestamp(),
             updatedAt: serverTimestamp()
-        });
+        }, { merge: true });
     } catch (error) {
         console.warn('Erro ao atualizar último login:', error);
     }

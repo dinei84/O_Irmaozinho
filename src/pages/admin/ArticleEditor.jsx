@@ -171,29 +171,15 @@ const ArticleEditor = () => {
 
         try {
             setLoading(true);
-
-            // Debug: Verificar se usuário é admin
-            console.log('Current user:', currentUser);
-            console.log('User role from context:', userRole);
-            console.log('Is admin:', isAdmin);
-
             const articleData = {
                 ...normalized,
                 updatedAt: serverTimestamp()
             };
-
-            // Debug: Verificar dados sendo enviados
-            console.log('Article data to save:', {
-                ...normalized,
-                updatedAt: 'serverTimestamp()'
-            });
-            console.log('Is edit mode:', isEditMode);
-
             if (isEditMode) {
                 // Update existing article
                 const docRef = doc(db, 'content', id);
                 await updateDoc(docRef, articleData);
-                
+
                 // Log de auditoria
                 if (currentUser) {
                     await logArticleAction(
@@ -203,7 +189,7 @@ const ArticleEditor = () => {
                         { title: normalized.title }
                     );
                 }
-                
+
                 setSuccess('Artigo atualizado com sucesso!');
             } else {
                 // Create new article
@@ -211,7 +197,7 @@ const ArticleEditor = () => {
                     ...articleData,
                     createdAt: serverTimestamp()
                 });
-                
+
                 // Log de auditoria
                 if (currentUser) {
                     await logArticleAction(
@@ -221,7 +207,7 @@ const ArticleEditor = () => {
                         { title: normalized.title }
                     );
                 }
-                
+
                 setSuccess('Artigo criado com sucesso!');
             }
 
@@ -230,7 +216,7 @@ const ArticleEditor = () => {
             }, 1500);
         } catch (err) {
             console.error('Error saving article:', err);
-            
+
             // Mensagens de erro mais específicas
             if (err.code === 'permission-denied') {
                 setError('Você não tem permissão para realizar esta ação.');
@@ -383,7 +369,7 @@ const ArticleEditor = () => {
                                 <label htmlFor="body" className="block text-sm font-semibold text-secondary mb-2">
                                     Conteúdo *
                                 </label>
-                                
+
                                 {/* Toolbar de formatação */}
                                 <div className="flex items-center gap-2 p-2 border border-gray-300 border-b-0 rounded-t-xl bg-gray-50">
                                     <button
@@ -415,7 +401,7 @@ const ArticleEditor = () => {
                                     </button>
                                     <div className="flex-1"></div>
                                     <span className="text-xs text-gray-500">
-                                        Atalhos: <kbd className="px-1 py-0.5 bg-white border rounded">Ctrl+B</kbd> Negrito | 
+                                        Atalhos: <kbd className="px-1 py-0.5 bg-white border rounded">Ctrl+B</kbd> Negrito |
                                         <kbd className="px-1 py-0.5 bg-white border rounded ml-1">Ctrl+I</kbd> Itálico
                                     </span>
                                 </div>
@@ -436,7 +422,7 @@ const ArticleEditor = () => {
                                     data-placeholder="Digite o conteúdo do artigo..."
                                     suppressContentEditableWarning={true}
                                 />
-                                
+
                                 {/* Estilo para placeholder */}
                                 <style>{`
                                     [contenteditable][data-placeholder]:empty:before {

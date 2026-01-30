@@ -69,7 +69,7 @@ const ArticleDetail = () => {
                 title: article.title,
                 text: article.body?.substring(0, 100) + '...',
                 url: window.location.href
-            }).catch(err => console.log('Error sharing:', err));
+            }).catch(err => console.error('Error sharing:', err));
         } else {
             // Fallback: copy to clipboard
             navigator.clipboard.writeText(window.location.href);
@@ -182,8 +182,8 @@ const ArticleDetail = () => {
                     {/* Article Content */}
                     <div className="prose prose-lg max-w-none mb-12 relative">
                         <TextSelectionControls />
-                        <HighlightableText 
-                            text={article.body} 
+                        <HighlightableText
+                            text={article.body}
                             className="text-text-primary leading-relaxed text-lg"
                         />
                     </div>

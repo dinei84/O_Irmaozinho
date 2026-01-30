@@ -60,12 +60,17 @@ export function validateArticle(data) {
 }
 
 export function normalizeArticle(data) {
-    return {
+    const normalized = {
         title: (data.title || '').trim(),
         body: (data.body || '').trim(),
-        category: data.category || 'Artigos',
-        imageUrl: data.imageUrl ? data.imageUrl.trim() : ''
+        category: data.category || 'Artigos'
     };
+
+    if (data.imageUrl && data.imageUrl.trim()) {
+        normalized.imageUrl = data.imageUrl.trim();
+    }
+
+    return normalized;
 }
 
 export function validateProduct(data) {
@@ -122,12 +127,11 @@ export function validateProduct(data) {
 }
 
 export function normalizeProduct(data) {
-    return {
+    const normalized = {
         name: (data.name || '').trim(),
         description: (data.description || '').trim() || '',
         price: Number(data.price) || 0,
         stock: Number.isInteger(Number(data.stock)) ? Number(data.stock) : 0,
-        imageUrl: data.imageUrl ? data.imageUrl.trim() : '',
         category: data.category ? data.category.trim() : '',
         supplierId: data.supplierId ? data.supplierId.trim() : '',
         supplierName: data.supplierName ? data.supplierName.trim() : '',
@@ -135,6 +139,12 @@ export function normalizeProduct(data) {
         createdAt: data.createdAt,
         updatedAt: data.updatedAt
     };
+
+    if (data.imageUrl && data.imageUrl.trim()) {
+        normalized.imageUrl = data.imageUrl.trim();
+    }
+
+    return normalized;
 }
 
 export function validateSupplier(data) {
