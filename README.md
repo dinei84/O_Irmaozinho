@@ -157,21 +157,34 @@ O projeto espera as seguintes coleções:
 firestore/
 ├── content/          # Artigos e crônicas
 ├── products/         # Produtos da loja
-├── orders/           # Pedidos (futuro)
-├── audit_logs/       # Logs de auditoria
-├── admins/           # Lista de admins (opcional)
-└── users/            # Perfis de usuários (opcional)
+├── suppliers/        # Fornecedores (marketplace)
+├── orders/           # Pedidos
+├── comments/         # Comentários dos artigos
+├── likes/            # Curtidas (id: contentId_userId)
+├── users/            # Perfis de usuários
+├── audit_logs/       # Logs de auditoria (imutáveis)
+└── admins/           # Lista de admins
 ```
 
 ## 📁 Estrutura do Projeto
 
 ```
 O_Irmaozinho/
-├── 📚 docs/                    # Documentação completa
-│   ├── SETUP.md               # Guia de setup
-│   ├── TESTING_GUIDE.md       # Guia de testes
-│   ├── TROUBLESHOOTING.md     # Solução de problemas
-│   └── ...                    # Outros documentos
+├── 📐 PROJECT_SPEC.md          # Fonte de verdade do design (aprovado)
+├── 🗺️ PLANO_DE_ACAO.md         # Plano de profissionalização (6 fases)
+│
+├── 📚 docs/                    # Documentação técnica (ver docs/README.md)
+│   ├── seguranca/             # ⚠️ Auditoria de segurança — comece por aqui
+│   ├── setup/                 # Configuração de ambiente e serviços
+│   ├── arquitetura/           # Decisões e análises técnicas
+│   ├── guias/                 # Testes e troubleshooting
+│   └── historico/             # Registro de implementações concluídas
+│
+├── 🗑️ garbage/                 # Docs obsoletos, aguardando exclusão
+│
+├── ⚡ functions/                # Cloud Functions (pagamento, webhook)
+│   ├── gateways/              # Gateways plugáveis (Mercado Pago)
+│   └── config/
 │
 ├── 🛠️ scripts/                 # Scripts utilitários
 │   ├── setAdminRole.js        # Script para configurar admin
@@ -211,28 +224,31 @@ Para mais detalhes sobre a estrutura, veja a [documentação completa](./docs/RE
 
 ## 🔒 Segurança
 
-### Regras do Firestore
+> ⚠️ **Atenção — leia antes de subir qualquer coisa para produção.**
+>
+> A auditoria de 13/07/2026 encontrou **14 vulnerabilidades, sendo 4 críticas** exploráveis por qualquer usuário com conta comum: compra por R$ 0,01 (dois caminhos independentes), escrita em pedidos de terceiros e XSS armazenado com escalada para admin.
+>
+> - **O diagnóstico**: [`docs/seguranca/AUDITORIA_SEGURANCA.md`](./docs/seguranca/AUDITORIA_SEGURANCA.md) — leia antes de mexer em pagamento, Firestore Rules ou renderização de conteúdo.
+> - **A correção, passo a passo**: [`docs/seguranca/PLANO_REMEDIACAO.md`](./docs/seguranca/PLANO_REMEDIACAO.md) — 19 passos, com código e verificação.
+> - **O plano geral do projeto**: [`PLANO_DE_ACAO.md`](./PLANO_DE_ACAO.md) — 6 fases, da segurança ao redesign.
 
-As regras implementadas garantem:
+### Modelo de autorização
 
-- ✅ Apenas admins podem criar/editar/deletar conteúdo
-- ✅ Qualquer pessoa pode ler conteúdo público
-- ✅ Validação de estrutura de dados
-- ✅ Limites de tamanho de campos
-- ✅ Logs de auditoria protegidos
+A autorização vive nas **Firestore Rules** (`firestore.rules`) e nas **Cloud Functions**. As Rules são o perímetro de segurança da aplicação — e hoje **não têm nenhum teste automatizado**, o que foi a causa de várias das falhas encontradas. Criar testes com `@firebase/rules-unit-testing` é prioridade (Bloco 3 do plano).
 
 ### Roles
 
-O sistema suporta dois tipos de usuários:
+- **Admin**: acesso ao painel administrativo. Definido via custom claim `role: 'admin'` no token (ver [`docs/setup/COMO_TORNAR_ADMIN.md`](./docs/setup/COMO_TORNAR_ADMIN.md)).
+- **User**: usuário comum (padrão).
 
-- **Admin**: Acesso completo ao painel administrativo
-- **User**: Usuário comum (padrão)
+### Validação de dados
 
-### Validação de Dados
+- **Cliente**: para experiência de uso (mensagens de erro imediatas). **Nunca** é garantia de segurança.
+- **Servidor**: Firestore Rules + Cloud Functions. É a única validação que conta — todo valor que vem do cliente (preço, total, identidade) precisa ser reconferido aqui.
 
-Todas as operações são validadas:
-- **Client-side**: Para melhor UX
-- **Server-side**: Via Firestore Rules (última linha de defesa)
+### Segredos
+
+Credenciais **nunca** entram no código, na documentação ou no git. Use variáveis de ambiente (`.env`, fora do versionamento) e *secrets* do Cloud Functions (`firebase functions:secrets:set`).
 
 ## 🧪 Testes
 
