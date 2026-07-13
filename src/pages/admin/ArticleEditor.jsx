@@ -4,6 +4,7 @@ import { doc, getDoc, addDoc, updateDoc, collection, serverTimestamp } from 'fir
 import { db } from '../../lib/firebase';
 import { useAuth } from '../../contexts/AuthContext';
 import { validateArticle, normalizeArticle } from '../../lib/validators';
+import { sanitizeArticleHtml, stripHtml } from '../../lib/sanitize';
 import { logArticleAction, AUDIT_ACTIONS } from '../../services/auditService';
 import { motion } from 'framer-motion';
 import { Save, ArrowLeft, AlertCircle, Image as ImageIcon, Bold, Italic, Underline } from 'lucide-react';
@@ -37,9 +38,12 @@ const ArticleEditor = () => {
     // Atualizar conteúdo do editor quando formData.body mudar (ao carregar artigo)
     useEffect(() => {
         if (editorRef.current && formData.body !== undefined) {
+            // Sanitiza antes de injetar: um artigo salvo antes desta correção pode
+            // conter HTML malicioso, e o editor é aberto pelo admin (V-04).
+            const safeBody = sanitizeArticleHtml(formData.body);
             // Só atualiza se o conteúdo for diferente (evita loop)
-            if (editorRef.current.innerHTML !== formData.body) {
-                editorRef.current.innerHTML = formData.body;
+            if (editorRef.current.innerHTML !== safeBody) {
+                editorRef.current.innerHTML = safeBody;
             }
         }
     }, [formData.body]);
@@ -76,7 +80,9 @@ const ArticleEditor = () => {
      */
     function handleEditorChange() {
         if (editorRef.current) {
-            const htmlContent = editorRef.current.innerHTML;
+            // Sanitiza na escrita também (defesa em profundidade): o que for salvo no
+            // Firestore já sai limpo, além de ser sanitizado de novo na leitura.
+            const htmlContent = sanitizeArticleHtml(editorRef.current.innerHTML);
             // Ensure we're not storing just whitespace or empty tags
             const cleanContent = htmlContent.replace(/<[^>]*>/g, '').trim() === '' ? '' : htmlContent;
             setFormData(prev => ({
@@ -87,61 +93,26 @@ const ArticleEditor = () => {
     }
 
     /**
-     * Handler para eventos de colar no editor
-     * Preserva formatação HTML (negrito, itálico) mas sanitiza conteúdo perigoso
-     */
-    /**
-     * Handler para eventos de colar no editor
-     * Preserva formatação HTML básica mas remove comentários e atributos inseguros
+     * Handler para eventos de colar no editor.
+     * Preserva a formatação básica (negrito, itálico, listas) e descarta tudo que
+     * for executável — a sanitização é delegada ao DOMPurify (lib/sanitize.js).
      */
     function handleEditorPaste(e) {
         e.preventDefault();
 
         const pastedData = e.clipboardData || window.clipboardData;
-        let htmlData = pastedData.getData('text/html');
+        const htmlData = pastedData.getData('text/html');
         const plainText = pastedData.getData('text/plain');
 
         if (htmlData) {
-            // Cria elemento temporário para sanitizar HTML
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = htmlData;
-
-            // 1. Remove comentários (como <!--StartFragment-->)
-            const removeComments = (node) => {
-                const children = Array.from(node.childNodes);
-                children.forEach(child => {
-                    if (child.nodeType === 8) { // Node.COMMENT_NODE
-                        child.remove();
-                    } else if (child.nodeType === 1) { // Node.ELEMENT_NODE
-                        removeComments(child);
-                    }
-                });
-            };
-            removeComments(tempDiv);
-
-            // 2. Remove tags perigosas ou indesejadas
-            const tagsToRemove = ['script', 'iframe', 'style', 'meta', 'link'];
-            tagsToRemove.forEach(tag => {
-                tempDiv.querySelectorAll(tag).forEach(el => el.remove());
-            });
-
-            // 3. Limpa atributos de TODOS os elementos
-            const allowedAttributes = ['href', 'src', 'alt', 'title', 'target'];
-            const allElements = tempDiv.querySelectorAll('*');
-            allElements.forEach(el => {
-                const attributes = Array.from(el.attributes);
-                attributes.forEach(attr => {
-                    if (!allowedAttributes.includes(attr.name)) {
-                        el.removeAttribute(attr.name);
-                    }
-                });
-            });
-
-            htmlData = tempDiv.innerHTML;
-            document.execCommand('insertHTML', false, htmlData);
+            document.execCommand('insertHTML', false, sanitizeArticleHtml(htmlData));
         } else if (plainText) {
-            // Se não tiver HTML, insere como texto plano
-            const formattedText = plainText.replace(/\r\n/g, '<br>').replace(/\n/g, '<br>').replace(/\r/g, '<br>');
+            // Sem HTML: insere como texto plano, escapando o conteúdo
+            const escaped = stripHtml(plainText);
+            const formattedText = escaped
+                .replace(/\r\n/g, '<br>')
+                .replace(/\n/g, '<br>')
+                .replace(/\r/g, '<br>');
             document.execCommand('insertHTML', false, formattedText);
         }
 
@@ -167,9 +138,9 @@ const ArticleEditor = () => {
         setSuccess('');
         setValidationErrors([]);
 
-        // Garantir que o conteúdo do editor está sincronizado
+        // Garantir que o conteúdo do editor está sincronizado (e sanitizado)
         if (editorRef.current) {
-            const htmlContent = editorRef.current.innerHTML;
+            const htmlContent = sanitizeArticleHtml(editorRef.current.innerHTML);
             // Ensure we're not storing just whitespace or empty tags
             const cleanContent = htmlContent.replace(/<[^>]*>/g, '').trim() === '' ? '' : htmlContent;
             formData.body = cleanContent;

@@ -30,9 +30,11 @@
         "firebase:deploy": "npx firebase deploy",
         "firebase:deploy:rules": "npx firebase deploy --only firestore:rules",
         "firebase:deploy:hosting": "npx firebase deploy --only hosting",
-        "firebase:login": "npx firebase login"
+        "firebase:login": "npx firebase login",
+        "test:rules": "firebase emulators:exec --only firestore --project demo-oirmaozinho \"vitest run --config vitest.rules.config.js\""
     },
     "dependencies": {
+        "dompurify": "^3.4.12",
         "firebase": "^10.14.1",
         "framer-motion": "^10.16.16",
         "lucide-react": "^0.303.0",
@@ -41,6 +43,7 @@
         "react-router-dom": "^6.21.1"
     },
     "devDependencies": {
+        "@firebase/rules-unit-testing": "^3.0.4",
         "@testing-library/jest-dom": "^6.1.5",
         "@testing-library/react": "^14.1.2",
         "@testing-library/user-event": "^14.5.1",

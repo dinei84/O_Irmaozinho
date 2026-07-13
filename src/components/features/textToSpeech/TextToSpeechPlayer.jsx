@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, Square, Volume2, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTextToSpeech } from '../../../hooks/useTextToSpeech';
 import Button from '../../ui/Button';
+import { stripHtml } from '../../../lib/sanitize';
 
 /**
  * Componente player de Text-to-Speech
@@ -29,17 +30,10 @@ const TextToSpeechPlayer = ({ text, title, className = '' }) => {
 
     useEffect(() => {
         // Prepara texto completo incluindo título se fornecido
-        let completeText = '';
-        if (title) {
-            completeText = `${title}. ${text}`;
-        } else {
-            completeText = text;
-        }
+        const completeText = title ? `${title}. ${text}` : text;
 
-        // Remove HTML tags for speech
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = completeText;
-        setFullText(tempDiv.textContent || tempDiv.innerText || '');
+        // Remove as tags HTML para a leitura em áudio (sem executar nada do conteúdo)
+        setFullText(stripHtml(completeText));
     }, [text, title]);
 
     const handlePlay = () => {

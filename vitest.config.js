@@ -27,7 +27,9 @@ export default defineConfig({
         statements: 70,
       },
     },
-    include: ['**/*.{test,spec}.{js,jsx}'],
+    include: ['src/**/*.{test,spec}.{js,jsx}'],
+    // firestore.rules.test.js roda em config próprio (precisa do emulador): npm run test:rules
+    exclude: ['**/node_modules/**', '**/dist/**', 'firestore.rules.test.js'],
     testTimeout: 10000,
   },
   resolve: {

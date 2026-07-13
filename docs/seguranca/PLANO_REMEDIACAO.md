@@ -19,7 +19,7 @@ Cada passo tem: objetivo, arquivos afetados, o que fazer, **como verificar** e o
 
 - [x] **Revogar as credenciais vazadas do Mercado Pago** — *feito em 13/07/2026: a aplicação do MP foi excluída pelo autor. As credenciais que estavam no histórico do git não têm mais validade.* ✅
 - [ ] Criar a nova aplicação no painel do Mercado Pago e guardar as credenciais **fora do repositório**.
-- [ ] Instalar os emuladores do Firebase (para testar rules e functions sem tocar em produção):
+- [x] Instalar os emuladores do Firebase (para testar rules e functions sem tocar em produção):
   ```bash
   npx firebase init emulators      # marcar: Authentication, Firestore, Functions
   npx firebase emulators:start
@@ -93,7 +93,7 @@ await firebase.firestore().doc('orders/<id-de-outro-usuario>').update({
 ```
 E o fluxo legítimo deve continuar funcionando: cancelar o próprio pedido pela interface, e o webhook aprovando um pagamento.
 
-- [ ] Concluído
+- [x] Concluído — 13/07/2026
 
 ---
 
@@ -127,7 +127,7 @@ const paymentResult = await gateway.createPayment({ orderId, amount, paymentMeth
 
 **Verificar**: criar um pedido de valor conhecido e chamar a function direto do console passando `amount: 0.01`. O pagamento gerado no MP deve sair com o **valor real do pedido** (o `amount` enviado é simplesmente ignorado).
 
-- [ ] Concluído
+- [x] Concluído — 13/07/2026
 
 ---
 
@@ -195,8 +195,8 @@ Aplicar em **todos** os pontos que hoje injetam HTML:
    ```
 3. Conferir que a formatação legítima (negrito, links, listas, citações) continua renderizando.
 
-- [ ] 4a — rules
-- [ ] 4b — sanitização
+- [x] 4a — rules — 13/07/2026
+- [x] 4b — sanitização — 13/07/2026
 
 ---
 
@@ -231,7 +231,7 @@ O segundo `allow update` (soft delete) já está correto: valida `affectedKeys` 
 
 **Verificar**: editar o próprio comentário alterando `userName` junto → `PERMISSION_DENIED`. Editar só o texto dentro de 1 h → funciona. Editar depois de 1 h → `PERMISSION_DENIED`.
 
-- [ ] Concluído
+- [x] Concluído — 13/07/2026
 
 ---
 
@@ -262,7 +262,7 @@ O segundo `allow update` (soft delete) já está correto: valida `affectedKeys` 
 
 **Verificar**: `curl -I https://<seu-dominio>/` deve trazer os seis headers. Rodar o site em https://securityheaders.com — meta: nota **A**.
 
-- [ ] Concluído
+- [x] Concluído — 13/07/2026 (falta validar em preview channel antes do deploy)
 
 ---
 
@@ -635,6 +635,10 @@ npx firebase deploy
 
 ## R-16 · Testes das Security Rules
 > Esforço: 2–3 dias · **A correção mais valiosa deste plano a longo prazo**
+>
+> ⚠️ **Parcialmente antecipado no Sprint 0** (13/07/2026): `firestore.rules.test.js` já cobre
+> V-03, V-04 e V-08 com 19 testes (`npm run test:rules`). Falta cobrir V-02, V-11 e V-14
+> junto com as respectivas correções.
 
 **Por quê**: as Firestore Rules são o perímetro de segurança da aplicação e **hoje não têm um único teste**. Foi exatamente isso que permitiu que a V-03 (escrita livre em pedidos) e a V-04 (criação livre de artigos) ficassem no código sem ninguém notar — as duas entraram como ajustes "temporários de debug" e nunca mais foram revistas.
 

@@ -4,7 +4,8 @@ import {
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     signOut,
-    getIdTokenResult
+    getIdTokenResult,
+    updateProfile
 } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 import { isAdmin, getUserRole } from '../lib/roles';
@@ -31,6 +32,14 @@ export const AuthProvider = ({ children }) => {
     async function signup(email, password, additionalData = {}) {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
+
+        // Grava o nome no perfil do Auth (não só no Firestore): assim ele entra no
+        // ID token como claim `name`, e as rules de comentários conseguem verificar
+        // que o autor é quem diz ser, em vez de confiar num nome vindo do cliente (V-08).
+        const displayName = (additionalData.displayName || '').trim();
+        if (displayName) {
+            await updateProfile(user, { displayName });
+        }
 
         await createUserProfile(user.uid, {
             email: user.email,

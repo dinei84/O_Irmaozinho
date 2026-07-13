@@ -35,17 +35,18 @@ function handlePaymentError(error) {
 /**
  * Cria intenção de pagamento PIX
  *
+ * O valor cobrado NÃO é enviado pelo cliente: a Cloud Function o lê do pedido
+ * no Firestore (finalTotal). Ver docs/seguranca/AUDITORIA_SEGURANCA.md (V-01).
+ *
  * @param {string} orderId - ID do pedido
- * @param {number} amount - Valor do pagamento
  * @returns {Promise<{ qrCode, qrCodeBase64, expiresAt }>}
  */
-export async function createPixPaymentIntent(orderId, amount) {
+export async function createPixPaymentIntent(orderId) {
     try {
         const createPaymentIntent = httpsCallable(functions, 'createPaymentIntent');
         const result = await createPaymentIntent({
             orderId,
-            paymentMethod: 'pix',
-            amount
+            paymentMethod: 'pix'
         });
 
         const data = result.data;
@@ -65,17 +66,17 @@ export async function createPixPaymentIntent(orderId, amount) {
 /**
  * Cria intenção de pagamento por Boleto
  *
+ * O valor cobrado é lido do pedido no servidor, não enviado pelo cliente (V-01).
+ *
  * @param {string} orderId - ID do pedido
- * @param {number} amount - Valor do pagamento
  * @returns {Promise<{ pdfUrl, barcode, barcodeFormatted, dueDate }>}
  */
-export async function createBoletoPaymentIntent(orderId, amount) {
+export async function createBoletoPaymentIntent(orderId) {
     try {
         const createPaymentIntent = httpsCallable(functions, 'createPaymentIntent');
         const result = await createPaymentIntent({
             orderId,
-            paymentMethod: 'boleto',
-            amount
+            paymentMethod: 'boleto'
         });
 
         const data = result.data;
@@ -96,19 +97,19 @@ export async function createBoletoPaymentIntent(orderId, amount) {
 /**
  * Cria intenção de pagamento por Cartão de Crédito
  *
+ * O valor cobrado é lido do pedido no servidor, não enviado pelo cliente (V-01).
+ *
  * @param {string} orderId - ID do pedido
- * @param {number} amount - Valor do pagamento
  * @param {string} token - Token do cartão (Mercado Pago SDK)
  * @param {number} [installments=1] - Número de parcelas
  * @returns {Promise<{ success, status, paymentId, card? }>}
  */
-export async function createCardPaymentIntent(orderId, amount, token, installments = 1) {
+export async function createCardPaymentIntent(orderId, token, installments = 1) {
     try {
         const createPaymentIntent = httpsCallable(functions, 'createPaymentIntent');
         const result = await createPaymentIntent({
             orderId,
             paymentMethod: 'credit_card',
-            amount,
             token: String(token).trim(),
             installments: Math.max(1, Math.min(12, parseInt(installments, 10) || 1))
         });

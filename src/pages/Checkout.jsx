@@ -225,7 +225,7 @@ const Checkout = () => {
 
             if (paymentMethod === 'pix') {
                 try {
-                    const pixResult = await createPixPaymentIntent(newOrderId, finalTotal);
+                    const pixResult = await createPixPaymentIntent(newOrderId);
                     setPixData({
                         qrCode: pixResult.qrCode,
                         qrCodeBase64: pixResult.qrCodeBase64,
@@ -246,7 +246,7 @@ const Checkout = () => {
 
             if (paymentMethod === 'boleto') {
                 try {
-                    const boletoResult = await createBoletoPaymentIntent(newOrderId, finalTotal);
+                    const boletoResult = await createBoletoPaymentIntent(newOrderId);
                     setBoletoData({
                         pdfUrl: boletoResult.pdfUrl,
                         barcode: boletoResult.barcode,
@@ -346,7 +346,7 @@ const Checkout = () => {
                                         setLoading(true);
                                         try {
                                             if (error.paymentMethod === 'pix') {
-                                                const pixResult = await createPixPaymentIntent(error.orderId, orderTotal || cartTotal);
+                                                const pixResult = await createPixPaymentIntent(error.orderId);
                                                 setPixData({
                                                     qrCode: pixResult.qrCode,
                                                     qrCodeBase64: pixResult.qrCodeBase64,
@@ -354,7 +354,7 @@ const Checkout = () => {
                                                 });
                                                 setStep(3);
                                             } else if (error.paymentMethod === 'boleto') {
-                                                const boletoResult = await createBoletoPaymentIntent(error.orderId, orderTotal || cartTotal);
+                                                const boletoResult = await createBoletoPaymentIntent(error.orderId);
                                                 setBoletoData({
                                                     pdfUrl: boletoResult.pdfUrl,
                                                     barcode: boletoResult.barcode,

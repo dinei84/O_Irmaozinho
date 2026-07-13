@@ -135,8 +135,10 @@ service cloud.firestore {
       // Isso permite que visitantes vejam os artigos públicos
       allow read: if true;
       
-      // TEMPORÁRIO: Qualquer usuário autenticado pode criar artigos para debug
-      allow create: if isAuthenticated() && 
+      // Apenas admins podem criar conteúdo.
+      // O corpo do artigo é renderizado como HTML: permitir criação por usuário
+      // comum equivale a permitir XSS armazenado (V-04). Não relaxe esta regra.
+      allow create: if isAdmin() &&
                        isValidArticle(request.resource.data) &&
                        request.resource.data.createdAt == request.time &&
                        request.resource.data.updatedAt == request.time;
@@ -256,20 +258,20 @@ service cloud.firestore {
                        request.resource.data.payment.status == 'pending';
       
       // Atualização de pedidos:
-      // - Cloud Functions podem atualizar qualquer campo (via server timestamp)
-      // - Usuário pode atualizar apenas status para 'cancelled' (cancelar próprio pedido)
       // - Admins podem atualizar qualquer campo
+      // - Usuário pode APENAS cancelar o próprio pedido (pending/paid)
+      //
+      // Webhooks e Cloud Functions NÃO precisam de regra aqui: usam o Admin SDK,
+      // que ignora as Security Rules. Não adicione uma cláusula "para o sistema"
+      // — foi exatamente isso que abriu a V-03 (qualquer autenticado escrevendo
+      // em qualquer pedido). Ver docs/seguranca/AUDITORIA_SEGURANCA.md
       allow update: if isAdmin() ||
                      (isAuthenticated() &&
                       resource.data.userId == request.auth.uid &&
                       canCancelOrder(resource.data) &&
                       request.resource.data.orderStatus == 'cancelled' &&
                       request.resource.data.diff(resource.data).affectedKeys()
-                        .hasOnly(['orderStatus', 'updatedAt', 'statusHistory'])) ||
-                     // Permitir atualizações automáticas do sistema (webhooks)
-                     // Nota: Cloud Functions devem usar admin SDK para atualizações completas
-                     (isAuthenticated() &&
-                      request.resource.data.updatedAt == request.time);
+                        .hasOnly(['orderStatus', 'updatedAt', 'statusHistory']));
       
       // Deleção: apenas admins (recomenda-se soft delete via update)
       allow delete: if isAdmin();
@@ -343,12 +345,22 @@ service cloud.firestore {
       // Qualquer um pode ler comentários (público)
       allow read: if true;
       
+      // Nome que o autor é OBRIGADO a usar: o `name` do token (displayName do Auth)
+      // ou, quando não houver, o prefixo do e-mail autenticado.
+      // Sem isso, o userName vem do cliente e qualquer um assina como "Administrador" (V-08).
+      function expectedUserName() {
+        return ('name' in request.auth.token && request.auth.token.name != '')
+               ? request.auth.token.name
+               : request.auth.token.email.split('@')[0];
+      }
+
       // Helper function para validar estrutura de comentário
       function isValidComment(data) {
         return data.articleId is string &&
                data.articleId.size() > 0 &&
                data.userId is string &&
                data.userName is string &&
+               data.userName == expectedUserName() &&
                data.content is string &&
                data.content.size() >= 3 &&
                data.content.size() <= 500 &&
@@ -363,9 +375,9 @@ service cloud.firestore {
                        request.resource.data.createdAt == request.time &&
                        request.resource.data.updatedAt == request.time;
       
-      // Usuários podem editar apenas seus próprios comentários
-      // Apenas dentro de 1 hora após criação
-      // Não pode editar se isDeleted == true
+      // Edição: apenas o dono, apenas o texto, apenas dentro de 1h (+5min de tolerância).
+      // O hasOnly() é essencial: sem ele o dono pode reescrever userName, articleId
+      // ou createdAt do próprio comentário (V-08).
       allow update: if isAuthenticated() &&
                        resource.data.userId == request.auth.uid &&
                        resource.data.isDeleted == false &&
@@ -373,18 +385,15 @@ service cloud.firestore {
                        request.resource.data.content is string &&
                        request.resource.data.content.size() >= 3 &&
                        request.resource.data.content.size() <= 500 &&
-                       // Simplificação para garantir funcionamento
-                       // 1. Ser o dono
-                       resource.data.userId == request.auth.uid &&
-                       // 2. Não estar deletado (soft delete)
-                       resource.data.isDeleted == false &&
-                       // 3. Conteúdo válido
-                       request.resource.data.content.size() >= 3 &&
-                       request.resource.data.content.size() <= 500 &&
-                       // 4. Tempo: 1h + 5min tolerância (DESATIVADO TEMPORARIAMENTE PARA DEBUG)
-                       // (resource.data.createdAt == null || 
-                       //  (request.time.seconds - resource.data.createdAt.seconds) <= 3900);
-                       true;
+                       request.resource.data.updatedAt == request.time &&
+                       request.resource.data.diff(resource.data).affectedKeys()
+                         .hasOnly(['content', 'updatedAt']) &&
+                       // Janela de edição: 1h + 5min de tolerância.
+                       // Usar toMillis(): em rules, timestamp.seconds() é o segundo do
+                       // minuto (0-59), não a época — comparar `.seconds` faz a regra
+                       // falhar sempre e negar toda edição (foi o que levou a versão
+                       // original a ser "desativada temporariamente para debug").
+                       (request.time.toMillis() - resource.data.createdAt.toMillis()) <= 3900000;
       
       // Usuários podem fazer soft delete apenas de seus próprios comentários
       // Admins podem deletar qualquer comentário

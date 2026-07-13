@@ -256,9 +256,9 @@ describe('CardPaymentForm', () => {
         });
 
         await waitFor(() => {
+            // Sem `amount`: o valor cobrado vem do pedido, no servidor (V-01)
             expect(createCardPaymentIntent).toHaveBeenCalledWith(
                 mockOrderId,
-                mockAmount,
                 mockToken,
                 1 // installments padrão
             );

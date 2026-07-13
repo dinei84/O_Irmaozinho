@@ -19,7 +19,6 @@ vi.mock('../../lib/firebase', () => ({
 
 describe('paymentService', () => {
     const mockOrderId = 'order123';
-    const mockAmount = 100.50;
     const mockToken = 'card_token_abc123';
     const mockInstallments = 3;
 
@@ -45,13 +44,12 @@ describe('paymentService', () => {
 
             httpsCallable.mockReturnValue(mockCallable);
 
-            const result = await createPixPaymentIntent(mockOrderId, mockAmount);
+            const result = await createPixPaymentIntent(mockOrderId);
 
             expect(httpsCallable).toHaveBeenCalledWith(functions, 'createPaymentIntent');
             expect(mockCallable).toHaveBeenCalledWith({
                 orderId: mockOrderId,
-                paymentMethod: 'pix',
-                amount: mockAmount
+                paymentMethod: 'pix'
             });
             expect(result).toEqual(mockPixData);
         });
@@ -68,7 +66,7 @@ describe('paymentService', () => {
             httpsCallable.mockReturnValue(mockCallable);
 
             await expect(
-                createPixPaymentIntent(mockOrderId, mockAmount)
+                createPixPaymentIntent(mockOrderId)
             ).rejects.toThrow('Resposta inválida do servidor');
         });
 
@@ -82,7 +80,7 @@ describe('paymentService', () => {
             httpsCallable.mockReturnValue(mockCallable);
 
             await expect(
-                createPixPaymentIntent(mockOrderId, mockAmount)
+                createPixPaymentIntent(mockOrderId)
             ).rejects.toThrow('Você precisa estar logado para fazer um pagamento');
         });
 
@@ -96,7 +94,7 @@ describe('paymentService', () => {
             httpsCallable.mockReturnValue(mockCallable);
 
             await expect(
-                createPixPaymentIntent(mockOrderId, mockAmount)
+                createPixPaymentIntent(mockOrderId)
             ).rejects.toThrow('Pedido não encontrado');
         });
     });
@@ -120,13 +118,12 @@ describe('paymentService', () => {
 
             httpsCallable.mockReturnValue(mockCallable);
 
-            const result = await createBoletoPaymentIntent(mockOrderId, mockAmount);
+            const result = await createBoletoPaymentIntent(mockOrderId);
 
             expect(httpsCallable).toHaveBeenCalledWith(functions, 'createPaymentIntent');
             expect(mockCallable).toHaveBeenCalledWith({
                 orderId: mockOrderId,
-                paymentMethod: 'boleto',
-                amount: mockAmount
+                paymentMethod: 'boleto'
             });
             expect(result).toEqual(mockBoletoData);
         });
@@ -143,7 +140,7 @@ describe('paymentService', () => {
             httpsCallable.mockReturnValue(mockCallable);
 
             await expect(
-                createBoletoPaymentIntent(mockOrderId, mockAmount)
+                createBoletoPaymentIntent(mockOrderId)
             ).rejects.toThrow('Resposta inválida do servidor');
         });
 
@@ -157,7 +154,7 @@ describe('paymentService', () => {
             httpsCallable.mockReturnValue(mockCallable);
 
             await expect(
-                createBoletoPaymentIntent(mockOrderId, mockAmount)
+                createBoletoPaymentIntent(mockOrderId)
             ).rejects.toThrow('Invalid payment method');
         });
     });
@@ -181,7 +178,6 @@ describe('paymentService', () => {
 
             const result = await createCardPaymentIntent(
                 mockOrderId,
-                mockAmount,
                 mockToken,
                 mockInstallments
             );
@@ -190,7 +186,6 @@ describe('paymentService', () => {
             expect(mockCallable).toHaveBeenCalledWith({
                 orderId: mockOrderId,
                 paymentMethod: 'credit_card',
-                amount: mockAmount,
                 token: mockToken,
                 installments: mockInstallments
             });
@@ -213,7 +208,7 @@ describe('paymentService', () => {
 
             httpsCallable.mockReturnValue(mockCallable);
 
-            await createCardPaymentIntent(mockOrderId, mockAmount, mockToken);
+            await createCardPaymentIntent(mockOrderId, mockToken);
 
             expect(mockCallable).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -234,13 +229,13 @@ describe('paymentService', () => {
             httpsCallable.mockReturnValue(mockCallable);
 
             // Teste com 0 parcelas (deve virar 1)
-            await createCardPaymentIntent(mockOrderId, mockAmount, mockToken, 0);
+            await createCardPaymentIntent(mockOrderId, mockToken, 0);
             expect(mockCallable).toHaveBeenCalledWith(
                 expect.objectContaining({ installments: 1 })
             );
 
             // Teste com 15 parcelas (deve virar 12)
-            await createCardPaymentIntent(mockOrderId, mockAmount, mockToken, 15);
+            await createCardPaymentIntent(mockOrderId, mockToken, 15);
             expect(mockCallable).toHaveBeenCalledWith(
                 expect.objectContaining({ installments: 12 })
             );
@@ -256,7 +251,7 @@ describe('paymentService', () => {
             httpsCallable.mockReturnValue(mockCallable);
 
             await expect(
-                createCardPaymentIntent(mockOrderId, mockAmount, mockToken)
+                createCardPaymentIntent(mockOrderId, mockToken)
             ).rejects.toThrow('Pagamento já foi criado para este pedido');
         });
 
@@ -269,8 +264,35 @@ describe('paymentService', () => {
             httpsCallable.mockReturnValue(mockCallable);
 
             await expect(
-                createCardPaymentIntent(mockOrderId, mockAmount, mockToken)
+                createCardPaymentIntent(mockOrderId, mockToken)
             ).rejects.toThrow('Erro genérico do servidor');
+        });
+    });
+
+    // Regressão da V-01 (docs/seguranca/AUDITORIA_SEGURANCA.md): o cliente definia o
+    // valor cobrado, permitindo pagar R$ 0,01 num pedido de R$ 500. O valor passou a
+    // ser lido do pedido no servidor. Nenhum payload pode voltar a carregar `amount`.
+    describe('V-01: o valor do pagamento nunca é enviado pelo cliente', () => {
+        it.each([
+            ['pix', (id) => createPixPaymentIntent(id)],
+            ['boleto', (id) => createBoletoPaymentIntent(id)],
+            ['credit_card', (id) => createCardPaymentIntent(id, mockToken)]
+        ])('não envia `amount` no payload de %s', async (_metodo, chamar) => {
+            const mockCallable = vi.fn().mockResolvedValue({
+                data: {
+                    success: true,
+                    paymentId: 'payment123',
+                    pix: { qrCode: 'x', qrCodeBase64: 'y', expiresAt: Date.now() },
+                    boleto: { pdfUrl: 'x', barcode: 'y', barcodeFormatted: 'y', dueDate: Date.now() },
+                    card: { status: 'approved', statusDetail: 'accredited' }
+                }
+            });
+            httpsCallable.mockReturnValue(mockCallable);
+
+            await chamar(mockOrderId);
+
+            const payload = mockCallable.mock.calls[0][0];
+            expect(payload).not.toHaveProperty('amount');
         });
     });
 

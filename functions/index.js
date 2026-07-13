@@ -115,24 +115,21 @@ exports.createPaymentIntent = functions.runWith({
     }
 
     try {
-        const { orderId, paymentMethod, amount, token, installments } = data;
+        // O `amount` NÃO é aceito do cliente: o valor cobrado é lido do pedido no
+        // Firestore, mais abaixo. Aceitá-lo daqui permitia pagar R$ 0,01 num pedido
+        // de R$ 500 (V-01). Ver docs/seguranca/AUDITORIA_SEGURANCA.md
+        const { orderId, paymentMethod, token, installments } = data;
 
-        if (!orderId || !paymentMethod || !amount) {
+        if (!orderId || !paymentMethod) {
             throw new functions.https.HttpsError(
                 'invalid-argument',
-                'orderId, paymentMethod e amount são obrigatórios'
+                'orderId e paymentMethod são obrigatórios'
             );
         }
         if (!PAYMENT_METHODS.includes(paymentMethod)) {
             throw new functions.https.HttpsError(
                 'invalid-argument',
                 `paymentMethod deve ser um de: ${PAYMENT_METHODS.join(', ')}`
-            );
-        }
-        if (amount <= 0) {
-            throw new functions.https.HttpsError(
-                'invalid-argument',
-                'Valor do pagamento deve ser maior que zero'
             );
         }
         if (paymentMethod === 'credit_card' && !token) {
@@ -171,6 +168,15 @@ exports.createPaymentIntent = functions.runWith({
             throw new functions.https.HttpsError(
                 'already-exists',
                 'Pagamento já foi criado para este pedido'
+            );
+        }
+
+        // Fonte da verdade do valor cobrado: o pedido gravado no Firestore.
+        const amount = Number(order.finalTotal);
+        if (!Number.isFinite(amount) || amount <= 0) {
+            throw new functions.https.HttpsError(
+                'failed-precondition',
+                'Pedido com valor inválido. Refaça o pedido ou contate o suporte.'
             );
         }
 

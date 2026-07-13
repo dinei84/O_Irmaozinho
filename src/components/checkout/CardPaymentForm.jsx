@@ -106,7 +106,7 @@ const CardPaymentForm = ({ orderId, amount, customer = {}, onSuccess, onError })
                 identificationNumber: docNumber
             });
 
-            const result = await createCardPaymentIntent(orderId, amount, token, installments);
+            const result = await createCardPaymentIntent(orderId, token, installments);
 
             const cardStatus = result?.card?.status || result?.status;
             if (cardStatus === 'approved' || result?.success) {

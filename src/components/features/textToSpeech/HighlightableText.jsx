@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTextToSpeech } from '../../../hooks/useTextToSpeech';
+import { sanitizeArticleHtml } from '../../../lib/sanitize';
 
 /**
  * Componente que envolve o texto e destaca parágrafos durante a leitura
@@ -113,7 +114,7 @@ const HighlightableText = ({ text, children, className = '' }) => {
                                 ? 'bg-yellow-50 dark:bg-yellow-900/20 px-4 py-3 rounded-md shadow-sm border-l-4 border-primary'
                                 : ''
                             }`}
-                        dangerouslySetInnerHTML={{ __html: paragraph.trim() }}
+                        dangerouslySetInnerHTML={{ __html: sanitizeArticleHtml(paragraph.trim()) }}
                     />
                 );
             })}

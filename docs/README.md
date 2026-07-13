@@ -18,8 +18,9 @@
 |---|---|
 | [AUDITORIA_SEGURANCA.md](./seguranca/AUDITORIA_SEGURANCA.md) | **O diagnóstico.** 14 vulnerabilidades (4 críticas), com prova de conceito, impacto e correção. Leia antes de mexer em pagamento, rules ou renderização de conteúdo. |
 | [PLANO_REMEDIACAO.md](./seguranca/PLANO_REMEDIACAO.md) | **O passo a passo.** 19 passos em 3 sprints, cada um com código, verificação e deploy. É o documento de trabalho do dia a dia. |
+| [RELATORIO_SPRINT_0.md](./seguranca/RELATORIO_SPRINT_0.md) | **O que já foi entregue.** Sprint 0 concluído em 13/07/2026: as 4 críticas fechadas no código, 35 testes novos. Aguarda deploy. |
 
-> ⚠️ Há **4 vulnerabilidades críticas exploráveis** no código atual. Nenhuma funcionalidade nova deve ir a produção antes do Sprint 0 do plano de remediação.
+> ⚠️ **Sprint 0 concluído no código, aguardando deploy.** Atenção: a fraude de preço (V-02) **continua possível** via adulteração do carrinho no `localStorage` até o passo **R-08** (criar o pedido no servidor) estar em produção.
 
 ## ⚙️ [`setup/`](./setup/) — configurar o ambiente
 

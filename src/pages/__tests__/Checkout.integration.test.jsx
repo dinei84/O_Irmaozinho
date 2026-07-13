@@ -142,10 +142,8 @@ describe('Checkout - Integração', () => {
 
             // Verificar criação do pagamento PIX
             await waitFor(() => {
-                expect(createPixPaymentIntent).toHaveBeenCalledWith(
-                    mockOrderId,
-                    mockCartTotal
-                );
+                // O valor NÃO é enviado pelo cliente: o servidor o lê do pedido (V-01)
+                expect(createPixPaymentIntent).toHaveBeenCalledWith(mockOrderId);
             });
 
             // Verificar exibição do QR Code
@@ -209,10 +207,7 @@ describe('Checkout - Integração', () => {
 
             // Verificar criação do boleto
             await waitFor(() => {
-                expect(createBoletoPaymentIntent).toHaveBeenCalledWith(
-                    mockOrderId,
-                    mockCartTotal
-                );
+                expect(createBoletoPaymentIntent).toHaveBeenCalledWith(mockOrderId);
             });
 
             // Verificar exibição do boleto
