@@ -12,3 +12,6 @@ coverage
 # Firebase Admin Service Account Key
 serviceAccountKey.json
 scripts/serviceAccountKey.json
+
+# Configuração local do Claude Code (permissões específicas da máquina/sessão)
+.claude/settings.local.json

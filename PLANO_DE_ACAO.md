@@ -172,7 +172,10 @@ A funcionalidade de e-mails para inscritos **deve nascer em conformidade** — �
 
 ## FASE 4 — Redesign + PWA (seguir PROJECT_SPEC.md) (3–5 semanas)
 
-O `PROJECT_SPEC.md` já é a fonte de verdade do design. Plano de implementação:
+O `PROJECT_SPEC.md` já é a fonte de verdade do design. A quebra executável desta fase em
+OS (com DoD, decisão de tokens Tailwind e mapeamento aos mockups do deck de revitalização)
+está em [`docs/arquitetura/PLANO_REDESIGN_VISUAL.md`](docs/arquitetura/PLANO_REDESIGN_VISUAL.md) —
+esta seção permanece como o resumo de alto nível.
 
 ### 4.1 Fundação do design system (1ª semana)
 - Tokens no `tailwind.config.js`: paleta terrosa completa (terracota `#B65E38`, oliva `#47533F`, dourado, papel, areia, pêssego, tinta, neutro) substituindo azul/navy.
