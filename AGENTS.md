@@ -1,6 +1,6 @@
 # 📜 AGENTS.md — Guia de Engenharia e Regras de Execução
 **Projeto:** O Irmãozinho — Blog cristão com e-commerce integrado
-**Versão:** 1.1 | **Mantenedor:** CEO/CTO (Claude LLM)
+**Versão:** 1.2 | **Mantenedor:** CEO/CTO (Claude LLM)
 **Atualização:** 2026-07-22
 
 > **LEITURA OBRIGATÓRIA.** Todo agente CLI (Claude Code, Gemini, Codex) deve ler este arquivo COMPLETO antes de iniciar qualquer OS. Sem exceção. O não cumprimento de qualquer regra aqui é considerado falha de execução.
@@ -409,7 +409,29 @@ Outputs de Vitest, emulador do Firestore, `vite build` e git devem ser mostrados
 
 ### 9.7 Branch de trabalho
 
-Trabalho em `main`. Se/quando o projeto adotar branch protection (Fase 5 do `PLANO_DE_ACAO.md`), esta seção passa a exigir branch dedicada + PR e deve ser atualizada antes da próxima OS que dependa disso.
+**A partir de 2026-07-22** (adotado durante a Fase 4 — antecipação da Fase 5 do
+`PLANO_DE_ACAO.md`): todo trabalho de OS acontece em `develop`, nunca direto em `main`.
+
+```
+main      ← só recebe merge de develop, sempre testado e aprovado pelo CTO
+  ▲
+  │ merge (após OS revisada e aprovada)
+  │
+develop   ← toda OS é implementada, testada e commitada aqui
+```
+
+- CLI Agent: sempre trabalha em `develop` (nunca cria branch própria por OS — não há
+  benefício de isolamento quando as OS rodam uma de cada vez, não em paralelo; ver
+  §0.1). Se isso mudar (múltiplos agentes rodando OS em paralelo), reavaliar um terceiro
+  nível de branch por OS.
+- CTO: revisa o trabalho em `develop`; quando aprovado, faz merge para `main`
+  (`git merge --no-ff develop` ou equivalente, mantendo o histórico de commits da OS).
+- Cadência recomendada: merge para `main` **a cada OS aprovada**, não em lote — mantém
+  `main` sempre num estado testado e reduz o risco de conflito acumulado. Divergir dessa
+  cadência é decisão do CTO, registrada no relatório de execução da OS em questão.
+- `main` e `develop` nascem idênticas em 2026-07-22 (commit `39498e7`) — os commits de
+  OS_REDESIGN_001 e OS_REDESIGN_002, já testados e aprovados individualmente antes de
+  cada commit, permanecem em `main` sem necessidade de refazer histórico.
 
 ### 9.8 Decisões antes da OS
 
@@ -435,4 +457,4 @@ Quando o PO, validando uma OS, encontra desvio entre o código entregue e a spec
 
 ---
 
-*Fim do AGENTS.md — Versão 1.1*
+*Fim do AGENTS.md — Versão 1.2*
