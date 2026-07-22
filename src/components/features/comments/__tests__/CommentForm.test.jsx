@@ -15,7 +15,7 @@ describe('CommentForm', () => {
     it('deve renderizar o formulário corretamente', () => {
         render(<CommentForm onSubmit={mockOnSubmit} />);
 
-        expect(screen.getByPlaceholderText(/escreva seu comentário/i)).toBeInTheDocument();
+        expect(screen.getByPlaceholderText(/comentário gentil/i)).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /comentar/i })).toBeInTheDocument();
     });
 
@@ -38,7 +38,7 @@ describe('CommentForm', () => {
 
         render(<CommentForm onSubmit={mockOnSubmit} />);
 
-        const textarea = screen.getByPlaceholderText(/escreva seu comentário/i);
+        const textarea = screen.getByPlaceholderText(/comentário gentil/i);
         const submitButton = screen.getByRole('button', { name: /comentar/i });
 
         await user.type(textarea, 'Este é um comentário válido');
@@ -53,7 +53,7 @@ describe('CommentForm', () => {
         const user = userEvent.setup();
         render(<CommentForm onSubmit={mockOnSubmit} />);
 
-        const textarea = screen.getByPlaceholderText(/escreva seu comentário/i);
+        const textarea = screen.getByPlaceholderText(/comentário gentil/i);
         const submitButton = screen.getByRole('button', { name: /comentar/i });
 
         await user.type(textarea, 'ab');
@@ -67,7 +67,7 @@ describe('CommentForm', () => {
         const user = userEvent.setup();
         render(<CommentForm onSubmit={mockOnSubmit} />);
 
-        const textarea = screen.getByPlaceholderText(/escreva seu comentário/i);
+        const textarea = screen.getByPlaceholderText(/comentário gentil/i);
         const submitButton = screen.getByRole('button', { name: /comentar/i });
 
         await user.type(textarea, 'ab');
@@ -85,7 +85,7 @@ describe('CommentForm', () => {
 
         render(<CommentForm onSubmit={mockOnSubmit} />);
 
-        const textarea = screen.getByPlaceholderText(/escreva seu comentário/i);
+        const textarea = screen.getByPlaceholderText(/comentário gentil/i);
         const submitButton = screen.getByRole('button', { name: /comentar/i });
 
         await user.type(textarea, 'Comentário válido');
@@ -106,7 +106,7 @@ describe('CommentForm', () => {
 
         render(<CommentForm onSubmit={mockOnSubmit} />);
 
-        const textarea = screen.getByPlaceholderText(/escreva seu comentário/i);
+        const textarea = screen.getByPlaceholderText(/comentário gentil/i);
         const submitButton = screen.getByRole('button', { name: /comentar/i });
 
         await user.type(textarea, 'Comentário válido');
@@ -128,7 +128,7 @@ describe('CommentForm', () => {
 
         render(<CommentForm onSubmit={mockOnSubmit} />);
 
-        const textarea = screen.getByPlaceholderText(/escreva seu comentário/i);
+        const textarea = screen.getByPlaceholderText(/comentário gentil/i);
         const submitButton = screen.getByRole('button', { name: /comentar/i });
 
         await user.type(textarea, 'Comentário válido');
@@ -153,7 +153,7 @@ describe('CommentForm', () => {
         const user = userEvent.setup();
         render(<CommentForm onSubmit={mockOnSubmit} />);
 
-        const textarea = screen.getByPlaceholderText(/escreva seu comentário/i);
+        const textarea = screen.getByPlaceholderText(/comentário gentil/i);
         
         await user.type(textarea, 'Teste');
         
@@ -170,7 +170,7 @@ describe('CommentForm', () => {
 
         render(<CommentForm onSubmit={mockOnSubmit} />);
 
-        const textarea = screen.getByPlaceholderText(/escreva seu comentário/i);
+        const textarea = screen.getByPlaceholderText(/comentário gentil/i);
         const submitButton = screen.getByRole('button', { name: /comentar/i });
 
         await user.type(textarea, 'Comentário válido');

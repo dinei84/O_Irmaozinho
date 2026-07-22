@@ -66,7 +66,7 @@ const CommentForm = ({ onSubmit, onCancel, initialText = '', submitLabel = 'Come
                         setError('');
                     }}
                     onKeyDown={handleKeyDown}
-                    placeholder="Escreva seu comentário... (Ctrl+Enter para enviar)"
+                    placeholder="Deixe um comentário gentil… (Ctrl+Enter para enviar)"
                     className={`
                         w-full px-4 py-3 pr-20 rounded-lg border
                         focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary

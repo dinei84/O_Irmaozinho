@@ -55,4 +55,26 @@
   .badge-categoria {
     @apply inline-flex items-center px-3 py-1 rounded-full bg-[#EDE1CD] text-[#8A5A2E] text-xs font-sans font-bold uppercase tracking-wider;
   }
+
+  .article-body p:first-of-type::first-letter {
+    float: left;
+    font-family: 'Spectral', serif;
+    font-weight: 800;
+    font-size: 4em;
+    line-height: 0.85;
+    padding-right: 0.15em;
+    color: theme('colors.secondary.DEFAULT');
+  }
+
+  .article-body blockquote {
+    border-left: 3px solid theme('colors.primary.DEFAULT');
+    padding-left: 1.25em;
+    font-style: italic;
+    margin: 1.5em 0;
+    color: theme('colors.text-secondary');
+  }
+
+  .article-body blockquote p {
+    margin: 0;
+  }
 }

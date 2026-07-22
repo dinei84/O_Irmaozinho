@@ -41,7 +41,7 @@ const CommentItem = ({ comment, currentUserId, onEdit, onDelete }) => {
                     <motion.div
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="mb-3 p-4 bg-red-50 border border-red-200 rounded-lg"
+                        className="mb-3 p-4 bg-red-50 border border-red-200 rounded-xl"
                     >
                         <div className="flex items-start gap-3">
                             <div className="flex-shrink-0 mt-0.5">
@@ -84,7 +84,7 @@ const CommentItem = ({ comment, currentUserId, onEdit, onDelete }) => {
         <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-6 pb-6 border-b border-gray-100 last:border-0"
+            className="mb-6 pb-6 border-b border-borda last:border-0"
         >
             <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
