@@ -1,7 +1,9 @@
 # OS_REDESIGN_004 — Home
 
-**Status:** 🔲 Não iniciada
+**Status:** ✅ Implementada, verificada e aprovada pelo CTO em 2026-07-22 (com remoção de
+abstração morta `CATEGORY_BADGES` aplicada na revisão)
 **Roadmap:** [`docs/arquitetura/PLANO_REDESIGN_VISUAL.md`](../arquitetura/PLANO_REDESIGN_VISUAL.md)
+**Relatório de execução:** [`docs/execution-reports/EXECUTION_REPORT_OS_REDESIGN_004.md`](../execution-reports/EXECUTION_REPORT_OS_REDESIGN_004.md)
 **Depende de:** OS_REDESIGN_001 (tokens), OS_REDESIGN_003 (header)
 
 ## Escopo (`PROJECT_SPEC.md` §5.4, mockup do deck slide 04)
@@ -16,11 +18,11 @@
 
 ## Definition of Done
 
-- [ ] Grade responsiva nos 3 breakpoints
-- [ ] Comparação visual com o mockup do deck (slide 04)
-- [ ] `npx vitest run` sem novas falhas
-- [ ] `npx vite build` limpo
-- [ ] **`docs/execution-reports/EXECUTION_REPORT_OS_REDESIGN_004.md` gerado** seguindo o
+- [x] Grade responsiva nos 3 breakpoints
+- [x] Comparação visual com o mockup do deck (slide 04)
+- [x] `npx vitest run` sem novas falhas
+- [x] `npx vite build` limpo
+- [x] **`docs/execution-reports/EXECUTION_REPORT_OS_REDESIGN_004.md` gerado** seguindo o
       template de `AGENTS.md` §6.3 — sem esse relatório a OS não está concluída
 
 ## Arquivos a alterar
