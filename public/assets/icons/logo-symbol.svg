@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <style>
+      .big { stroke: #B65E38; stroke-width: 20; stroke-linecap: round; }
+      .small { fill: #B65E38; }
+    </style>
+  </defs>
+  <circle class="big" cx="230" cy="240" r="176" />
+  <circle class="small" cx="356" cy="366" r="108" />
+</svg>

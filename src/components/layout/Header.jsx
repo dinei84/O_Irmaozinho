@@ -34,8 +34,15 @@ const Header = () => {
         <header className="fixed w-full top-0 z-50 bg-surface/95 backdrop-blur-sm shadow-sm transition-all duration-300">
             <div className="container mx-auto px-4 h-24 flex items-center justify-between">
                 {/* Logo */}
-                <Link to="/" className="text-3xl font-heading font-bold text-primary">
-                    O Irmãozinho
+                <Link to="/" className="flex items-center gap-3">
+                    <img
+                        src="/assets/icons/logo-symbol.svg"
+                        alt="O Irmãozinho"
+                        className="h-9 w-9"
+                    />
+                    <span className="text-3xl font-heading font-bold text-primary">
+                        O Irmãozinho
+                    </span>
                 </Link>
 
                 {/* Desktop Navigation */}
