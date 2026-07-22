@@ -74,7 +74,7 @@ Lógica de pagamento/checkout (Mercado Pago), regras do Firestore, LGPD, wrapper
 | [OS_REDESIGN_002](../os/OS_REDESIGN_002_MARCA.md) | Marca (símbolo + ícones) | ✅ Aprovada |
 | [OS_REDESIGN_003](../os/OS_REDESIGN_003_HEADER_NAV_MOBILE.md) | Header/navegação + bottom tab bar mobile | ✅ Aprovada |
 | [OS_REDESIGN_004](../os/OS_REDESIGN_004_HOME.md) | Home | ✅ Aprovada |
-| [OS_REDESIGN_005](../os/OS_REDESIGN_005_PAGINA_ARTIGO.md) | Página de leitura do artigo | 🔲 Não iniciada |
+| [OS_REDESIGN_005](../os/OS_REDESIGN_005_PAGINA_ARTIGO.md) | Página de leitura do artigo | ✅ Aprovada |
 | [OS_REDESIGN_006](../os/OS_REDESIGN_006_LISTAGENS.md) | Listagens (Artigos, Crônicas) | 🔲 Não iniciada |
 | [OS_REDESIGN_007](../os/OS_REDESIGN_007_LOJA_CHECKOUT.md) | Loja e Checkout | 🔲 Não iniciada |
 | [OS_REDESIGN_008](../os/OS_REDESIGN_008_PAGINAS_RESTANTES.md) | Páginas restantes + limpeza de cores cruas | 🔲 Não iniciada |

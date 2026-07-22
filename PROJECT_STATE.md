@@ -52,6 +52,7 @@ Esta é a primeira versão do `PROJECT_STATE.md` — o projeto passa a adotar o 
 |---|---|---|
 | DT-01 | MÉDIA | `npm run lint` não funciona — não existe `.eslintrc*`/`eslint.config.*` em nenhum lugar do repositório (raiz ou `functions/`), apesar do script e das dependências do ESLint estarem presentes no `package.json`. Bloqueia qualquer adoção de CI que dependa de lint. |
 | DT-02 | A investigar | 14 testes falhando em `npx vitest run` (de 298 totais) — aceitos como "pré-existentes" porque batem com a baseline do `RELATORIO_SPRINT_0.md`, mas nunca triados individualmente sob este novo modelo de governança. Arquivos com falha observados nesta sessão incluem `src/components/checkout/__tests__/BoletoPaymentForm.test.jsx` e `src/components/features/comments/__tests__/CommentItem.test.jsx` — não investigados a fundo, apenas confirmados como parte da contagem conhecida. |
+| DT-03 | BAIXA | `TextToSpeechPlayer.jsx` (reskin na OS_REDESIGN_005) não tem barra de progresso nem contador de tempo atual/total, presentes no `PROJECT_SPEC.md` §5.6 item 6 e no mockup do deck (slide 05, "1:48 / 6:12"). Implementar exigiria expor progresso/duração em `src/hooks/useTextToSpeech.js` — fora do escopo de um "reskin visual" (a OS explicitamente proibia reescrever lógica). Fica para uma OS futura dedicada. |
 
 ### 3.2 Herdadas do plano de ação (não redigitadas aqui — ver fonte)
 

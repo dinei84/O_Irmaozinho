@@ -1,16 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { doc, getDoc, collection, query, where, orderBy, limit, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Calendar, Tag, Share2 } from 'lucide-react';
+import { ArrowLeft, Calendar, Share2, Clock } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Card, { CardBody } from '../components/ui/Card';
 import LikeButton from '../components/features/likes/LikeButton';
 import CommentsSection from '../components/features/comments/CommentsSection';
 import TextToSpeechPlayer from '../components/features/textToSpeech/TextToSpeechPlayer';
-import TextSelectionControls from '../components/features/textToSpeech/TextSelectionControls';
 import HighlightableText from '../components/features/textToSpeech/HighlightableText';
+
+const ReadingProgressBar = () => {
+    const [progress, setProgress] = useState(0);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            setProgress(docHeight > 0 ? Math.min((scrollTop / docHeight) * 100, 100) : 0);
+        };
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    return (
+        <div className="fixed top-0 left-0 right-0 z-[60] h-1 bg-[#E1D2B8]">
+            <div
+                className="h-full bg-primary transition-all duration-150 ease-out"
+                style={{ width: `${progress}%` }}
+            />
+        </div>
+    );
+};
 
 const ArticleDetail = () => {
     const { id } = useParams();
@@ -28,8 +50,6 @@ const ArticleDetail = () => {
         try {
             setLoading(true);
             setError('');
-
-            // Fetch the article
             const docRef = doc(db, 'content', id);
             const docSnap = await getDoc(docRef);
 
@@ -37,7 +57,6 @@ const ArticleDetail = () => {
                 const articleData = { id: docSnap.id, ...docSnap.data() };
                 setArticle(articleData);
 
-                // Fetch related articles (same category, excluding current)
                 if (articleData.category) {
                     const q = query(
                         collection(db, 'content'),
@@ -63,24 +82,28 @@ const ArticleDetail = () => {
         }
     }
 
-    function handleShare() {
+    const handleShare = useCallback(() => {
         if (navigator.share) {
             navigator.share({
-                title: article.title,
-                text: article.body?.substring(0, 100) + '...',
+                title: article?.title,
+                text: article?.body?.substring(0, 100) + '...',
                 url: window.location.href
-            }).catch(err => console.error('Error sharing:', err));
+            }).catch(() => {});
         } else {
-            // Fallback: copy to clipboard
             navigator.clipboard.writeText(window.location.href);
-            alert('Link copiado para a área de transferência!');
         }
-    }
+    }, [article]);
+
+    const readingTime = article?.body
+        ? Math.max(1, Math.ceil(article.body.split(/\s+/).length / 150))
+        : 0;
+
+    const articleCategory = article?.category || 'Artigo';
 
     if (loading) {
         return (
             <div className="min-h-screen bg-background flex justify-center items-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
             </div>
         );
     }
@@ -100,35 +123,30 @@ const ArticleDetail = () => {
     }
 
     return (
-        <div className="min-h-screen bg-background pt-20 pb-16">
-            <article className="container mx-auto px-4 max-w-4xl">
-                {/* Back Button */}
-                <Button
-                    onClick={() => navigate(-1)}
-                    variant="ghost"
-                    className="mb-6 flex items-center gap-2"
-                >
-                    <ArrowLeft size={20} />
-                    Voltar
-                </Button>
+        <div className="min-h-screen bg-background">
+            <ReadingProgressBar />
 
-                {/* Article Header */}
+            <article className="container mx-auto px-4 pt-28 pb-16 max-w-[720px]">
+                <Link
+                    to={`/${articleCategory === 'Crônicas' ? 'cronicas' : 'artigos'}`}
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary-dark transition-colors mb-8"
+                >
+                    <ArrowLeft size={16} />
+                    {articleCategory === 'Crônicas' ? 'Crônicas' : 'Artigos'}
+                </Link>
+
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
                 >
-                    {/* Category & Date */}
-                    <div className="flex flex-wrap items-center gap-4 mb-6">
-                        {article.category && (
-                            <span className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full font-semibold text-sm">
-                                <Tag size={16} />
-                                {article.category}
-                            </span>
-                        )}
+                    <div className="flex flex-wrap items-center gap-3 mb-4">
+                        <span className="px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-[#EDE1CD] text-[#8A5A2E]">
+                            {articleCategory}
+                        </span>
                         {article.createdAt && (
-                            <span className="inline-flex items-center gap-2 text-text-secondary text-sm">
-                                <Calendar size={16} />
+                            <span className="flex items-center gap-1.5 text-xs font-semibold text-text-secondary uppercase tracking-wider">
+                                <Calendar size={13} />
                                 {new Date(article.createdAt.seconds * 1000).toLocaleDateString('pt-BR', {
                                     day: 'numeric',
                                     month: 'long',
@@ -138,28 +156,40 @@ const ArticleDetail = () => {
                         )}
                     </div>
 
-                    {/* Title */}
-                    <h1 className="text-4xl md:text-5xl font-heading font-bold text-secondary mb-6 leading-tight">
+                    <h1 className="text-4xl md:text-[56px] font-heading font-extrabold text-secondary leading-[1.08] -tracking-[0.02em] mb-6">
                         {article.title}
                     </h1>
 
-                    {/* Share Button and Like Button */}
-                    <div className="mb-6 flex items-center justify-between gap-4">
-                        <Button
-                            onClick={handleShare}
-                            variant="outline"
-                            className="flex items-center gap-2"
-                        >
-                            <Share2 size={18} />
-                            Compartilhar
-                        </Button>
-                        <LikeButton
-                            contentId={article.id}
-                            initialLikesCount={article.likesCount || 0}
-                        />
+                    <div className="flex items-center justify-between gap-4 mb-8 pb-6 border-b border-borda">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-background text-sm font-bold">
+                                {(article.authorName || 'O Irmãozinho').charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <p className="text-sm font-semibold text-secondary">
+                                    {article.authorName || 'O Irmãozinho'}
+                                </p>
+                                <p className="text-xs text-text-secondary flex items-center gap-1">
+                                    <Clock size={12} />
+                                    {readingTime} min de leitura
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={handleShare}
+                                className="p-2 text-text-secondary hover:text-primary transition-colors rounded-full hover:bg-primary/10"
+                                aria-label="Compartilhar"
+                            >
+                                <Share2 size={20} />
+                            </button>
+                            <LikeButton
+                                contentId={article.id}
+                                initialLikesCount={article.likesCount || 0}
+                            />
+                        </div>
                     </div>
 
-                    {/* Text-to-Speech Player */}
                     <div className="mb-8">
                         <TextToSpeechPlayer
                             text={article.body}
@@ -167,32 +197,27 @@ const ArticleDetail = () => {
                         />
                     </div>
 
-                    {/* Featured Image */}
                     {article.imageUrl && (
-                        <div className="mb-8 rounded-2xl overflow-hidden shadow-xl bg-gray-100 flex justify-center">
+                        <div className="mb-10 rounded-2xl overflow-hidden bg-areia">
                             <img
                                 src={article.imageUrl}
                                 alt={article.title}
-                                className="w-full max-h-[60vh] object-contain"
+                                className="w-full aspect-[16/9] object-cover"
                                 onError={(e) => { e.target.style.display = 'none' }}
                             />
                         </div>
                     )}
 
-                    {/* Article Content */}
-                    <div className="prose prose-lg max-w-none mb-12 relative">
-                        <TextSelectionControls />
+                    <div className="article-body text-lg leading-[1.75] text-text-primary space-y-6 mb-10">
                         <HighlightableText
                             text={article.body}
-                            className="text-text-primary leading-relaxed text-lg"
+                            className="text-text-primary leading-relaxed"
                         />
                     </div>
-
-                    {/* Divider */}
-                    <div className="border-t border-gray-200 my-12"></div>
                 </motion.div>
 
-                {/* Comments Section */}
+                <div className="border-t border-borda my-12" />
+
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -202,7 +227,6 @@ const ArticleDetail = () => {
                     <CommentsSection articleId={article.id} />
                 </motion.div>
 
-                {/* Related Articles */}
                 {relatedArticles.length > 0 && (
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -216,16 +240,16 @@ const ArticleDetail = () => {
                             {relatedArticles.map((related) => (
                                 <Card
                                     key={related.id}
-                                    className="flex flex-col h-full cursor-pointer hover:shadow-xl transition-shadow"
+                                    className="flex flex-col h-full cursor-pointer"
                                     onClick={() => navigate(`/${related.category === 'Crônicas' ? 'cronica' : 'artigo'}/${related.id}`)}
                                 >
                                     {related.imageUrl && (
-                                        <div className="h-40 overflow-hidden">
+                                        <div className="aspect-[16/9] overflow-hidden">
                                             <img
                                                 src={related.imageUrl}
                                                 alt={related.title}
                                                 className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                                                onError={(e) => { e.target.src = 'https://placehold.co/600x400?text=Artigo' }}
+                                                onError={(e) => { e.target.src = 'https://placehold.co/800x450?text=Artigo' }}
                                             />
                                         </div>
                                     )}

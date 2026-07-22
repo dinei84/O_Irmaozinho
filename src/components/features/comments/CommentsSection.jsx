@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { MessageSquare, Loader2 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { getComments, getCommentsCount, createComment, updateComment, deleteComment } from '../../../services/commentService';
@@ -200,12 +201,12 @@ const CommentsSection = ({ articleId, className = '' }) => {
                     />
                 </div>
             ) : (
-                <div className="mb-8 p-4 bg-gray-50 rounded-lg text-center text-text-secondary">
-                    <p className="text-sm">
-                        <a href="/login" className="text-primary hover:underline font-medium">
+                <div className="mb-8 p-6 bg-areia rounded-xl text-center">
+                    <p className="text-sm text-text-secondary">
+                        <Link to="/login" className="text-primary hover:underline font-semibold">
                             Faça login
-                        </a>
-                        {' '}para comentar
+                        </Link>
+                        {' '}para deixar um comentário gentil
                     </p>
                 </div>
             )}
@@ -215,10 +216,10 @@ const CommentsSection = ({ articleId, className = '' }) => {
                     <Loader2 className="animate-spin text-primary" size={32} />
                 </div>
             ) : comments.length === 0 ? (
-                <div className="text-center py-12 bg-gray-50 rounded-lg">
-                    <MessageSquare className="mx-auto text-gray-300 mb-4" size={48} />
+                <div className="text-center py-12 bg-areia rounded-xl">
+                    <MessageSquare className="mx-auto text-text-secondary/30 mb-4" size={48} />
                     <p className="text-text-secondary">
-                        Nenhum comentário ainda. Seja o primeiro a comentar!
+                        Seja o primeiro a deixar um comentário gentil
                     </p>
                 </div>
             ) : (
