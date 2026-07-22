@@ -1,6 +1,8 @@
 # OS_REDESIGN_010 — Performance e revisão final
 
 **Status:** 🔲 Não iniciada
+**Branch:** criar `feature/os-010-performance` a partir de `develop` — nunca em `main`
+(ver `AGENTS.md` §9.7). **Passo zero, antes de qualquer edição.**
 **Roadmap:** [`docs/arquitetura/PLANO_REDESIGN_VISUAL.md`](../arquitetura/PLANO_REDESIGN_VISUAL.md)
 **Depende de:** todas as OS anteriores (revisão transversal)
 

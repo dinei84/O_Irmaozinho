@@ -1,6 +1,6 @@
 # 📜 AGENTS.md — Guia de Engenharia e Regras de Execução
 **Projeto:** O Irmãozinho — Blog cristão com e-commerce integrado
-**Versão:** 1.2 | **Mantenedor:** CEO/CTO (Claude LLM)
+**Versão:** 1.3 | **Mantenedor:** CEO/CTO (Claude LLM)
 **Atualização:** 2026-07-22
 
 > **LEITURA OBRIGATÓRIA.** Todo agente CLI (Claude Code, Gemini, Codex) deve ler este arquivo COMPLETO antes de iniciar qualquer OS. Sem exceção. O não cumprimento de qualquer regra aqui é considerado falha de execução.
@@ -58,13 +58,17 @@ apenas ao PO).
 2. CLI Agent lê: AGENTS.md + PROJECT_CONTEXT.md + PROJECT_STATE.md + a OS
    (+ PROJECT_SPEC.md se a OS mexer em UI/design; + docs/seguranca/ se mexer
    em pagamento, Firestore Rules ou renderização de conteúdo de usuário)
-3. CLI Agent executa seguindo os padrões deste documento
-4. CLI Agent verifica cada item do DoD da OS
-5. CLI Agent gera relatório de execução (commit message detalhada ou
+3. CLI Agent cria `feature/os-XXX-slug` a partir de `develop` (ver §9.7) —
+   **antes de qualquer edição**, nunca em `main`
+4. CLI Agent executa seguindo os padrões deste documento
+5. CLI Agent verifica cada item do DoD da OS
+6. CLI Agent gera relatório de execução (commit message detalhada ou
    docs/execution-reports/EXECUTION_REPORT_[ID].md para trabalho grande — ver §6.3)
-6. CLI Agent commita código + relatório
-7. CTO lê o relatório, valida, atualiza PROJECT_STATE.md e o status da OS em docs/os/
-8. CTO emite próxima OS
+7. CLI Agent commita código + relatório na branch da OS (não faz merge)
+8. CTO lê o relatório, revisa a branch, valida, faz merge para `develop`
+   (e depois para `main`, conforme cadência de §9.7), atualiza PROJECT_STATE.md e o
+   status da OS em docs/os/
+9. CTO emite próxima OS
 ```
 
 **Regra de ouro:** o CLI Agent nunca decide o que fazer além do que está na OS. Se encontrar ambiguidade, registra e aguarda a próxima OS com clareza (ver §8).
@@ -363,6 +367,9 @@ Sem a leitura desses documentos, **não iniciar a implementação**.
 ### 9.1 Pré-flight obrigatório
 
 Toda OS começa com:
+0. `git branch --show-current` — **deve ser `feature/os-XXX-slug`, nunca `main` nem
+   `develop` direto** (ver §9.7). Se não for, criar/trocar antes de tocar em qualquer
+   arquivo.
 1. `npx vitest run` — output literal completo
 2. `npm run test:rules` — obrigatório se a OS tocar `firestore.rules`; output literal completo
 3. `npx vite build` — output literal completo
@@ -410,28 +417,48 @@ Outputs de Vitest, emulador do Firestore, `vite build` e git devem ser mostrados
 ### 9.7 Branch de trabalho
 
 **A partir de 2026-07-22** (adotado durante a Fase 4 — antecipação da Fase 5 do
-`PLANO_DE_ACAO.md`): todo trabalho de OS acontece em `develop`, nunca direto em `main`.
+`PLANO_DE_ACAO.md`), revisado no mesmo dia para acrescentar branch dedicada por OS:
 
 ```
-main      ← só recebe merge de develop, sempre testado e aprovado pelo CTO
+main                     ← só recebe merge de develop, sempre testado e aprovado
   ▲
-  │ merge (após OS revisada e aprovada)
+  │ merge (cadência: a cada OS aprovada, não em lote)
   │
-develop   ← toda OS é implementada, testada e commitada aqui
+develop                  ← integração; sempre no último estado aprovado
+  ▲
+  │ merge (após a OS individual ser revisada e aprovada pelo CTO)
+  │
+feature/os-XXX-slug      ← 1 branch por OS, criada a partir de develop
 ```
 
-- CLI Agent: sempre trabalha em `develop` (nunca cria branch própria por OS — não há
-  benefício de isolamento quando as OS rodam uma de cada vez, não em paralelo; ver
-  §0.1). Se isso mudar (múltiplos agentes rodando OS em paralelo), reavaliar um terceiro
-  nível de branch por OS.
-- CTO: revisa o trabalho em `develop`; quando aprovado, faz merge para `main`
-  (`git merge --no-ff develop` ou equivalente, mantendo o histórico de commits da OS).
-- Cadência recomendada: merge para `main` **a cada OS aprovada**, não em lote — mantém
-  `main` sempre num estado testado e reduz o risco de conflito acumulado. Divergir dessa
+**Passo zero, obrigatório, antes de qualquer edição de código:**
+```bash
+git checkout develop && git pull --ff-only   # (ou apenas checkout, se só local)
+git checkout -b feature/os-XXX-slug          # ex.: feature/os-004-home
+```
+Nenhum CLI Agent começa a implementar uma OS com `main` como branch corrente — **checar
+`git branch --show-current` antes do primeiro `Write`/`Edit`** é parte do DoD de toda OS
+(ver também §9.1). Se o agente perceber, a qualquer momento, que está em `main`, para
+imediatamente, faz `git status` para não perder trabalho, e migra para a branch correta
+antes de continuar (mesmo procedimento seguro usado pelo CTO nas OS 002/003/004 quando
+isso aconteceu por engano nesta sessão — checkout de uma branch nova no mesmo commit
+carrega as mudanças não commitadas sem risco).
+
+- **1 branch por OS** (`feature/os-[NNN]-[slug curto]`, ex.: `feature/os-004-home`),
+  criada a partir de `develop` — não a partir de `main`.
+- CLI Agent implementa, testa e commita na branch da OS. Ao final, a branch **não é
+  mergeada pelo próprio agente** — fica pronta para o CTO revisar.
+- CTO revisa o trabalho na branch da OS; se aprovado, faz merge para `develop`
+  (`git merge --no-ff feature/os-XXX-slug`), e a branch de feature pode ser removida.
+- Cadência de merge `develop` → `main`: **a cada OS aprovada**, não em lote — mantém
+  `main` sempre num estado testado e reduz risco de conflito acumulado. Divergir dessa
   cadência é decisão do CTO, registrada no relatório de execução da OS em questão.
-- `main` e `develop` nascem idênticas em 2026-07-22 (commit `39498e7`) — os commits de
-  OS_REDESIGN_001 e OS_REDESIGN_002, já testados e aprovados individualmente antes de
-  cada commit, permanecem em `main` sem necessidade de refazer histórico.
+- Exceção histórica (não repetir): OS_REDESIGN_001 e OS_REDESIGN_002 foram commitadas
+  direto em `main` (antes deste modelo existir); OS_REDESIGN_003 e OS_REDESIGN_004 foram
+  implementadas em `main`/`develop` por falha de instrução do CTO em passar a branch
+  correta ao CLI Agent — corrigido retroativamente movendo o trabalho não commitado para
+  a branch de feature correta antes do commit. Nenhuma dessas é precedente: a partir de
+  OS_REDESIGN_005, toda OS nasce em `feature/os-XXX-slug`.
 
 ### 9.8 Decisões antes da OS
 
@@ -457,4 +484,4 @@ Quando o PO, validando uma OS, encontra desvio entre o código entregue e a spec
 
 ---
 
-*Fim do AGENTS.md — Versão 1.2*
+*Fim do AGENTS.md — Versão 1.3*

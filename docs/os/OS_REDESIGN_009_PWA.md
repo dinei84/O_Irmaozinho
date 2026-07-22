@@ -1,6 +1,8 @@
 # OS_REDESIGN_009 — PWA (instalabilidade + offline)
 
 **Status:** 🔲 Não iniciada
+**Branch:** criar `feature/os-009-pwa` a partir de `develop` — nunca em `main`
+(ver `AGENTS.md` §9.7). **Passo zero, antes de qualquer edição.**
 **Roadmap:** [`docs/arquitetura/PLANO_REDESIGN_VISUAL.md`](../arquitetura/PLANO_REDESIGN_VISUAL.md)
 **Depende de:** OS_REDESIGN_002 (ícones 192/512 já gerados)
 
