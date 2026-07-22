@@ -17,6 +17,8 @@
 - [ ] Relatório Lighthouse (mobile) com as 4 métricas ≥ 90
 - [ ] `npx vitest run` sem novas falhas
 - [ ] `npx vite build` limpo, sem regressão de tamanho de bundle não justificada
+- [ ] **`docs/execution-reports/EXECUTION_REPORT_OS_REDESIGN_010.md` gerado** seguindo o
+      template de `AGENTS.md` §6.3 — sem esse relatório a OS não está concluída
 
 ## Arquivos a alterar
 

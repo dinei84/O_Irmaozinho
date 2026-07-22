@@ -21,6 +21,8 @@
 - [ ] Sem regressão nos testes existentes de navegação/rotas (se houver)
 - [ ] `npx vitest run` sem novas falhas
 - [ ] Verificação manual em navegador real, em viewport mobile e desktop
+- [ ] **`docs/execution-reports/EXECUTION_REPORT_OS_REDESIGN_003.md` gerado** seguindo o
+      template de `AGENTS.md` §6.3 — sem esse relatório a OS não está concluída
 
 ## Arquivos a alterar
 

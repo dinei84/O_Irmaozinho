@@ -27,6 +27,8 @@ nunca reescrevendo-a:
       `AGENTS.md` §4.5
 - [ ] Comparação visual com o mockup do deck (slide 05)
 - [ ] `npx vite build` limpo
+- [ ] **`docs/execution-reports/EXECUTION_REPORT_OS_REDESIGN_005.md` gerado** seguindo o
+      template de `AGENTS.md` §6.3 — sem esse relatório a OS não está concluída
 
 ## Arquivos a alterar
 

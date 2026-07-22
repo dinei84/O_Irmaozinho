@@ -23,6 +23,8 @@ atualizada antes desta varredura final)
 - [ ] Verificação de que nenhum `gray-*`/`blue-*`/`indigo-*` restou fora de `pages/admin/*`
       (`grep -rl "gray-\|blue-\|indigo-" src --include="*.jsx"` restrito a fora de admin)
 - [ ] `npx vite build` limpo
+- [ ] **`docs/execution-reports/EXECUTION_REPORT_OS_REDESIGN_008.md` gerado** seguindo o
+      template de `AGENTS.md` §6.3 — sem esse relatório a OS não está concluída
 
 ## Arquivos a alterar
 

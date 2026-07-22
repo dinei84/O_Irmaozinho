@@ -33,6 +33,8 @@ produção no relatório de execução.
 - [ ] Leitura de um artigo já visitado funciona offline
 - [ ] `npx vitest run` sem novas falhas
 - [ ] `npx vite build` limpo
+- [ ] **`docs/execution-reports/EXECUTION_REPORT_OS_REDESIGN_009.md` gerado** seguindo o
+      template de `AGENTS.md` §6.3 — sem esse relatório a OS não está concluída
 
 ## Arquivos a alterar
 

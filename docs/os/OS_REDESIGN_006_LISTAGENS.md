@@ -15,6 +15,8 @@
 - [ ] Conferência visual manual, sem regressão de testes existentes dessas páginas
 - [ ] `npx vitest run` sem novas falhas
 - [ ] `npx vite build` limpo
+- [ ] **`docs/execution-reports/EXECUTION_REPORT_OS_REDESIGN_006.md` gerado** seguindo o
+      template de `AGENTS.md` §6.3 — sem esse relatório a OS não está concluída
 
 ## Arquivos a alterar
 

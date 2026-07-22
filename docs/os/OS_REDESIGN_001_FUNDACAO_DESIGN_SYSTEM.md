@@ -31,6 +31,8 @@ fontes, componentes de UI genéricos), sem tocar página por página ainda.
 - [x] Conferência visual/computada no navegador (Home): cores, tipografia e forma dos
       botões mudaram; nenhuma quebra visual
 - [x] 2 execuções consecutivas de `npx vitest run`, output literal no relatório de execução
+- [x] **`docs/execution-reports/EXECUTION_REPORT_OS_REDESIGN_001.md` gerado** seguindo o
+      template de `AGENTS.md` §6.3 — sem esse relatório a OS não está concluída
 
 ## Arquivos alterados
 

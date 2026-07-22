@@ -22,6 +22,8 @@ foi tocada por engano, não de "falha esperada".
 - [ ] Conferência visual manual do fluxo de checkout completo (sem finalizar pagamento
       real)
 - [ ] `npx vite build` limpo
+- [ ] **`docs/execution-reports/EXECUTION_REPORT_OS_REDESIGN_007.md` gerado** seguindo o
+      template de `AGENTS.md` §6.3 — sem esse relatório a OS não está concluída
 
 ## Arquivos a alterar
 
