@@ -1,7 +1,9 @@
 # OS_REDESIGN_003 — Header/navegação + bottom tab bar mobile
 
-**Status:** 🔲 Não iniciada
+**Status:** ✅ Implementada, verificada e aprovada pelo CTO em 2026-07-22 (com correção
+de overlap Footer/tab bar aplicada na revisão)
 **Roadmap:** [`docs/arquitetura/PLANO_REDESIGN_VISUAL.md`](../arquitetura/PLANO_REDESIGN_VISUAL.md)
+**Relatório de execução:** [`docs/execution-reports/EXECUTION_REPORT_OS_REDESIGN_003.md`](../execution-reports/EXECUTION_REPORT_OS_REDESIGN_003.md)
 **Depende de:** OS_REDESIGN_002 (símbolo da marca)
 
 ## Escopo (`PROJECT_SPEC.md` §5.5)
@@ -17,11 +19,11 @@
 
 ## Definition of Done
 
-- [ ] Navegação funcional em desktop (menu horizontal) e mobile (tab bar)
-- [ ] Sem regressão nos testes existentes de navegação/rotas (se houver)
-- [ ] `npx vitest run` sem novas falhas
-- [ ] Verificação manual em navegador real, em viewport mobile e desktop
-- [ ] **`docs/execution-reports/EXECUTION_REPORT_OS_REDESIGN_003.md` gerado** seguindo o
+- [x] Navegação funcional em desktop (menu horizontal) e mobile (tab bar)
+- [x] Sem regressão nos testes existentes de navegação/rotas (se houver)
+- [x] `npx vitest run` sem novas falhas
+- [x] Verificação manual em navegador real, em viewport mobile e desktop
+- [x] **`docs/execution-reports/EXECUTION_REPORT_OS_REDESIGN_003.md` gerado** seguindo o
       template de `AGENTS.md` §6.3 — sem esse relatório a OS não está concluída
 
 ## Arquivos a alterar
