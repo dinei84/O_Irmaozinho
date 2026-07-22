@@ -4,6 +4,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import Header from './components/layout/Header';
+import BottomTabBar from './components/layout/BottomTabBar';
 import Footer from './components/layout/Footer';
 import CartDrawer from './components/features/cart/CartDrawer';
 import Home from './pages/Home';
@@ -33,7 +34,7 @@ function App() {
                 <Router>
                     <div className="flex flex-col min-h-screen bg-background text-text-primary font-sans">
                         <Header />
-                        <main className="flex-grow">
+                        <main className="flex-grow pb-16 md:pb-0">
                             <Routes>
                                 <Route path="/" element={<Home />} />
                                 <Route path="/artigos" element={<Articles />} />
@@ -138,6 +139,7 @@ function App() {
                             </Routes>
                         </main>
                         <Footer />
+                        <BottomTabBar />
                         <CartDrawer />
                     </div>
                 </Router>

@@ -40,7 +40,8 @@ CEO / CTO (Claude LLM)
 CLI Agents (Claude Code / Gemini / Codex)
     │ implementam, testam, commitam, reportam
     ▼
-Repositório Git — branch: main
+Repositório Git — trabalho em `develop`, merge para `main` a cada OS aprovada (ver
+`AGENTS.md` §9.7)
 ```
 
 **Regra:** CLI Agents nunca decidem escopo. Dúvidas registradas no relatório e resolvidas pelo CTO na próxima OS.
