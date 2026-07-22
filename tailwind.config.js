@@ -7,26 +7,31 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Cores principais
+        // Cores de ação — paleta terrosa (PROJECT_SPEC.md §3)
         primary: {
-          DEFAULT: '#4A90E2',
-          dark: '#357ABD',
-          light: '#6BA3E8',
+          DEFAULT: '#B65E38', // terracota
+          dark: '#9B5030',
+          light: '#C17656',
         },
         secondary: {
-          DEFAULT: '#2C3E50',
-          light: '#34495E',
-          dark: '#1A252F',
+          DEFAULT: '#47533F', // oliva
+          light: '#636D5C',
+          dark: '#3C4736',
         },
         // Cores de fundo e texto
-        background: '#F8F9FA',
+        background: '#F7F1E7', // papel
         surface: '#FFFFFF',
-        'text-primary': '#2C3E50',
-        'text-secondary': '#7F8C8D',
+        'text-primary': '#2A2620', // tinta
+        'text-secondary': '#8B7C64', // neutro
+        // Paleta complementar (PROJECT_SPEC.md §3)
+        dourado: '#C79A3E',
+        areia: '#EFE6D5',
+        pessego: '#E8C9B4',
+        borda: '#E4D9C7',
       },
       fontFamily: {
-        sans: ['Open Sans', 'sans-serif'],
-        heading: ['Poppins', 'sans-serif'],
+        sans: ['Mulish', 'sans-serif'],
+        heading: ['Spectral', 'serif'],
       },
       animation: {
         'spin-slow': 'spin 20s linear infinite',

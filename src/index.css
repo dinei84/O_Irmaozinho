@@ -1,4 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Poppins:wght@600;700&display=swap');
+/* Spectral — títulos e corpo de leitura (PROJECT_SPEC.md §4) */
+@import '@fontsource/spectral/400.css';
+@import '@fontsource/spectral/400-italic.css';
+@import '@fontsource/spectral/500.css';
+@import '@fontsource/spectral/500-italic.css';
+@import '@fontsource/spectral/600.css';
+@import '@fontsource/spectral/700.css';
+@import '@fontsource/spectral/800.css';
+/* Mulish — interface e apoio (PROJECT_SPEC.md §4) */
+@import '@fontsource/mulish/400.css';
+@import '@fontsource/mulish/500.css';
+@import '@fontsource/mulish/600.css';
+@import '@fontsource/mulish/700.css';
+@import '@fontsource/mulish/800.css';
 
 @tailwind base;
 @tailwind components;
@@ -8,7 +21,7 @@
   html {
     scroll-behavior: smooth;
   }
-  
+
   body {
     @apply bg-background text-text-primary font-sans antialiased;
   }
@@ -20,22 +33,26 @@
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center px-6 py-3 rounded-xl font-heading font-semibold transition-all duration-300 transform active:scale-95;
+    @apply inline-flex items-center justify-center min-h-[44px] px-7 py-3.5 rounded-full font-sans font-bold transition-all duration-300 transform active:scale-95;
   }
-  
+
   .btn-primary {
-    @apply bg-primary text-white shadow-lg hover:bg-primary-dark hover:shadow-xl hover:-translate-y-1;
+    @apply bg-primary text-background shadow-lg hover:bg-primary-dark hover:shadow-xl hover:-translate-y-1;
   }
-  
+
   .btn-secondary {
-    @apply bg-secondary text-white shadow-lg hover:bg-secondary-light hover:shadow-xl hover:-translate-y-1;
+    @apply bg-secondary text-background shadow-lg hover:bg-secondary-light hover:shadow-xl hover:-translate-y-1;
   }
-  
+
   .btn-outline {
-    @apply border-2 border-primary text-primary hover:bg-primary hover:text-white;
+    @apply border-2 border-secondary text-secondary hover:bg-secondary hover:text-background;
   }
 
   .card {
-    @apply bg-surface rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden;
+    @apply bg-surface border border-borda rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden;
+  }
+
+  .badge-categoria {
+    @apply inline-flex items-center px-3 py-1 rounded-full bg-[#EDE1CD] text-[#8A5A2E] text-xs font-sans font-bold uppercase tracking-wider;
   }
 }
