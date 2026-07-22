@@ -1,6 +1,8 @@
 # OS_REDESIGN_008 — Páginas restantes + limpeza de cores cruas
 
 **Status:** 🔲 Não iniciada
+**Branch:** criar `feature/os-008-paginas-restantes` a partir de `develop` — nunca em
+`main` (ver `AGENTS.md` §9.7). **Passo zero, antes de qualquer edição.**
 **Roadmap:** [`docs/arquitetura/PLANO_REDESIGN_VISUAL.md`](../arquitetura/PLANO_REDESIGN_VISUAL.md)
 **Depende de:** OS_REDESIGN_001 a 007 (a maioria dos componentes genéricos já deve estar
 atualizada antes desta varredura final)
