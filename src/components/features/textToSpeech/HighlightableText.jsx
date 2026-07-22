@@ -89,7 +89,7 @@ const HighlightableText = ({ text, children, className = '' }) => {
             <div
                 ref={containerRef}
                 className={`${className} ${isPlaying
-                        ? 'bg-yellow-50 dark:bg-yellow-900/20 px-3 py-2 rounded-md transition-all duration-500'
+                        ? 'bg-[#F1E7D6] px-3 py-2 rounded-md transition-all duration-500'
                         : ''
                     }`}
             >
@@ -111,7 +111,7 @@ const HighlightableText = ({ text, children, className = '' }) => {
                             paragraphRefs.current[index] = el;
                         }}
                         className={`mb-4 last:mb-0 transition-all duration-500 ${isHighlighted
-                                ? 'bg-yellow-50 dark:bg-yellow-900/20 px-4 py-3 rounded-md shadow-sm border-l-4 border-primary'
+                                ? 'bg-[#F1E7D6] px-4 py-3 rounded-md border-l-4 border-primary'
                                 : ''
                             }`}
                         dangerouslySetInnerHTML={{ __html: sanitizeArticleHtml(paragraph.trim()) }}

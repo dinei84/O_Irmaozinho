@@ -222,7 +222,7 @@ describe('TextToSpeechPlayer', () => {
         expect(mockSetVoice).toHaveBeenCalled();
     });
 
-    it('deve mostrar indicador de estado quando reproduzindo', async () => {
+    it('deve mostrar indicador de estado quando reproduzindo', () => {
         useTextToSpeech.mockReturnValue({
             ...defaultMockReturn,
             isPlaying: true,
@@ -230,15 +230,10 @@ describe('TextToSpeechPlayer', () => {
 
         render(<TextToSpeechPlayer text="Texto do artigo" />);
 
-        const expandButton = screen.getByRole('button', { name: /expandir controles/i });
-        await userEvent.setup().click(expandButton);
-
-        await waitFor(() => {
-            expect(screen.getByText(/reproduzindo/i)).toBeInTheDocument();
-        });
+        expect(screen.getByText(/reproduzindo/i)).toBeInTheDocument();
     });
 
-    it('deve mostrar indicador de pausado', async () => {
+    it('deve mostrar indicador de pausado', () => {
         useTextToSpeech.mockReturnValue({
             ...defaultMockReturn,
             isPaused: true,
@@ -246,12 +241,7 @@ describe('TextToSpeechPlayer', () => {
 
         render(<TextToSpeechPlayer text="Texto do artigo" />);
 
-        const expandButton = screen.getByRole('button', { name: /expandir controles/i });
-        await userEvent.setup().click(expandButton);
-
-        await waitFor(() => {
-            expect(screen.getByText(/pausado/i)).toBeInTheDocument();
-        });
+        expect(screen.getByText(/pausado/i)).toBeInTheDocument();
     });
 
     it('deve usar apenas texto quando título não for fornecido', async () => {
