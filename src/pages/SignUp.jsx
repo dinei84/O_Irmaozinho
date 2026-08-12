@@ -142,7 +142,7 @@ const SignUp = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="max-w-md w-full space-y-8 relative z-10 bg-white p-8 rounded-2xl shadow-xl"
+                className="max-w-md w-full space-y-8 relative z-10 bg-surface p-8 rounded-2xl shadow-xl"
             >
                 <div>
                     <h2 className="mt-6 text-center text-3xl font-heading font-bold text-secondary">
@@ -157,10 +157,10 @@ const SignUp = () => {
                     <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
-                        className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md flex items-center gap-3"
+                        className="bg-pessego/30 border-l-4 border-primary p-4 rounded-md flex items-center gap-3"
                     >
-                        <AlertCircle className="text-red-500" size={20} />
-                        <p className="text-red-700 text-sm">{errors.submit}</p>
+                        <AlertCircle className="text-primary" size={20} />
+                        <p className="text-secondary text-sm">{errors.submit}</p>
                     </motion.div>
                 )}
 
@@ -173,7 +173,7 @@ const SignUp = () => {
                             </label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <User className="h-5 w-5 text-gray-400" />
+                                    <User className="h-5 w-5 text-text-secondary" />
                                 </div>
                                 <input
                                     id="displayName"
@@ -182,15 +182,15 @@ const SignUp = () => {
                                     autoComplete="name"
                                     required
                                     className={`appearance-none relative block w-full px-3 py-3 pl-10 border ${
-                                        errors.displayName ? 'border-red-500' : 'border-gray-300'
-                                    } placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:z-10 sm:text-sm transition-all`}
+                                        errors.displayName ? 'border-red-500' : 'border-borda'
+                                    } placeholder-text-secondary text-text-primary rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:z-10 sm:text-sm transition-all`}
                                     placeholder="Seu nome completo"
                                     value={formData.displayName}
                                     onChange={handleChange}
                                 />
                             </div>
                             {errors.displayName && (
-                                <p className="mt-1 text-sm text-red-600">{errors.displayName}</p>
+                                <p className="mt-1 text-sm text-primary">{errors.displayName}</p>
                             )}
                         </div>
 
@@ -201,7 +201,7 @@ const SignUp = () => {
                             </label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Mail className="h-5 w-5 text-gray-400" />
+                                    <Mail className="h-5 w-5 text-text-secondary" />
                                 </div>
                                 <input
                                     id="email"
@@ -210,15 +210,15 @@ const SignUp = () => {
                                     autoComplete="email"
                                     required
                                     className={`appearance-none relative block w-full px-3 py-3 pl-10 border ${
-                                        errors.email ? 'border-red-500' : 'border-gray-300'
-                                    } placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:z-10 sm:text-sm transition-all`}
+                                        errors.email ? 'border-red-500' : 'border-borda'
+                                    } placeholder-text-secondary text-text-primary rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:z-10 sm:text-sm transition-all`}
                                     placeholder="seu@email.com"
                                     value={formData.email}
                                     onChange={handleChange}
                                 />
                             </div>
                             {errors.email && (
-                                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                                <p className="mt-1 text-sm text-primary">{errors.email}</p>
                             )}
                         </div>
 
@@ -229,7 +229,7 @@ const SignUp = () => {
                             </label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Lock className="h-5 w-5 text-gray-400" />
+                                    <Lock className="h-5 w-5 text-text-secondary" />
                                 </div>
                                 <input
                                     id="password"
@@ -238,15 +238,15 @@ const SignUp = () => {
                                     autoComplete="new-password"
                                     required
                                     className={`appearance-none relative block w-full px-3 py-3 pl-10 border ${
-                                        errors.password ? 'border-red-500' : 'border-gray-300'
-                                    } placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:z-10 sm:text-sm transition-all`}
+                                        errors.password ? 'border-red-500' : 'border-borda'
+                                    } placeholder-text-secondary text-text-primary rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:z-10 sm:text-sm transition-all`}
                                     placeholder="Mínimo 6 caracteres"
                                     value={formData.password}
                                     onChange={handleChange}
                                 />
                             </div>
                             {errors.password && (
-                                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                                <p className="mt-1 text-sm text-primary">{errors.password}</p>
                             )}
                         </div>
 
@@ -257,7 +257,7 @@ const SignUp = () => {
                             </label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Lock className="h-5 w-5 text-gray-400" />
+                                    <Lock className="h-5 w-5 text-text-secondary" />
                                 </div>
                                 <input
                                     id="confirmPassword"
@@ -266,15 +266,15 @@ const SignUp = () => {
                                     autoComplete="new-password"
                                     required
                                     className={`appearance-none relative block w-full px-3 py-3 pl-10 border ${
-                                        errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
-                                    } placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:z-10 sm:text-sm transition-all`}
+                                        errors.confirmPassword ? 'border-red-500' : 'border-borda'
+                                    } placeholder-text-secondary text-text-primary rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:z-10 sm:text-sm transition-all`}
                                     placeholder="Digite a senha novamente"
                                     value={formData.confirmPassword}
                                     onChange={handleChange}
                                 />
                             </div>
                             {errors.confirmPassword && (
-                                <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
+                                <p className="mt-1 text-sm text-primary">{errors.confirmPassword}</p>
                             )}
                         </div>
                     </div>
@@ -289,7 +289,7 @@ const SignUp = () => {
                                     type="checkbox"
                                     checked={formData.newsletter}
                                     onChange={handleChange}
-                                    className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+                                    className="h-4 w-4 text-primary focus:ring-primary border-borda rounded"
                                 />
                             </div>
                             <div className="ml-3 text-sm">
@@ -308,7 +308,7 @@ const SignUp = () => {
                                     required
                                     checked={formData.acceptTerms}
                                     onChange={handleChange}
-                                    className={`h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded ${
+                                    className={`h-4 w-4 text-primary focus:ring-primary border-borda rounded ${
                                         errors.acceptTerms ? 'border-red-500' : ''
                                     }`}
                                 />
@@ -327,7 +327,7 @@ const SignUp = () => {
                             </div>
                         </div>
                         {errors.acceptTerms && (
-                            <p className="text-sm text-red-600">{errors.acceptTerms}</p>
+                            <p className="text-sm text-primary">{errors.acceptTerms}</p>
                         )}
                     </div>
 

@@ -4,13 +4,13 @@ import { Facebook, Instagram, Twitter } from 'lucide-react';
 
 const Footer = () => {
     return (
-        <footer className="bg-secondary text-white py-8 pb-24 md:pb-8">
+        <footer className="bg-secondary text-background py-8 pb-24 md:pb-8">
             <div className="container mx-auto px-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6">
                     {/* Brand */}
                     <div>
                         <h3 className="text-xl font-heading font-bold text-primary mb-3">O Irmãozinho</h3>
-                        <p className="text-gray-300 text-sm leading-relaxed">
+                        <p className="text-pessego text-sm leading-relaxed">
                             Compartilhando artigos e reflexões sobre a vida Cristã.
                         </p>
                     </div>
@@ -19,10 +19,10 @@ const Footer = () => {
                     <div>
                         <h4 className="text-base font-heading font-semibold mb-3">Navegação</h4>
                         <ul className="space-y-2">
-                            <li><Link to="/" className="text-gray-300 hover:text-primary text-sm transition-colors">Home</Link></li>
-                            <li><Link to="/artigos" className="text-gray-300 hover:text-primary text-sm transition-colors">Artigos</Link></li>
-                            <li><Link to="/cronicas" className="text-gray-300 hover:text-primary text-sm transition-colors">Crônicas</Link></li>
-                            <li><Link to="/sobre" className="text-gray-300 hover:text-primary text-sm transition-colors">Sobre Nós</Link></li>
+                            <li><Link to="/" className="text-pessego hover:text-primary text-sm transition-colors">Home</Link></li>
+                            <li><Link to="/artigos" className="text-pessego hover:text-primary text-sm transition-colors">Artigos</Link></li>
+                            <li><Link to="/cronicas" className="text-pessego hover:text-primary text-sm transition-colors">Crônicas</Link></li>
+                            <li><Link to="/sobre" className="text-pessego hover:text-primary text-sm transition-colors">Sobre Nós</Link></li>
                         </ul>
                     </div>
 
@@ -46,34 +46,34 @@ const Footer = () => {
                 <div className="flex justify-center space-x-6 mb-6">
                     <a
                         href="#"
-                        className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-700 text-gray-300 hover:bg-primary hover:text-white transition-all duration-300 transform hover:scale-110"
+                        className="flex items-center justify-center w-10 h-10 rounded-full bg-secondary-dark text-pessego hover:bg-primary hover:text-background transition-all duration-300 transform hover:scale-110"
                         aria-label="Facebook"
                     >
                         <Facebook size={22} />
                     </a>
                     <a
                         href="#"
-                        className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-700 text-gray-300 hover:bg-primary hover:text-white transition-all duration-300 transform hover:scale-110"
+                        className="flex items-center justify-center w-10 h-10 rounded-full bg-secondary-dark text-pessego hover:bg-primary hover:text-background transition-all duration-300 transform hover:scale-110"
                         aria-label="Instagram"
                     >
                         <Instagram size={22} />
                     </a>
                     <a
                         href="#"
-                        className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-700 text-gray-300 hover:bg-primary hover:text-white transition-all duration-300 transform hover:scale-110"
+                        className="flex items-center justify-center w-10 h-10 rounded-full bg-secondary-dark text-pessego hover:bg-primary hover:text-background transition-all duration-300 transform hover:scale-110"
                         aria-label="Twitter"
                     >
                         <Twitter size={22} />
                     </a>
                 </div>
 
-                <div className="border-t border-gray-700 pt-6 flex flex-col md:flex-row justify-between items-center text-sm">
-                    <p className="text-gray-400 text-center md:text-left mb-3 md:mb-0">
+                <div className="border-t border-secondary-dark pt-6 flex flex-col md:flex-row justify-between items-center text-sm">
+                    <p className="text-pessego text-center md:text-left mb-3 md:mb-0">
                         &copy; {new Date().getFullYear()} O Irmãozinho. Todos os direitos reservados.
                     </p>
                     <div className="flex space-x-4">
-                        <Link to="/privacidade" className="text-gray-400 hover:text-primary transition-colors">Privacidade</Link>
-                        <Link to="/termos" className="text-gray-400 hover:text-primary transition-colors">Termos</Link>
+                        <Link to="/privacidade" className="text-pessego hover:text-primary transition-colors">Privacidade</Link>
+                        <Link to="/termos" className="text-pessego hover:text-primary transition-colors">Termos</Link>
                     </div>
                 </div>
             </div>

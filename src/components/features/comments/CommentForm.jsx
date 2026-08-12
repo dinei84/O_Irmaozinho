@@ -71,14 +71,14 @@ const CommentForm = ({ onSubmit, onCancel, initialText = '', submitLabel = 'Come
                         w-full px-4 py-3 pr-20 rounded-lg border
                         focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary
                         resize-none min-h-[100px] max-h-[200px]
-                        ${error ? 'border-red-300' : 'border-gray-300'}
+                        ${error ? 'border-primary' : 'border-borda'}
                         ${loading ? 'opacity-50 cursor-not-allowed' : ''}
                     `}
                     disabled={loading}
                     maxLength={500}
                 />
                 <div className="absolute bottom-3 right-3 flex items-center gap-2">
-                    <span className={`text-xs ${isNearLimit ? 'text-red-500' : 'text-gray-400'}`}>
+                    <span className={`text-xs ${isNearLimit ? 'text-primary' : 'text-text-secondary'}`}>
                         {remainingChars}
                     </span>
                 </div>
@@ -88,7 +88,7 @@ const CommentForm = ({ onSubmit, onCancel, initialText = '', submitLabel = 'Come
                 <motion.div
                     initial={{ opacity: 0, y: -5 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2"
+                    className="text-sm text-primary bg-pessego/30 border border-primary/30 rounded-lg px-3 py-2"
                 >
                     {error}
                 </motion.div>
@@ -120,14 +120,14 @@ const CommentForm = ({ onSubmit, onCancel, initialText = '', submitLabel = 'Come
                             flex items-center gap-2
                             transition-all duration-200
                             ${loading || content.trim().length < 3
-                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                : 'bg-primary text-white hover:bg-primary-dark'
+                                ? 'bg-areia text-text-secondary cursor-not-allowed'
+                                : 'bg-primary text-background hover:bg-primary-dark'
                             }
                         `}
                     >
                         {loading ? (
                             <>
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-background"></div>
                                 Enviando...
                             </>
                         ) : (

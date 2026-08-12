@@ -1,6 +1,8 @@
 # OS_REDESIGN_008 — Páginas restantes + limpeza final de cores cruas
 
-**Status:** 🔲 Não iniciada
+**Status:** ✅ Aprovada pelo CTO em 2026-08-12 (grep de cores cruas vazio confirmado, zero
+lógica tocada, sem correções necessárias)
+**Relatório de execução:** [`docs/execution-reports/EXECUTION_REPORT_OS_REDESIGN_008.md`](../execution-reports/EXECUTION_REPORT_OS_REDESIGN_008.md)
 **Branch:** criar `feature/os-008-paginas-restantes` a partir de `develop` — nunca em
 `main` (ver `AGENTS.md` §9.7). **Passo zero, antes de qualquer edição.**
 **Roadmap:** [`docs/arquitetura/PLANO_REDESIGN_VISUAL.md`](../arquitetura/PLANO_REDESIGN_VISUAL.md)
@@ -86,17 +88,17 @@ spec não detalha essas telas) e sem tocar lógica.
 
 ## Definition of Done
 
-- [ ] Reskin das 5 páginas (A) e limpeza dos componentes (B) aplicados com tokens da paleta
-- [ ] `grep -rlE "gray-[0-9]|blue-[0-9]|indigo-[0-9]|slate-[0-9]" src --include="*.jsx"`,
+- [x] Reskin das 5 páginas (A) e limpeza dos componentes (B) aplicados com tokens da paleta
+- [x] `grep -rlE "gray-[0-9]|blue-[0-9]|indigo-[0-9]|slate-[0-9]" src --include="*.jsx"`,
       **excluindo `src/pages/admin/` e `__tests__`**, retorna **vazio** (só devem restar
       cores **funcionais** — `red-*`/`green-*`/`dourado`, que são permitidas)
-- [ ] Nenhuma mudança de lógica (só classes/markup visuais)
-- [ ] `npx vitest run` (2 execuções consecutivas, dev server desligado) **sem novas falhas**
+- [x] Nenhuma mudança de lógica (só classes/markup visuais)
+- [x] `npx vitest run` (2 execuções consecutivas, dev server desligado) **sem novas falhas**
       (baseline: 284 passando / 14 falhas pré-existentes / 298 total — ver `PROJECT_STATE.md`)
-- [ ] `npx vite build` limpo (warning de chunk >500KB é pré-existente, ok)
-- [ ] Conferência visual na medida do possível no ambiente; ser honesto no report sobre o
+- [x] `npx vite build` limpo (warning de chunk >500KB é pré-existente, ok)
+- [~] Conferência visual na medida do possível no ambiente; ser honesto no report sobre o
       que não deu para verificar ao vivo (Firebase de placeholder pode impedir a navegação)
-- [ ] **Arquivo de report gerado (ver "Entrega obrigatória" abaixo)**
+- [x] **Arquivo de report gerado (ver "Entrega obrigatória" abaixo)**
 
 ---
 

@@ -10,11 +10,11 @@ const OrderStatusBadge = ({ status }) => {
         },
         processing: {
             label: 'Processando',
-            className: 'bg-blue-100 text-blue-800 border-blue-200'
+            className: 'bg-pessego/30 text-dourado border-primary/30'
         },
         shipped: {
             label: 'Enviado',
-            className: 'bg-purple-100 text-purple-800 border-purple-200'
+            className: 'bg-areia text-secondary border-borda'
         },
         delivered: {
             label: 'Entregue',
@@ -28,7 +28,7 @@ const OrderStatusBadge = ({ status }) => {
 
     const config = statusConfig[status] || {
         label: status,
-        className: 'bg-gray-100 text-gray-800 border-gray-200'
+        className: 'bg-areia text-text-secondary border-borda'
     };
 
     return (

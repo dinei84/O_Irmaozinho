@@ -86,12 +86,12 @@ const Header = () => {
                                     initial={{ opacity: 0, y: -10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -10 }}
-                                    className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2"
+                                    className="absolute right-0 mt-2 w-56 bg-surface rounded-lg shadow-lg border border-borda py-2"
                                     onMouseLeave={() => setIsUserMenuOpen(false)}
                                 >
                                     {currentUser ? (
                                         <>
-                                            <div className="px-4 py-2 border-b border-gray-200">
+                                            <div className="px-4 py-2 border-b border-borda">
                                                 <p className="text-sm font-semibold text-secondary truncate">
                                                     {currentUser.email}
                                                 </p>
@@ -99,7 +99,7 @@ const Header = () => {
                                             <Link
                                                 to="/orders"
                                                 onClick={() => setIsUserMenuOpen(false)}
-                                                className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:bg-gray-50 hover:text-primary transition-colors"
+                                                className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:bg-areia hover:text-primary transition-colors"
                                             >
                                                 <Package size={18} />
                                                 Meus Pedidos
@@ -107,14 +107,14 @@ const Header = () => {
                                             <Link
                                                 to="/admin"
                                                 onClick={() => setIsUserMenuOpen(false)}
-                                                className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:bg-gray-50 hover:text-primary transition-colors"
+                                                className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:bg-areia hover:text-primary transition-colors"
                                             >
                                                 <User size={18} />
                                                 Painel Admin
                                             </Link>
                                             <button
                                                 onClick={handleLogout}
-                                                className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                                                className="w-full flex items-center gap-3 px-4 py-2 text-sm text-primary hover:bg-pessego/30 transition-colors"
                                             >
                                                 <LogOut size={18} />
                                                 Sair
@@ -125,7 +125,7 @@ const Header = () => {
                                             <Link
                                                 to="/login"
                                                 onClick={() => setIsUserMenuOpen(false)}
-                                                className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:bg-gray-50 hover:text-primary transition-colors"
+                                                className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:bg-areia hover:text-primary transition-colors"
                                             >
                                                 <LogIn size={18} />
                                                 Entrar
@@ -133,7 +133,7 @@ const Header = () => {
                                             <Link
                                                 to="/signup"
                                                 onClick={() => setIsUserMenuOpen(false)}
-                                                className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:bg-gray-50 hover:text-primary transition-colors"
+                                                className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:bg-areia hover:text-primary transition-colors"
                                             >
                                                 <User size={18} />
                                                 Criar Conta

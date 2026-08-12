@@ -72,13 +72,13 @@ const Orders = () => {
                 </div>
 
                 {error && (
-                    <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
-                        <AlertCircle className="text-red-600 flex-shrink-0 mt-0.5" size={20} />
+                    <div className="mb-6 p-4 bg-pessego/30 border border-primary/30 rounded-lg flex items-start gap-3">
+                        <AlertCircle className="text-primary flex-shrink-0 mt-0.5" size={20} />
                         <div className="flex-1">
-                            <p className="text-sm text-red-800">{error}</p>
+                            <p className="text-sm text-secondary">{error}</p>
                             <button
                                 onClick={loadOrders}
-                                className="text-sm text-red-600 hover:text-red-700 font-medium mt-2"
+                                className="text-sm text-primary hover:text-primary-dark font-medium mt-2"
                             >
                                 Tentar novamente
                             </button>
@@ -88,7 +88,7 @@ const Orders = () => {
 
                 {orders.length === 0 && !error ? (
                     <div className="text-center py-16">
-                        <Package className="mx-auto text-gray-300 mb-6" size={64} />
+                        <Package className="mx-auto text-text-secondary mb-6" size={64} />
                         <h2 className="text-2xl font-heading font-bold text-secondary mb-4">
                             Nenhum pedido encontrado
                         </h2>
@@ -117,8 +117,8 @@ const Orders = () => {
                                     onClick={() => setFilter(value)}
                                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                                         filter === value
-                                            ? 'bg-primary text-white'
-                                            : 'bg-white text-text-secondary border border-gray-200 hover:border-primary hover:text-primary'
+                                            ? 'bg-primary text-background'
+                                            : 'bg-surface text-text-secondary border border-borda hover:border-primary hover:text-primary'
                                     }`}
                                 >
                                     {label}
@@ -127,8 +127,8 @@ const Orders = () => {
                         </div>
 
                         {filteredOrders.length === 0 ? (
-                            <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-                                <Package className="mx-auto text-gray-300 mb-4" size={48} />
+                            <div className="text-center py-12 bg-surface rounded-lg border border-borda">
+                                <Package className="mx-auto text-text-secondary mb-4" size={48} />
                                 <p className="text-text-secondary">
                                     Nenhum pedido encontrado com este filtro
                                 </p>
