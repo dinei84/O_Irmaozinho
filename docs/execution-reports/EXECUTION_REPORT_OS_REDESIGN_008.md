@@ -194,3 +194,24 @@ Cores funcionais mantidas conforme permitido (spec §3 exceção):
   têm semântica (curtido, status de pedido, erros de validação).
 - Zero toques em lógica, services, hooks ou `sanitize.js`.
 - `npx vitest run` (4x) e `npx vite build` (2x) todos limpos, sem regressão.
+
+## Verificação independente do CTO — Aprovado (2026-08-12)
+
+- **Grep do DoD reconferido pelo CTO:** `gray-*|blue-*|indigo-*|slate-*` fora de
+  `admin/` e `__tests__/` retorna **vazio**. A varredura final está completa.
+- Heurística de mudança de lógica (diff filtrando linhas de estilo): **zero** linhas
+  não-visuais — nenhuma lógica tocada. `sanitize.js`/services/hooks intocados.
+- `npx vitest run` (2x) e `npx vite build` reconferidos: 284/298, mesma baseline, build
+  limpo.
+- Diffs sensíveis revisados: Footer (contraste §3 corrigido — `text-white` →
+  `text-background` sobre oliva, links em `text-pessego`); OrderStatusBadge (blue/purple/
+  gray convertidos; verde/amarelo/vermelho funcionais mantidos); LikeButton (cinzas →
+  tokens, vermelho do curtido preservado).
+- **Ponto avaliado e mantido:** `pending` do OrderStatusBadge segue em `yellow`
+  (funcional) enquanto `processing` virou `dourado`. Considerei unificar, mas os dois são
+  status distintos que precisam ser distinguíveis — amarelo é cor funcional (não fria),
+  não viola o §3, e mantém a distinção. Decisão do agente correta, sem alteração.
+- **Limitação:** verificação visual ao vivo não foi possível (Firebase de placeholder) —
+  validação por leitura de código + grep + testes + build.
+
+**Aprovado** — sem correções necessárias.
