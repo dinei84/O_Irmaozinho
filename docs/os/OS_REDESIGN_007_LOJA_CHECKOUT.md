@@ -1,6 +1,6 @@
 # OS_REDESIGN_007 — Loja e Checkout
 
-**Status:** 🔲 Não iniciada
+**Status:** ✅ Concluída — commit `b625c09` na branch `feature/os-007-loja-checkout`
 **Branch:** criar `feature/os-007-loja-checkout` a partir de `develop` — nunca em `main`
 (ver `AGENTS.md` §9.7). **Passo zero, antes de qualquer edição.**
 **Roadmap:** [`docs/arquitetura/PLANO_REDESIGN_VISUAL.md`](../arquitetura/PLANO_REDESIGN_VISUAL.md)
