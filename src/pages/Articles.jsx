@@ -43,6 +43,12 @@ const Articles = () => {
         }
     }
 
+    const formatDate = (timestamp) => {
+        if (!timestamp) return '';
+        const seconds = timestamp.seconds || timestamp._seconds || timestamp;
+        return new Date(seconds * 1000).toLocaleDateString('pt-BR');
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen bg-background flex justify-center items-center">
@@ -120,38 +126,50 @@ const Articles = () => {
                 {articles.length > 0 && (
                     <>
                         <h2 className="text-2xl font-heading font-bold text-secondary mb-8">Todos os Artigos</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {articles.map((article) => (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                            {articles.map((article, index) => (
                                 <motion.div
                                     key={article.id}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
+                                    initial={{ opacity: 0, y: 30 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.5, delay: index * 0.1 }}
                                 >
-                                    <Card className="flex flex-col h-full">
-                                        {article.imageUrl && (
-                                            <div className="h-48 overflow-hidden">
-                                                <img
-                                                    src={article.imageUrl}
-                                                    alt={article.title}
-                                                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                                                    onError={(e) => { e.target.src = 'https://placehold.co/600x400?text=Artigo' }}
-                                                />
+                                    <Card className="flex flex-col h-full group">
+                                        <div className="relative aspect-[16/9] overflow-hidden">
+                                            <img
+                                                src={article.imageUrl || 'https://placehold.co/800x450?text=O+Irmaozinho'}
+                                                alt={article.title}
+                                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                onError={(e) => { e.target.src = 'https://placehold.co/800x450?text=O+Irmaozinho' }}
+                                            />
+                                        </div>
+                                        <CardBody className="flex flex-col flex-grow gap-3">
+                                            <div className="flex items-center gap-3">
+                                                <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-[#EDE1CD] text-[#8A5A2E]">
+                                                    {article.category || 'Artigo'}
+                                                </span>
+                                                {article.createdAt && (
+                                                    <span className="text-[11px] font-semibold text-text-secondary uppercase tracking-wider">
+                                                        {formatDate(article.createdAt)}
+                                                    </span>
+                                                )}
                                             </div>
-                                        )}
-                                        <CardBody className="flex-grow">
-                                            <div className="text-xs text-primary font-semibold mb-2">
-                                                {article.category?.toUpperCase() || 'ARTIGO'}
-                                            </div>
-                                            <h3 className="text-xl font-heading font-bold text-secondary mb-3">
+                                            <h3 className="text-xl font-heading font-bold text-secondary leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200">
                                                 {article.title}
                                             </h3>
-                                            <p className="text-text-secondary text-sm line-clamp-3">
+                                            <p className="text-sm text-text-secondary leading-relaxed line-clamp-3 flex-grow">
                                                 {stripHtml(article.body)}
                                             </p>
                                         </CardBody>
-                                        <div className="p-6 pt-0 mt-auto flex items-center justify-between gap-4">
-                                            <Button to={`/artigo/${article.id}`} variant="ghost" className="pl-0 hover:bg-transparent hover:text-primary-dark">
-                                                Ler mais <ArrowRight size={16} className="ml-1" />
+                                        <div className="px-6 pb-5 pt-0 flex items-center justify-between gap-4">
+                                            <Button
+                                                to={`/artigo/${article.id}`}
+                                                variant="ghost"
+                                                className="pl-0 text-sm gap-1.5 group/btn"
+                                            >
+                                                Ler mais
+                                                <ArrowRight size={15} className="transition-transform duration-200 group-hover/btn:translate-x-1" />
                                             </Button>
                                             <LikeButton
                                                 contentId={article.id}
