@@ -78,7 +78,7 @@ Lógica de pagamento/checkout (Mercado Pago), regras do Firestore, LGPD, wrapper
 | [OS_REDESIGN_006](../os/OS_REDESIGN_006_LISTAGENS.md) | Listagens (Artigos, Crônicas) | ✅ Aprovada |
 | [OS_REDESIGN_007](../os/OS_REDESIGN_007_LOJA_CHECKOUT.md) | Loja e Checkout | ✅ Aprovada |
 | [OS_REDESIGN_008](../os/OS_REDESIGN_008_PAGINAS_RESTANTES.md) | Páginas restantes + limpeza de cores cruas | ✅ Aprovada |
-| [OS_REDESIGN_009](../os/OS_REDESIGN_009_PWA.md) | PWA (instalabilidade + offline) | 🔲 Não iniciada |
+| [OS_REDESIGN_009](../os/OS_REDESIGN_009_PWA.md) | PWA (instalabilidade + offline) | ✅ Aprovada |
 | [OS_REDESIGN_010](../os/OS_REDESIGN_010_PERFORMANCE_REVISAO_FINAL.md) | Performance e revisão final | 🔲 Não iniciada |
 
 Relatórios de execução ficam em [`docs/execution-reports/`](../execution-reports/),

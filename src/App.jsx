@@ -7,6 +7,7 @@ import Header from './components/layout/Header';
 import BottomTabBar from './components/layout/BottomTabBar';
 import Footer from './components/layout/Footer';
 import CartDrawer from './components/features/cart/CartDrawer';
+import InstallPrompt from './components/features/pwa/InstallPrompt';
 import Home from './pages/Home';
 import About from './pages/About';
 import Articles from './pages/Articles';
@@ -141,6 +142,7 @@ function App() {
                         <Footer />
                         <BottomTabBar />
                         <CartDrawer />
+                        <InstallPrompt />
                     </div>
                 </Router>
             </CartProvider>
