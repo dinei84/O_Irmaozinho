@@ -33,7 +33,7 @@ const OrderConfirmation = ({ orderId, orderData }) => {
 
                     {/* Informações do Pedido */}
                     {orderId && (
-                        <div className="bg-white border border-gray-200 rounded-lg p-6 mb-8 text-left">
+                        <div className="bg-surface border border-borda rounded-lg p-6 mb-8 text-left">
                             <div className="flex items-center gap-2 mb-4">
                                 <Package className="text-primary" size={20} />
                                 <h2 className="text-lg font-semibold text-secondary">
@@ -70,7 +70,7 @@ const OrderConfirmation = ({ orderId, orderData }) => {
                     )}
 
                     {/* Mensagem */}
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+                    <div className="bg-areia border border-borda rounded-lg p-6 mb-8">
                         <p className="text-text-secondary">
                             {orderData?.payment?.method === 'pix' && (
                                 <>

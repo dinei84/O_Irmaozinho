@@ -59,6 +59,8 @@ Paleta terrosa e acolhedora — substitui integralmente o azul/navy atual.
 
 **Regras de contraste**: todo texto sobre terracota, oliva ou tinta deve usar `#F7F1E7` (quase-branco quente) — nunca branco puro (#FFF), para manter a paleta quente. Nunca usar azul, cinza frio ou preto puro em qualquer novo componente.
 
+**Cores funcionais (exceção aprovada pela diretoria em 2026-08-12)**: em feedback funcional de estado — validação de formulário, resultado de pagamento e afins — é permitido usar **verde** (sucesso), **vermelho** (erro/rejeição) e **dourado/âmbar** (aviso), pois carregam significado que o usuário reconhece de imediato num fluxo crítico (ex.: checkout). Isso é uma exceção pontual e **funcional**, não decorativa: a paleta terrosa continua sendo a base de toda a interface, e **azul, cinza frio e preto puro seguem proibidos** mesmo como cor funcional. Convenção adotada: sucesso `green-50/green-600/green-800`; erro/validação `red-50/red-500/red-800`; aviso `#C79A3E` (dourado). Aplicada primeiro no checkout (OS_REDESIGN_007).
+
 ---
 
 ## 4. Tipografia

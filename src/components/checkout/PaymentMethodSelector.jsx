@@ -63,13 +63,13 @@ const PaymentMethodSelector = ({ selectedMethod, onSelect, availableMethods = ['
                                     isSelected
                                         ? 'border-primary bg-primary/5'
                                         : isDisabled
-                                        ? 'border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed'
-                                        : 'border-gray-300 hover:border-primary/50 hover:bg-gray-50'
+                                        ? 'border-borda bg-areia opacity-50 cursor-not-allowed'
+                                        : 'border-borda hover:border-primary/50 hover:bg-areia'
                                 }`}
                             >
                                 <div className="flex items-start gap-4">
                                     <div className={`p-2 rounded-lg ${
-                                        isSelected ? 'bg-primary text-white' : 'bg-gray-200 text-gray-600'
+                                        isSelected ? 'bg-primary text-background' : 'bg-areia text-text-secondary'
                                     }`}>
                                         <Icon size={24} />
                                     </div>
@@ -79,7 +79,7 @@ const PaymentMethodSelector = ({ selectedMethod, onSelect, availableMethods = ['
                                                 {method.name}
                                             </h4>
                                             {method.comingSoon && (
-                                                <span className="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded">
+                                                <span className="text-xs px-2 py-1 bg-areia text-dourado rounded">
                                                     Em breve
                                                 </span>
                                             )}
@@ -90,7 +90,7 @@ const PaymentMethodSelector = ({ selectedMethod, onSelect, availableMethods = ['
                                     </div>
                                     {isSelected && (
                                         <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                                            <div className="w-2 h-2 rounded-full bg-white"></div>
+                                            <div className="w-2 h-2 rounded-full bg-background"></div>
                                         </div>
                                     )}
                                 </div>
@@ -100,24 +100,24 @@ const PaymentMethodSelector = ({ selectedMethod, onSelect, availableMethods = ['
                 </div>
 
                 {selectedMethod === 'pix' && (
-                    <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                        <p className="text-sm text-green-800">
+                    <div className="mt-4 p-4 bg-areia border border-borda rounded-lg">
+                        <p className="text-sm text-secondary">
                             <strong>✓ PIX selecionado</strong><br />
                             Após confirmar o pedido, você receberá um QR Code para pagamento instantâneo.
                         </p>
                     </div>
                 )}
                 {selectedMethod === 'boleto' && (
-                    <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                        <p className="text-sm text-amber-800">
+                    <div className="mt-4 p-4 bg-areia border border-borda rounded-lg">
+                        <p className="text-sm text-secondary">
                             <strong>✓ Boleto selecionado</strong><br />
                             Após confirmar, você receberá o link do boleto para pagar em qualquer banco. Confirmação em até 2 dias úteis.
                         </p>
                     </div>
                 )}
                 {selectedMethod === 'credit_card' && (
-                    <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                        <p className="text-sm text-blue-800">
+                    <div className="mt-4 p-4 bg-areia border border-borda rounded-lg">
+                        <p className="text-sm text-secondary">
                             <strong>✓ Cartão de Crédito selecionado</strong><br />
                             Na próxima etapa você informará os dados do cartão. Parcelamento em até 12x.
                         </p>

@@ -50,7 +50,7 @@ const Checkout = () => {
         return (
             <div className="min-h-screen bg-background flex items-center justify-center px-4">
                 <div className="text-center">
-                    <Package className="mx-auto text-gray-300 mb-6" size={64} />
+                    <Package className="mx-auto text-text-secondary mb-6" size={64} />
                     <h2 className="text-2xl font-heading font-bold text-secondary mb-4">
                         Carrinho Vazio
                     </h2>
@@ -306,8 +306,8 @@ const Checkout = () => {
                                 <div className="flex flex-col items-center">
                                     <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
                                         step >= s
-                                            ? 'bg-primary text-white'
-                                            : 'bg-gray-200 text-gray-600'
+                                            ? 'bg-primary text-background'
+                                            : 'bg-areia text-text-secondary'
                                     }`}>
                                         {step > s ? <Check size={20} /> : s}
                                     </div>
@@ -319,7 +319,7 @@ const Checkout = () => {
                                 </div>
                                 {s < 3 && (
                                     <div className={`flex-1 h-0.5 mx-4 ${
-                                        step > s ? 'bg-primary' : 'bg-gray-200'
+                                        step > s ? 'bg-primary' : 'bg-borda'
                                     }`} />
                                 )}
                             </React.Fragment>
@@ -436,8 +436,8 @@ const Checkout = () => {
                                 {/* Itens */}
                                 <div className="space-y-3 mb-4 max-h-64 overflow-y-auto">
                                     {cartItems.map((item) => (
-                                        <div key={item.id} className="flex gap-3 pb-3 border-b border-gray-200 last:border-0">
-                                            <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                                        <div key={item.id} className="flex gap-3 pb-3 border-b border-borda last:border-0">
+                                            <div className="w-16 h-16 rounded-lg overflow-hidden bg-areia flex-shrink-0">
                                                 {item.imageUrl ? (
                                                     <img
                                                         src={item.imageUrl}
@@ -449,7 +449,7 @@ const Checkout = () => {
                                                     />
                                                 ) : (
                                                     <div className="w-full h-full flex items-center justify-center">
-                                                        <ShoppingBag className="text-gray-300" size={20} />
+                                                        <ShoppingBag className="text-text-secondary" size={20} />
                                                     </div>
                                                 )}
                                             </div>
@@ -469,7 +469,7 @@ const Checkout = () => {
                                 </div>
 
                                 {/* Totais */}
-                                <div className="space-y-3 mb-6 pt-4 border-t border-gray-200">
+                                <div className="space-y-3 mb-6 pt-4 border-t border-borda">
                                     <div className="flex justify-between text-text-secondary text-sm">
                                         <span>Subtotal</span>
                                         <span>R$ {cartTotal.toFixed(2).replace('.', ',')}</span>
@@ -478,7 +478,7 @@ const Checkout = () => {
                                         <span>Frete</span>
                                         <span>Grátis</span>
                                     </div>
-                                    <div className="pt-3 border-t border-gray-200">
+                                    <div className="pt-3 border-t border-borda">
                                         <div className="flex justify-between items-center">
                                             <span className="font-semibold text-secondary">Total</span>
                                             <span className="text-xl font-bold text-primary">
