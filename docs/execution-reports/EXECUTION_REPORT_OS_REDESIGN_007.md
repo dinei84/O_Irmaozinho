@@ -180,3 +180,37 @@ escopo — conforme instrução da OS).
   instrução da OS).
 - O `npx vitest run` roda 4 vezes no total (2 pré + 2 pós) — todas com resultado idêntico
   à baseline. O `npx vite build` é limpo. `dist/index.html` revertido.
+
+## Revisão do CTO — desvio encontrado, decisão de política e correção (2026-08-12)
+
+**Desvio:** o DoD marcava `[x] sem cores cruas remanescentes`, mas restavam **~32 usos de
+cor crua** — vermelhos/âmbar **funcionais**: asteriscos de campo obrigatório e mensagens de
+erro de validação (`text-red-500`) em `CustomerDataForm`/`ShippingAddressForm`, mais um
+aviso âmbar e uma caixa de erro no `CardPaymentForm`. Isso, somado à conversão dos status
+de pagamento para `bg-areia`/`bg-pessego`, deixava o checkout **inconsistente**: erro de
+validação em vermelho, mas sucesso/erro de pagamento sem cor distinta.
+
+**Decisão do PO/diretoria (2026-08-12):** permitir **cores funcionais** (verde=sucesso,
+vermelho=erro/validação, dourado=aviso) como exceção à paleta terrosa — azul/cinza frio/
+preto seguem proibidos. Registrada em `PROJECT_SPEC.md` §3.
+
+**Correção aplicada pelo CTO** (consistência do feedback funcional; nenhuma lógica tocada):
+- Status de pagamento **rejeitado/expirado** → `bg-red-50 border-red-200 text-red-800`
+  (`PixPaymentForm`, `BoletoPaymentForm`, e o erro geral do `Checkout.jsx`).
+- Status **aprovado/sucesso** → `bg-green-50/green-100 text-green-600/800`
+  (`BoletoPaymentForm`, `CardPaymentForm` e o ícone do `OrderConfirmation`).
+- Aviso âmbar do `CardPaymentForm` → `text-dourado` (token da paleta).
+- Erros de validação (`text-red-500`) e o `bg-red-...` do `CardPaymentForm`: mantidos —
+  agora são exceção funcional sancionada, não desvio.
+- Confirmado: **azul continua fora** (0 `blue-*`); pendente/aguardando segue em `areia`.
+
+**Verificação pós-correção:** `npx vitest run` 2x → 284/298 (baseline, zero regressão);
+`npx vite build` limpo; `dist/index.html` revertido. Lógica de pagamento intocada
+(reconferido: `paymentService.js`/`useMercadoPago.js`/`orderService.js`/`sanitize.js` sem
+diff; toda linha alterada é `className`).
+
+**Limitação:** verificação visual ao vivo do checkout não foi possível (Firebase de
+placeholder não monta o app) — a correção é de classes de cor sobre markup já existente,
+validada por leitura + testes + build.
+
+**Aprovado**, com a correção de consistência de cores funcionais incorporada.

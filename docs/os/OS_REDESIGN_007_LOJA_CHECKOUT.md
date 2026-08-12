@@ -1,6 +1,9 @@
 # OS_REDESIGN_007 — Loja e Checkout
 
-**Status:** ✅ Concluída — commit `b625c09` na branch `feature/os-007-loja-checkout`
+**Status:** ✅ Aprovada pelo CTO em 2026-08-12 (com correção de consistência de cores
+funcionais — verde/vermelho para status de pagamento — aplicada na revisão; política
+registrada em `PROJECT_SPEC.md` §3)
+**Relatório de execução:** [`docs/execution-reports/EXECUTION_REPORT_OS_REDESIGN_007.md`](../execution-reports/EXECUTION_REPORT_OS_REDESIGN_007.md)
 **Branch:** criar `feature/os-007-loja-checkout` a partir de `develop` — nunca em `main`
 (ver `AGENTS.md` §9.7). **Passo zero, antes de qualquer edição.**
 **Roadmap:** [`docs/arquitetura/PLANO_REDESIGN_VISUAL.md`](../arquitetura/PLANO_REDESIGN_VISUAL.md)
@@ -73,18 +76,17 @@ que mude de status por causa desta OS é sinal de que lógica foi tocada por eng
 
 ## Definition of Done
 
-- [ ] Reskin visual aplicado em `Store.jsx`, `Checkout.jsx` e nos 7 componentes de
-      `checkout/`, usando tokens da paleta (sem cores cruas remanescentes nesses arquivos)
-- [ ] Nenhuma mudança em `paymentService.js`, `useMercadoPago.js` ou em qualquer cálculo
-      de valor/fluxo de pagamento
-- [ ] `npx vitest run` (2 execuções consecutivas, dev server desligado) **sem novas
-      falhas** em relação à baseline conhecida (284 passando / 14 falhas pré-existentes /
-      298 total — ver `PROJECT_STATE.md` §0; algumas dessas 14 já são de `checkout/`, o
-      alvo é **não aumentar** o número, não zerá-lo)
-- [ ] `npx vite build` limpo (o warning de chunk >500KB é pré-existente, ok)
-- [ ] Conferência visual do fluxo de checkout (na medida do possível no ambiente — ver
-      nota abaixo); ser honesto sobre o que não deu para verificar ao vivo
-- [ ] **Arquivo de report gerado (ver seção "Entrega obrigatória" abaixo)**
+- [x] Reskin visual aplicado em `Store.jsx`, `Checkout.jsx` e nos 7 componentes de
+      `checkout/` com a paleta terrosa. Cores cruas restantes são **funcionais e
+      intencionais** (verde=sucesso, vermelho=erro/validação, dourado=aviso), sancionadas
+      pela decisão de `PROJECT_SPEC.md` §3 — azul/cinza frio/preto ficaram fora
+- [x] Nenhuma mudança em `paymentService.js`, `useMercadoPago.js` ou em qualquer cálculo
+      de valor/fluxo de pagamento (reconferido pelo CTO)
+- [x] `npx vitest run` (2x, dev server desligado) — 284/298, sem novas falhas
+- [x] `npx vite build` limpo
+- [~] Conferência visual do fluxo de checkout ao vivo — **não possível** (Firebase de
+      placeholder não monta o app); validado por leitura de código + testes + build
+- [x] **Arquivo de report gerado** (`docs/execution-reports/EXECUTION_REPORT_OS_REDESIGN_007.md`)
 
 > **Nota sobre verificação visual:** este ambiente normalmente não tem `.env` com
 > credenciais reais do Firebase, então o app pode não montar / não carregar dados. Se
