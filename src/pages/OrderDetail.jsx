@@ -169,7 +169,7 @@ const OrderDetail = () => {
                             {order.orderStatus === 'pending' && (
                                 <button
                                     onClick={() => setShowCancelModal(true)}
-                                    className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg hover:bg-red-100 transition-colors font-medium"
+                                    className="flex items-center gap-2 px-4 py-2 bg-pessego/30 text-primary border border-primary/30 rounded-lg hover:bg-pessego/50 transition-colors font-medium"
                                 >
                                     <XCircle size={18} />
                                     Cancelar Pedido
@@ -192,9 +192,9 @@ const OrderDetail = () => {
 
                                 <div className="space-y-4">
                                     {order.items?.map((item, index) => (
-                                        <div key={index} className="flex gap-4 pb-4 border-b border-gray-200 last:border-0">
-                                            <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                                                <Package className="text-gray-400" size={32} />
+                                        <div key={index} className="flex gap-4 pb-4 border-b border-borda last:border-0">
+                                            <div className="w-20 h-20 bg-areia rounded-lg flex items-center justify-center flex-shrink-0">
+                                                <Package className="text-text-secondary" size={32} />
                                             </div>
                                             <div className="flex-1">
                                                 <h3 className="font-semibold text-secondary mb-1">
@@ -211,7 +211,7 @@ const OrderDetail = () => {
                                     ))}
                                 </div>
 
-                                <div className="mt-6 pt-6 border-t border-gray-200 space-y-2">
+                                <div className="mt-6 pt-6 border-t border-borda space-y-2">
                                     <div className="flex justify-between text-text-secondary">
                                         <span>Subtotal</span>
                                         <span>{formatCurrency(order.subtotal)}</span>
@@ -226,7 +226,7 @@ const OrderDetail = () => {
                                             <span>- {formatCurrency(order.discount)}</span>
                                         </div>
                                     )}
-                                    <div className="flex justify-between text-xl font-bold text-secondary pt-2 border-t border-gray-200">
+                                    <div className="flex justify-between text-xl font-bold text-secondary pt-2 border-t border-borda">
                                         <span>Total</span>
                                         <span className="text-primary">{formatCurrency(order.finalTotal)}</span>
                                     </div>
@@ -368,11 +368,11 @@ const OrderDetail = () => {
 
                 {/* Modal de Confirmação de Cancelamento */}
                 {showCancelModal && (
-                    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                        <div className="bg-white rounded-lg max-w-md w-full p-6">
+                    <div className="fixed inset-0 bg-secondary/50 flex items-center justify-center z-50 p-4">
+                        <div className="bg-surface rounded-lg max-w-md w-full p-6">
                             <div className="flex items-center gap-3 mb-4">
-                                <div className="p-2 bg-red-100 rounded-full">
-                                    <XCircle className="text-red-600" size={24} />
+                                <div className="p-2 bg-pessego/30 rounded-full">
+                                    <XCircle className="text-primary" size={24} />
                                 </div>
                                 <h3 className="text-xl font-heading font-bold text-secondary">
                                     Cancelar Pedido
@@ -385,14 +385,14 @@ const OrderDetail = () => {
                                 <button
                                     onClick={() => setShowCancelModal(false)}
                                     disabled={cancelling}
-                                    className="flex-1 px-4 py-2 border border-gray-300 text-text-secondary rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                                    className="flex-1 px-4 py-2 border border-borda text-text-secondary rounded-lg hover:bg-areia transition-colors font-medium"
                                 >
                                     Voltar
                                 </button>
                                 <button
                                     onClick={handleCancelOrder}
                                     disabled={cancelling}
-                                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium flex items-center justify-center gap-2"
+                                    className="flex-1 px-4 py-2 bg-primary text-background rounded-lg hover:bg-primary-dark transition-colors font-medium flex items-center justify-center gap-2"
                                 >
                                     {cancelling ? (
                                         <>

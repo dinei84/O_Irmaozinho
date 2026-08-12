@@ -62,14 +62,14 @@ const OrderTimeline = ({ order }) => {
 
     if (order.orderStatus === 'cancelled') {
         return (
-            <div className="flex items-center gap-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <div className="p-2 bg-red-100 rounded-full">
-                    <XCircle className="text-red-600" size={24} />
+            <div className="flex items-center gap-4 p-4 bg-pessego/30 border border-primary/30 rounded-lg">
+                <div className="p-2 bg-pessego/30 rounded-full">
+                    <XCircle className="text-primary" size={24} />
                 </div>
                 <div>
-                    <p className="font-semibold text-red-800">Pedido Cancelado</p>
+                    <p className="font-semibold text-secondary">Pedido Cancelado</p>
                     {order.cancelledAt && (
-                        <p className="text-sm text-red-600">{formatDate(order.cancelledAt)}</p>
+                        <p className="text-sm text-text-secondary">{formatDate(order.cancelledAt)}</p>
                     )}
                 </div>
             </div>
@@ -89,22 +89,22 @@ const OrderTimeline = ({ order }) => {
                             <div className="relative flex flex-col items-center">
                                 <div className={`p-2 rounded-full ${
                                     step.completed
-                                        ? 'bg-green-100'
+                                        ? 'bg-areia'
                                         : isCurrent
-                                        ? 'bg-blue-100'
-                                        : 'bg-gray-100'
+                                        ? 'bg-pessego/30'
+                                        : 'bg-areia'
                                 }`}>
                                     <Icon className={
                                         step.completed
-                                            ? 'text-green-600'
+                                            ? 'text-primary'
                                             : isCurrent
-                                            ? 'text-blue-600'
-                                            : 'text-gray-400'
+                                            ? 'text-dourado'
+                                            : 'text-text-secondary'
                                     } size={20} />
                                 </div>
                                 {!isLast && (
                                     <div className={`w-0.5 h-12 mt-2 ${
-                                        step.completed ? 'bg-green-300' : 'bg-gray-200'
+                                        step.completed ? 'bg-primary/30' : 'bg-borda'
                                     }`} />
                                 )}
                             </div>
@@ -112,10 +112,10 @@ const OrderTimeline = ({ order }) => {
                             <div className="flex-1 pb-8">
                                 <p className={`font-semibold ${
                                     step.completed
-                                        ? 'text-green-800'
+                                        ? 'text-secondary'
                                         : isCurrent
-                                        ? 'text-blue-800'
-                                        : 'text-gray-500'
+                                        ? 'text-dourado'
+                                        : 'text-text-secondary'
                                 }`}>
                                     {step.label}
                                 </p>
@@ -125,7 +125,7 @@ const OrderTimeline = ({ order }) => {
                                     </p>
                                 )}
                                 {isCurrent && !step.completed && (
-                                    <p className="text-xs text-blue-600 mt-1">Em andamento</p>
+                                    <p className="text-xs text-dourado mt-1">Em andamento</p>
                                 )}
                             </div>
                         </div>

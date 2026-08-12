@@ -92,7 +92,7 @@ const OrderCard = ({ order, isAdmin = false }) => {
                             </div>
                         </div>
 
-                        <div className="mt-4 pt-4 border-t border-gray-200">
+                        <div className="mt-4 pt-4 border-t border-borda">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-xs text-text-secondary mb-1">Total</p>

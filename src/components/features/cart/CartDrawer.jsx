@@ -30,7 +30,7 @@ const CartDrawer = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+                        className="fixed inset-0 bg-secondary/50 backdrop-blur-sm z-40"
                         onClick={closeCart}
                     />
 
@@ -40,10 +40,10 @@ const CartDrawer = () => {
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
                         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                        className="fixed right-0 top-0 h-full w-full sm:w-[450px] bg-white shadow-2xl z-50 flex flex-col"
+                        className="fixed right-0 top-0 h-full w-full sm:w-[450px] bg-surface shadow-2xl z-50 flex flex-col"
                     >
                         {/* Header */}
-                        <div className="p-6 border-b border-gray-200">
+                        <div className="p-6 border-b border-borda">
                             <div className="flex items-center justify-between mb-2">
                                 <h2 className="text-2xl font-heading font-bold text-secondary flex items-center gap-2">
                                     <ShoppingBag size={24} />
@@ -51,9 +51,9 @@ const CartDrawer = () => {
                                 </h2>
                                 <button
                                     onClick={closeCart}
-                                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                                    className="p-2 hover:bg-areia rounded-lg transition-colors"
                                 >
-                                    <X size={24} className="text-gray-600" />
+                                    <X size={24} className="text-text-secondary" />
                                 </button>
                             </div>
                             <p className="text-sm text-text-secondary">
@@ -65,7 +65,7 @@ const CartDrawer = () => {
                         <div className="flex-1 overflow-y-auto p-6">
                             {cartItems.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center h-full text-center">
-                                    <ShoppingBag className="text-gray-300 mb-4" size={64} />
+                                    <ShoppingBag className="text-text-secondary mb-4" size={64} />
                                     <h3 className="text-xl font-heading font-bold text-secondary mb-2">
                                         Carrinho Vazio
                                     </h3>
@@ -85,11 +85,11 @@ const CartDrawer = () => {
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0, x: 100 }}
-                                            className="bg-gray-50 rounded-xl p-4"
+                                            className="bg-areia rounded-xl p-4"
                                         >
                                             <div className="flex gap-4">
                                                 {/* Product Image */}
-                                                <div className="w-20 h-20 rounded-lg overflow-hidden bg-white flex-shrink-0">
+                                                <div className="w-20 h-20 rounded-lg overflow-hidden bg-surface flex-shrink-0">
                                                     {item.imageUrl ? (
                                                         <img
                                                             src={item.imageUrl}
@@ -101,7 +101,7 @@ const CartDrawer = () => {
                                                         />
                                                     ) : (
                                                         <div className="w-full h-full flex items-center justify-center">
-                                                            <ShoppingBag className="text-gray-300" size={24} />
+                                                            <ShoppingBag className="text-text-secondary" size={24} />
                                                         </div>
                                                     )}
                                                 </div>
@@ -137,7 +137,7 @@ const CartDrawer = () => {
                                                     <button
                                                         onClick={() => handleQuantityChange(item.id, item.quantity, -1)}
                                                         disabled={item.quantity <= 1}
-                                                        className="w-8 h-8 rounded-lg border-2 border-gray-300 flex items-center justify-center hover:border-primary hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                        className="w-8 h-8 rounded-lg border-2 border-borda flex items-center justify-center hover:border-primary hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                                     >
                                                         <Minus size={16} />
                                                     </button>
@@ -147,7 +147,7 @@ const CartDrawer = () => {
                                                     <button
                                                         onClick={() => handleQuantityChange(item.id, item.quantity, 1)}
                                                         disabled={item.quantity >= (item.stock || 999)}
-                                                        className="w-8 h-8 rounded-lg border-2 border-gray-300 flex items-center justify-center hover:border-primary hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                        className="w-8 h-8 rounded-lg border-2 border-borda flex items-center justify-center hover:border-primary hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                                     >
                                                         <Plus size={16} />
                                                     </button>
@@ -164,7 +164,7 @@ const CartDrawer = () => {
 
                         {/* Footer */}
                         {cartItems.length > 0 && (
-                            <div className="border-t border-gray-200 p-6 bg-gray-50">
+                            <div className="border-t border-borda p-6 bg-areia">
                                 {/* Total */}
                                 <div className="flex justify-between items-center mb-6">
                                     <span className="text-lg font-semibold text-secondary">Total:</span>
