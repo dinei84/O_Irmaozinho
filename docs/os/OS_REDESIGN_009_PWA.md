@@ -1,6 +1,9 @@
 # OS_REDESIGN_009 — PWA (instalabilidade + offline)
 
-**Status:** ✅ Concluída — commit na branch `feature/os-009-pwa` (ver EXECUTION_REPORT_OS_REDESIGN_009.md)
+**Status:** ✅ Aprovada pelo CTO em 2026-08-12 — SW verificado registrando/ativo em
+navegador real (preview), manifest válido, zero lógica tocada; DT-04/05/06 registradas.
+Instalação real e offline com dados reais dependem de deploy HTTPS (não bloqueante).
+**Relatório de execução:** [`docs/execution-reports/EXECUTION_REPORT_OS_REDESIGN_009.md`](../execution-reports/EXECUTION_REPORT_OS_REDESIGN_009.md)
 **Branch:** criar `feature/os-009-pwa` a partir de `develop` — nunca em `main`
 (ver `AGENTS.md` §9.7). **Passo zero, antes de qualquer edição.**
 **Roadmap:** [`docs/arquitetura/PLANO_REDESIGN_VISUAL.md`](../arquitetura/PLANO_REDESIGN_VISUAL.md)
@@ -96,19 +99,19 @@ não force aqui.
 
 ## Definition of Done
 
-- [ ] `vite-plugin-pwa` instalado e configurado em `vite.config.js`
-- [ ] `npx vite build` gera **manifest e service worker válidos** em `dist/` (conferir que
+- [x] `vite-plugin-pwa` instalado e configurado em `vite.config.js`
+- [x] `npx vite build` gera **manifest e service worker válidos** em `dist/` (conferir que
       `dist/manifest.webmanifest` e `dist/sw.js` — ou nomes equivalentes do plugin —
       existem, e que o manifest tem name/short_name/theme_color/ícones corretos)
-- [ ] `npm run preview` (build de produção servido localmente): o SW **registra sem erro
+- [x] `npm run preview` (build de produção servido localmente): o SW **registra sem erro
       no console**, o manifest é servido, e o app continua funcionando
-- [ ] Prompt de instalação customizado implementado (com fallback iOS), montado no layout
-- [ ] `npx vitest run` (2x, dev server desligado) **sem novas falhas** (baseline 284/298)
-- [ ] `npx vite build` limpo
+- [x] Prompt de instalação customizado implementado (com fallback iOS), montado no layout
+- [x] `npx vitest run` (2x, dev server desligado) **sem novas falhas** (baseline 284/298)
+- [x] `npx vite build` limpo
 - [~] Instalação real ("Install app") e leitura offline com dado real — **verificar na
       medida do possível** (localhost/preview); ser honesto no report sobre o que exige
       deploy HTTPS + dados reais (provavelmente não testável 100% neste ambiente)
-- [ ] **Arquivo de report gerado (ver "Entrega obrigatória" abaixo)**
+- [x] **Arquivo de report gerado (ver "Entrega obrigatória" abaixo)**
 
 > **Nota de verificação:** service worker e instalação PWA precisam de HTTPS ou
 > `localhost`, e a instalação depende de heurísticas de engajamento do navegador +

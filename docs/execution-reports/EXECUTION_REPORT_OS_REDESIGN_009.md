@@ -134,3 +134,28 @@ Entregue **shell + assets + imagens offline** (precache do app shell + `StaleWhi
 - **Não** alterado `firebase.json` (CSP já compatível).
 - Branch pronta para revisão — **sem merge, sem push** (instrução da OS).
 - Validação de instalação em navegador real + leitura offline com dados reais ficam para produção (HTTPS + deploy do Sprint 0 pendente, PROJECT_STATE §1).
+
+## Verificação independente do CTO — Aprovado (2026-08-12)
+
+- `npx vitest run` (2x) e `npx vite build`: 284/298, baseline, build gera `sw.js`,
+  `manifest.webmanifest` e `registerSW.js`; manifest conferido (name/short_name/theme
+  `#47533F`/bg `#F7F1E7`/2 ícones). Nenhuma lógica de dados/pagamento tocada.
+- **Service worker verificado em navegador real** (`npm run preview` em `localhost:4173`):
+  `navigator.serviceWorker.getRegistrations()` → **1 registro, ativo, scope
+  `http://localhost:4173/`, página controlada (`controller` presente)**;
+  `<link rel="manifest">` presente no HTML; **zero erro de service worker no console** (só
+  o erro esperado de Firebase env, que não impede o registro do SW — ele é independente do
+  app React). Isso vai além da checagem de HTTP 200 do relatório: confirma que o SW de fato
+  registra, ativa e controla a página.
+  - *Nota de processo:* na primeira tentativa deu 0 registros porque eu havia revertido o
+    `dist/index.html` (hábito de limpar o artefato) **antes** de testar, removendo as
+    injeções do plugin. Rebuild + teste **antes** de reverter resolveu. Lição: em OS de
+    PWA, testar o preview antes de reverter o `dist/index.html`.
+- `InstallPrompt.jsx` revisado: prompt sobre oliva, botão pêssego com texto tinta
+  (`text-text-primary`) — **correto per PROJECT_SPEC §5.7** ("texto tinta escura"); o agente
+  acertou ao seguir o spec em vez da minha instrução levemente errada na OS. Guard
+  `visible = show && (isIOS || deferredPrompt)` evita botão que não faz nada; posicionado
+  acima da tab bar mobile (`bottom-20 md:bottom-6`); dismiss com `localStorage` (3 dias).
+- DTs registradas em `PROJECT_STATE.md` §3.1 (DT-04/05/06).
+
+**Aprovado** — sem correções de código necessárias.
