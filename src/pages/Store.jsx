@@ -89,7 +89,7 @@ const Store = () => {
                         animate={{ opacity: 1, y: 0 }}
                         className="text-center py-20"
                     >
-                        <Package className="mx-auto text-gray-300 mb-6" size={64} />
+                        <Package className="mx-auto text-text-secondary mb-6" size={64} />
                         <h2 className="text-2xl font-heading font-bold text-secondary mb-4">
                             Em Breve
                         </h2>
@@ -114,7 +114,7 @@ const Store = () => {
                                     className="flex flex-col h-full hover:shadow-xl transition-shadow duration-300 cursor-pointer"
                                     onClick={() => openProductModal(product)}
                                 >
-                                    <div className="h-64 overflow-hidden bg-gray-100 flex items-center justify-center relative">
+                                    <div className="h-64 overflow-hidden bg-areia flex items-center justify-center relative">
                                         {product.imageUrl ? (
                                             <img
                                                 src={product.imageUrl}
@@ -125,11 +125,11 @@ const Store = () => {
                                                 }}
                                             />
                                         ) : (
-                                            <Package className="text-gray-300" size={48} />
+                                            <Package className="text-text-secondary" size={48} />
                                         )}
                                         {product.stock === 0 && (
-                                            <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                                                <span className="bg-red-500 text-white px-4 py-2 rounded-full font-semibold">
+                                            <div className="absolute inset-0 bg-secondary/60 flex items-center justify-center">
+                                                <span className="bg-primary text-background px-4 py-2 rounded-full font-semibold">
                                                     Esgotado
                                                 </span>
                                             </div>
@@ -172,7 +172,7 @@ const Store = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+                        className="fixed inset-0 bg-secondary/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
                         onClick={closeProductModal}
                     >
                         <motion.div
@@ -180,21 +180,21 @@ const Store = () => {
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.9, opacity: 0 }}
                             transition={{ type: "spring", duration: 0.5 }}
-                            className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+                            className="bg-surface rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
                             onClick={(e) => e.stopPropagation()}
                         >
                             {/* Close Button */}
                             <button
                                 onClick={closeProductModal}
-                                className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors z-10"
+                                className="absolute top-4 right-4 p-2 bg-surface rounded-full shadow-lg hover:bg-areia transition-colors z-10"
                             >
-                                <X size={24} className="text-gray-600" />
+                                <X size={24} className="text-text-secondary" />
                             </button>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8">
                                 {/* Product Image */}
                                 <div className="relative">
-                                    <div className="aspect-square rounded-xl overflow-hidden bg-gray-100">
+                                    <div className="aspect-square rounded-xl overflow-hidden bg-areia">
                                         {selectedProduct.imageUrl ? (
                                             <img
                                                 src={selectedProduct.imageUrl}
@@ -206,13 +206,13 @@ const Store = () => {
                                             />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center">
-                                                <Package className="text-gray-300" size={64} />
+                                                <Package className="text-text-secondary" size={64} />
                                             </div>
                                         )}
                                     </div>
                                     {selectedProduct.stock === 0 && (
-                                        <div className="absolute inset-0 bg-black/60 rounded-xl flex items-center justify-center">
-                                            <span className="bg-red-500 text-white px-6 py-3 rounded-full font-semibold text-lg">
+                                        <div className="absolute inset-0 bg-secondary/60 rounded-xl flex items-center justify-center">
+                                            <span className="bg-primary text-background px-6 py-3 rounded-full font-semibold text-lg">
                                                 Esgotado
                                             </span>
                                         </div>
@@ -261,7 +261,7 @@ const Store = () => {
                                                     <button
                                                         onClick={() => handleQuantityChange(-1)}
                                                         disabled={quantity <= 1}
-                                                        className="w-10 h-10 rounded-lg border-2 border-gray-300 flex items-center justify-center hover:border-primary hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                        className="w-10 h-10 rounded-lg border-2 border-borda flex items-center justify-center hover:border-primary hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                                     >
                                                         <Minus size={20} />
                                                     </button>
@@ -271,7 +271,7 @@ const Store = () => {
                                                     <button
                                                         onClick={() => handleQuantityChange(1)}
                                                         disabled={quantity >= selectedProduct.stock}
-                                                        className="w-10 h-10 rounded-lg border-2 border-gray-300 flex items-center justify-center hover:border-primary hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                        className="w-10 h-10 rounded-lg border-2 border-borda flex items-center justify-center hover:border-primary hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                                     >
                                                         <Plus size={20} />
                                                     </button>
@@ -279,7 +279,7 @@ const Store = () => {
                                             </div>
 
                                             {/* Total Price */}
-                                            <div className="bg-gray-50 rounded-xl p-4 mb-6">
+                                            <div className="bg-areia rounded-xl p-4 mb-6">
                                                 <div className="flex justify-between items-center">
                                                     <span className="text-text-secondary">Subtotal:</span>
                                                     <span className="text-2xl font-bold text-secondary">

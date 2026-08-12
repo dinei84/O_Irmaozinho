@@ -91,8 +91,8 @@ const PixPaymentForm = ({ orderId, pixData }) => {
         <Card>
             <CardBody className="p-6">
                 <div className="text-center mb-6">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
-                        <QrCode className="text-green-600" size={32} />
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-areia rounded-full mb-4">
+                        <QrCode className="text-primary" size={32} />
                     </div>
                     <h3 className="text-xl font-heading font-bold text-secondary mb-2">
                         Pagamento via PIX
@@ -104,7 +104,7 @@ const PixPaymentForm = ({ orderId, pixData }) => {
 
                 {/* QR Code */}
                 {pixData.qrCodeBase64 ? (
-                    <div className="bg-white p-4 rounded-lg border-2 border-gray-200 mb-4 flex justify-center">
+                    <div className="bg-surface p-4 rounded-lg border-2 border-borda mb-4 flex justify-center">
                         <img
                             src={`data:image/png;base64,${pixData.qrCodeBase64}`}
                             alt="QR Code PIX"
@@ -112,7 +112,7 @@ const PixPaymentForm = ({ orderId, pixData }) => {
                         />
                     </div>
                 ) : (
-                    <div className="bg-gray-100 p-8 rounded-lg mb-4 flex items-center justify-center min-h-[256px]">
+                    <div className="bg-areia p-8 rounded-lg mb-4 flex items-center justify-center min-h-[256px]">
                         <p className="text-text-secondary">QR Code não disponível</p>
                     </div>
                 )}
@@ -128,11 +128,11 @@ const PixPaymentForm = ({ orderId, pixData }) => {
                                 type="text"
                                 value={pixData.qrCode}
                                 readOnly
-                                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm font-mono"
+                                className="flex-1 px-4 py-2 border border-borda rounded-lg bg-areia text-sm font-mono"
                             />
                             <button
                                 onClick={handleCopyPixCode}
-                                className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2"
+                                className="px-4 py-2 bg-primary text-background rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2"
                             >
                                 {copied ? (
                                     <>
@@ -152,9 +152,9 @@ const PixPaymentForm = ({ orderId, pixData }) => {
 
                 {/* Timer */}
                 {timeRemaining && (
-                    <div className="flex items-center justify-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg mb-4">
-                        <Clock className="text-yellow-600" size={18} />
-                        <span className="text-sm text-yellow-800">
+                    <div className="flex items-center justify-center gap-2 p-3 bg-areia border border-borda rounded-lg mb-4">
+                        <Clock className="text-dourado" size={18} />
+                        <span className="text-sm text-secondary">
                             QR Code expira em: <strong>{timeRemaining.minutes}:{String(timeRemaining.seconds).padStart(2, '0')}</strong>
                         </span>
                     </div>
@@ -172,8 +172,8 @@ const PixPaymentForm = ({ orderId, pixData }) => {
 
                 {/* Status do Pagamento */}
                 {paymentStatus === 'pending' && (
-                    <div className="text-center p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                        <p className="text-sm text-blue-800">
+                    <div className="text-center p-4 bg-areia border border-borda rounded-lg">
+                        <p className="text-sm text-secondary">
                             <strong>Aguardando pagamento...</strong><br />
                             Após realizar o pagamento, o status será atualizado automaticamente.
                         </p>
@@ -190,7 +190,7 @@ const PixPaymentForm = ({ orderId, pixData }) => {
                 )}
 
                 {/* Instruções */}
-                <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+                <div className="mt-6 p-4 bg-areia rounded-lg">
                     <h4 className="font-semibold text-secondary mb-2">Como pagar:</h4>
                     <ol className="list-decimal list-inside space-y-1 text-sm text-text-secondary">
                         <li>Abra o app do seu banco</li>
@@ -205,7 +205,7 @@ const PixPaymentForm = ({ orderId, pixData }) => {
                 <div className="mt-6">
                     <button
                         onClick={() => navigate('/orders')}
-                        className="w-full px-6 py-3 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-colors font-semibold"
+                        className="w-full px-6 py-3 bg-secondary text-background rounded-lg hover:bg-secondary/90 transition-colors font-semibold"
                     >
                         Ver Meus Pedidos
                     </button>

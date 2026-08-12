@@ -101,7 +101,7 @@ const ShippingAddressForm = ({ value, onChange, errors = {} }) => {
                                 placeholder="00000-000"
                                 maxLength={9}
                                 className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${
-                                    errors.zipCode ? 'border-red-500' : 'border-gray-300'
+                                    errors.zipCode ? 'border-red-500' : 'border-borda'
                                 }`}
                                 required
                             />
@@ -128,7 +128,7 @@ const ShippingAddressForm = ({ value, onChange, errors = {} }) => {
                             onChange={(e) => handleChange('street', e.target.value)}
                             placeholder="Nome da rua"
                             className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${
-                                errors.street ? 'border-red-500' : 'border-gray-300'
+                                errors.street ? 'border-red-500' : 'border-borda'
                             }`}
                             required
                         />
@@ -150,7 +150,7 @@ const ShippingAddressForm = ({ value, onChange, errors = {} }) => {
                                 onChange={(e) => handleChange('number', e.target.value)}
                                 placeholder="123"
                                 className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${
-                                    errors.number ? 'border-red-500' : 'border-gray-300'
+                                    errors.number ? 'border-red-500' : 'border-borda'
                                 }`}
                                 required
                             />
@@ -170,7 +170,7 @@ const ShippingAddressForm = ({ value, onChange, errors = {} }) => {
                                 value={formData.complement}
                                 onChange={(e) => handleChange('complement', e.target.value)}
                                 placeholder="Apto, Bloco, etc."
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                className="w-full px-4 py-2 border border-borda rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                             />
                         </div>
                     </div>
@@ -187,7 +187,7 @@ const ShippingAddressForm = ({ value, onChange, errors = {} }) => {
                             onChange={(e) => handleChange('neighborhood', e.target.value)}
                             placeholder="Nome do bairro"
                             className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${
-                                errors.neighborhood ? 'border-red-500' : 'border-gray-300'
+                                errors.neighborhood ? 'border-red-500' : 'border-borda'
                             }`}
                             required
                         />
@@ -209,7 +209,7 @@ const ShippingAddressForm = ({ value, onChange, errors = {} }) => {
                                 onChange={(e) => handleChange('city', e.target.value)}
                                 placeholder="Nome da cidade"
                                 className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${
-                                    errors.city ? 'border-red-500' : 'border-gray-300'
+                                    errors.city ? 'border-red-500' : 'border-borda'
                                 }`}
                                 required
                             />
@@ -231,7 +231,7 @@ const ShippingAddressForm = ({ value, onChange, errors = {} }) => {
                                 placeholder="SP"
                                 maxLength={2}
                                 className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${
-                                    errors.state ? 'border-red-500' : 'border-gray-300'
+                                    errors.state ? 'border-red-500' : 'border-borda'
                                 }`}
                                 required
                             />
