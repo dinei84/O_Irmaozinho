@@ -1,6 +1,6 @@
 # OS_REDESIGN_009 — PWA (instalabilidade + offline)
 
-**Status:** 🔲 Não iniciada
+**Status:** ✅ Concluída — commit na branch `feature/os-009-pwa` (ver EXECUTION_REPORT_OS_REDESIGN_009.md)
 **Branch:** criar `feature/os-009-pwa` a partir de `develop` — nunca em `main`
 (ver `AGENTS.md` §9.7). **Passo zero, antes de qualquer edição.**
 **Roadmap:** [`docs/arquitetura/PLANO_REDESIGN_VISUAL.md`](../arquitetura/PLANO_REDESIGN_VISUAL.md)
