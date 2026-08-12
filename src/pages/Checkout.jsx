@@ -329,10 +329,10 @@ const Checkout = () => {
 
                 {/* Erro geral */}
                 {error && (
-                    <div className="mb-6 p-4 bg-pessego/30 border border-primary/30 rounded-lg">
+                    <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
                         <div className="flex items-start gap-3 mb-3">
-                            <AlertCircle className="text-primary flex-shrink-0 mt-0.5" size={20} />
-                            <p className="text-sm text-secondary flex-1">
+                            <AlertCircle className="text-red-600 flex-shrink-0 mt-0.5" size={20} />
+                            <p className="text-sm text-red-800 flex-1">
                                 {typeof error === 'string' ? error : error.message}
                             </p>
                         </div>

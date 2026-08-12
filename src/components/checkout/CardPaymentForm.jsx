@@ -152,7 +152,7 @@ const CardPaymentForm = ({ orderId, amount, customer = {}, onSuccess, onError })
         return (
             <Card>
                 <CardBody className="p-6">
-                    <div className="flex items-center gap-2 text-amber-700 mb-2">
+                    <div className="flex items-center gap-2 text-dourado mb-2">
                         <AlertCircle size={20} />
                         <span className="font-medium">Pagamento com cartão indisponível</span>
                     </div>
@@ -169,14 +169,14 @@ const CardPaymentForm = ({ orderId, amount, customer = {}, onSuccess, onError })
             <CardBody className="p-6">
                 {paymentSuccess ? (
                     <div className="text-center">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-areia rounded-full mb-4">
-                        <CreditCard className="text-primary" size={32} />
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+                        <CreditCard className="text-green-600" size={32} />
                         </div>
                         <h3 className="text-xl font-heading font-bold text-secondary mb-2">
                             Pagamento Aprovado!
                         </h3>
-                        <div className="p-4 bg-areia border border-borda rounded-lg mb-4">
-                            <p className="text-sm text-secondary">
+                        <div className="p-4 bg-green-50 border border-green-200 rounded-lg mb-4">
+                            <p className="text-sm text-green-800">
                                 <strong>✓ Pagamento com cartão processado com sucesso!</strong><br />
                                 Seu pedido está sendo processado.
                             </p>

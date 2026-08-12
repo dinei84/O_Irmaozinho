@@ -19,8 +19,8 @@ const OrderConfirmation = ({ orderId, orderData }) => {
                     className="text-center"
                 >
                     {/* Ícone de Sucesso */}
-                    <div className="inline-flex items-center justify-center w-24 h-24 bg-areia rounded-full mb-6">
-                        <CheckCircle className="text-primary" size={48} />
+                    <div className="inline-flex items-center justify-center w-24 h-24 bg-green-100 rounded-full mb-6">
+                        <CheckCircle className="text-green-600" size={48} />
                     </div>
 
                     {/* Título */}

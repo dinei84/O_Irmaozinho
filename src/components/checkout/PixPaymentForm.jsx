@@ -162,8 +162,8 @@ const PixPaymentForm = ({ orderId, pixData }) => {
 
                 {/* QR Code expirado */}
                 {!timeRemaining && paymentStatus === 'pending' && pixData?.expiresAt && (
-                    <div className="text-center p-4 bg-pessego/30 border border-primary/30 rounded-lg mb-4">
-                        <p className="text-sm text-secondary">
+                    <div className="text-center p-4 bg-red-50 border border-red-200 rounded-lg mb-4">
+                        <p className="text-sm text-red-800">
                             <strong>QR Code expirado</strong><br />
                             Por favor, crie um novo pagamento.
                         </p>
@@ -181,8 +181,8 @@ const PixPaymentForm = ({ orderId, pixData }) => {
                 )}
 
                 {paymentStatus === 'rejected' && (
-                    <div className="text-center p-4 bg-pessego/30 border border-primary/30 rounded-lg">
-                        <p className="text-sm text-secondary">
+                    <div className="text-center p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <p className="text-sm text-red-800">
                             <strong>✗ Pagamento rejeitado</strong><br />
                             Por favor, tente novamente ou escolha outro método de pagamento.
                         </p>

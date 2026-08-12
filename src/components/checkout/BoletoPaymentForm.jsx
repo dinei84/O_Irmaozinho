@@ -154,8 +154,8 @@ const BoletoPaymentForm = ({ orderId, boletoData }) => {
                 )}
 
                 {paymentStatus === 'approved' && (
-                    <div className="text-center p-4 bg-areia border border-borda rounded-lg mb-4">
-                        <p className="text-sm text-secondary mb-3">
+                    <div className="text-center p-4 bg-green-50 border border-green-200 rounded-lg mb-4">
+                        <p className="text-sm text-green-800 mb-3">
                             <strong>✓ Pagamento aprovado!</strong><br />
                             Seu pedido está sendo processado.
                         </p>
@@ -169,8 +169,8 @@ const BoletoPaymentForm = ({ orderId, boletoData }) => {
                 )}
 
                 {paymentStatus === 'rejected' && (
-                    <div className="text-center p-4 bg-pessego/30 border border-primary/30 rounded-lg mb-4">
-                        <p className="text-sm text-secondary">
+                    <div className="text-center p-4 bg-red-50 border border-red-200 rounded-lg mb-4">
+                        <p className="text-sm text-red-800">
                             <strong>✗ Pagamento rejeitado</strong><br />
                             Entre em contato com o suporte ou tente outro método.
                         </p>
