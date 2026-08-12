@@ -113,7 +113,7 @@ const CustomerDataForm = ({ value, onChange, errors = {} }) => {
                             onChange={(e) => handleChange('name', e.target.value)}
                             placeholder="Seu nome completo"
                             className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${
-                                errors.name ? 'border-red-500' : 'border-gray-300'
+                                errors.name ? 'border-red-500' : 'border-borda'
                             }`}
                             required
                         />
@@ -134,7 +134,7 @@ const CustomerDataForm = ({ value, onChange, errors = {} }) => {
                             onChange={(e) => handleChange('email', e.target.value)}
                             placeholder="seu@email.com"
                             className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${
-                                errors.email ? 'border-red-500' : 'border-gray-300'
+                                errors.email ? 'border-red-500' : 'border-borda'
                             }`}
                             required
                         />
@@ -155,7 +155,7 @@ const CustomerDataForm = ({ value, onChange, errors = {} }) => {
                             onChange={(e) => handleChange('phone', e.target.value)}
                             placeholder="(11) 99999-9999"
                             className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${
-                                errors.phone ? 'border-red-500' : 'border-gray-300'
+                                errors.phone ? 'border-red-500' : 'border-borda'
                             }`}
                             required
                         />
@@ -176,7 +176,7 @@ const CustomerDataForm = ({ value, onChange, errors = {} }) => {
                             onChange={(e) => handleChange('document', e.target.value)}
                             placeholder="000.000.000-00 ou 00.000.000/0000-00"
                             className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${
-                                errors.document ? 'border-red-500' : 'border-gray-300'
+                                errors.document ? 'border-red-500' : 'border-borda'
                             }`}
                             required
                         />

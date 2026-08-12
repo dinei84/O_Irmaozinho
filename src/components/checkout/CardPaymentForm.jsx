@@ -169,21 +169,21 @@ const CardPaymentForm = ({ orderId, amount, customer = {}, onSuccess, onError })
             <CardBody className="p-6">
                 {paymentSuccess ? (
                     <div className="text-center">
-                        <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
-                            <CreditCard className="text-green-600" size={32} />
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-areia rounded-full mb-4">
+                        <CreditCard className="text-primary" size={32} />
                         </div>
                         <h3 className="text-xl font-heading font-bold text-secondary mb-2">
                             Pagamento Aprovado!
                         </h3>
-                        <div className="p-4 bg-green-50 border border-green-200 rounded-lg mb-4">
-                            <p className="text-sm text-green-800">
+                        <div className="p-4 bg-areia border border-borda rounded-lg mb-4">
+                            <p className="text-sm text-secondary">
                                 <strong>✓ Pagamento com cartão processado com sucesso!</strong><br />
                                 Seu pedido está sendo processado.
                             </p>
                         </div>
                         <button
                             onClick={() => window.location.href = '/orders'}
-                            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+                            className="px-6 py-2 bg-primary text-background rounded-lg hover:bg-primary-dark transition-colors font-medium"
                         >
                             Ver Meus Pedidos
                         </button>
@@ -215,7 +215,7 @@ const CardPaymentForm = ({ orderId, amount, customer = {}, onSuccess, onError })
                                     placeholder="0000 0000 0000 0000"
                                     value={cardNumber}
                                     onChange={handleCardNumber}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                                    className="w-full px-4 py-2 border border-borda rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
                                 />
                             </div>
 
@@ -228,7 +228,7 @@ const CardPaymentForm = ({ orderId, amount, customer = {}, onSuccess, onError })
                                     placeholder="Como está no cartão"
                                     value={cardholderName}
                                     onChange={(e) => setCardholderName(e.target.value)}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                                    className="w-full px-4 py-2 border border-borda rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
                                 />
                             </div>
 
@@ -243,7 +243,7 @@ const CardPaymentForm = ({ orderId, amount, customer = {}, onSuccess, onError })
                                         placeholder="MM/AA"
                                         value={expiry}
                                         onChange={handleExpiry}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                                        className="w-full px-4 py-2 border border-borda rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
                                     />
                                 </div>
                                 <div>
@@ -256,7 +256,7 @@ const CardPaymentForm = ({ orderId, amount, customer = {}, onSuccess, onError })
                                         placeholder="123"
                                         value={cvv}
                                         onChange={handleCvv}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                                        className="w-full px-4 py-2 border border-borda rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
                                     />
                                     <p className="text-xs text-text-secondary mt-0.5">
                                         3 ou 4 dígitos no verso do cartão
@@ -274,7 +274,7 @@ const CardPaymentForm = ({ orderId, amount, customer = {}, onSuccess, onError })
                                     placeholder="Apenas números, 11 dígitos"
                                     value={docNumber}
                                     onChange={handleDoc}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                                    className="w-full px-4 py-2 border border-borda rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
                                 />
                             </div>
 
@@ -285,7 +285,7 @@ const CardPaymentForm = ({ orderId, amount, customer = {}, onSuccess, onError })
                                 <select
                                     value={installments}
                                     onChange={(e) => setInstallments(Number(e.target.value))}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                                    className="w-full px-4 py-2 border border-borda rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
                                 >
                                     {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => (
                                         <option key={n} value={n}>
