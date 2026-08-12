@@ -134,3 +134,24 @@ escopo — conforme instrução da OS).
   fora do escopo desta OS (a OS proíbe reescrever lógica e o componente é usado em
   várias telas). Fica como observação para uma eventual OS de reskin de componentes de
   interação.
+
+## Verificação independente do CTO — Aprovado (2026-08-12)
+
+- `npx vitest run` (2x, servidor de dev desligado): 284/298, mesma baseline, zero
+  regressão — confirmado de forma independente.
+- `npx vite build`: limpo; `dist/index.html` revertido.
+- Diffs de `Articles.jsx` e `Chronicles.jsx` revisados: reskin simétrico e fiel ao card
+  da Home, badge estático (armadilha do `CATEGORY_BADGES` evitada com sucesso),
+  `sanitize.js` e a lógica de busca intactos, sem cores cruas introduzidas.
+- **Decisão do `LikeButton` validada e aprovada:** manter o componente interativo nas
+  listagens (em vez do `<Heart>` estático que a Home usa) é a escolha certa — trocar
+  removeria o "curtir da listagem", seria regressão funcional, não reskin. Fica assim.
+  (Anota-se a assimetria Home-estático vs. listagem-interativa como possível ajuste
+  futuro de produto, não bloqueante.)
+- **Verificação visual ao vivo:** também não foi possível para o CTO (mesma limitação de
+  Firebase deste ambiente). A correção visual é herdada: o card usa exatamente as mesmas
+  classes Tailwind do card da Home, que foi verificado ao vivo em navegador na
+  OS_REDESIGN_004. Base de aprovação: revisão de código + testes + build + reuso de
+  padrão já validado.
+
+**Aprovado.**
