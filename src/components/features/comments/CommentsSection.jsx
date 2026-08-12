@@ -187,7 +187,7 @@ const CommentsSection = ({ articleId, className = '' }) => {
                 <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg mb-6"
+                    className="bg-pessego/30 border border-primary/30 text-secondary text-sm px-4 py-3 rounded-lg mb-6"
                 >
                     {error}
                 </motion.div>
@@ -248,8 +248,8 @@ const CommentsSection = ({ articleId, className = '' }) => {
                                     px-6 py-2 rounded-lg text-sm font-medium
                                     transition-all duration-200
                                     ${loadingMore
-                                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                                        : 'bg-primary text-white hover:bg-primary-dark'
+                                        ? 'bg-areia text-text-secondary cursor-not-allowed'
+                                        : 'bg-primary text-background hover:bg-primary-dark'
                                     }
                                 `}
                             >

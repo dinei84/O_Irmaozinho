@@ -54,7 +54,7 @@ const Login = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="max-w-md w-full space-y-8 relative z-10 bg-white p-8 rounded-2xl shadow-xl"
+                className="max-w-md w-full space-y-8 relative z-10 bg-surface p-8 rounded-2xl shadow-xl"
             >
                 <div>
                     <h2 className="mt-6 text-center text-3xl font-heading font-bold text-secondary">
@@ -69,10 +69,10 @@ const Login = () => {
                     <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
-                        className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md flex items-center gap-3"
+                        className="bg-pessego/30 border-l-4 border-primary p-4 rounded-md flex items-center gap-3"
                     >
-                        <AlertCircle className="text-red-500" size={20} />
-                        <p className="text-red-700 text-sm">{error}</p>
+                        <AlertCircle className="text-primary" size={20} />
+                        <p className="text-secondary text-sm">{error}</p>
                     </motion.div>
                 )}
 
@@ -84,7 +84,7 @@ const Login = () => {
                             </label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Mail className="h-5 w-5 text-gray-400" />
+                                    <Mail className="h-5 w-5 text-text-secondary" />
                                 </div>
                                 <input
                                     id="email-address"
@@ -92,7 +92,7 @@ const Login = () => {
                                     type="email"
                                     autoComplete="email"
                                     required
-                                    className="appearance-none relative block w-full px-3 py-3 pl-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:z-10 sm:text-sm transition-all"
+                                    className="appearance-none relative block w-full px-3 py-3 pl-10 border border-borda placeholder-text-secondary text-text-primary rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:z-10 sm:text-sm transition-all"
                                     placeholder="admin@oirmaozinho.com"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
@@ -105,7 +105,7 @@ const Login = () => {
                             </label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Lock className="h-5 w-5 text-gray-400" />
+                                    <Lock className="h-5 w-5 text-text-secondary" />
                                 </div>
                                 <input
                                     id="password"
@@ -113,7 +113,7 @@ const Login = () => {
                                     type="password"
                                     autoComplete="current-password"
                                     required
-                                    className="appearance-none relative block w-full px-3 py-3 pl-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:z-10 sm:text-sm transition-all"
+                                    className="appearance-none relative block w-full px-3 py-3 pl-10 border border-borda placeholder-text-secondary text-text-primary rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:z-10 sm:text-sm transition-all"
                                     placeholder="••••••••"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}

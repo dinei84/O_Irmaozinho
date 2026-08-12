@@ -91,9 +91,9 @@ const LikeButton = ({ contentId, initialLikesCount = 0, onLikeChange, className 
         return (
             <div className={`flex items-center gap-2 ${className}`}>
                 <div className="animate-pulse">
-                    <Heart size={20} className="text-gray-300" />
+                    <Heart size={20} className="text-areia" />
                 </div>
-                <span className="text-gray-300 text-sm">{likesCount}</span>
+                <span className="text-areia text-sm">{likesCount}</span>
             </div>
         );
     }
@@ -108,7 +108,7 @@ const LikeButton = ({ contentId, initialLikesCount = 0, onLikeChange, className 
                     transition-all duration-200
                     ${isLiked 
                         ? 'text-red-500 hover:text-red-600 bg-red-50' 
-                        : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
+                        : 'text-text-secondary hover:text-text-primary hover:bg-areia'
                     }
                     ${loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
                     ${!currentUser ? 'opacity-50 cursor-not-allowed' : ''}
@@ -138,14 +138,14 @@ const LikeButton = ({ contentId, initialLikesCount = 0, onLikeChange, className 
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="bg-red-50 border border-red-200 text-red-700 text-xs px-3 py-2 rounded-md"
+                    className="bg-pessego/30 border border-primary/30 text-primary text-xs px-3 py-2 rounded-md"
                 >
                     {error}
                 </motion.div>
             )}
 
             {!currentUser && (
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-text-secondary">
                     Faça login para curtir
                 </p>
             )}
