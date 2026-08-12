@@ -1,6 +1,6 @@
 # OS_REDESIGN_008 — Páginas restantes + limpeza final de cores cruas
 
-**Status:** 🔲 Não iniciada
+**Status:** ✅ Concluída — commit `464571f` na branch `feature/os-008-paginas-restantes`
 **Branch:** criar `feature/os-008-paginas-restantes` a partir de `develop` — nunca em
 `main` (ver `AGENTS.md` §9.7). **Passo zero, antes de qualquer edição.**
 **Roadmap:** [`docs/arquitetura/PLANO_REDESIGN_VISUAL.md`](../arquitetura/PLANO_REDESIGN_VISUAL.md)
