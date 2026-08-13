@@ -1,17 +1,16 @@
 import {
     collection,
     doc,
-    addDoc,
     getDoc,
     getDocs,
     updateDoc,
     query,
     where,
     orderBy,
-    serverTimestamp,
-    writeBatch
+    serverTimestamp
 } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { httpsCallable } from 'firebase/functions';
+import { db, functions } from '../lib/firebase';
 
 const ORDER_STATUSES = ['pending', 'paid', 'processing', 'shipped', 'delivered', 'cancelled'];
 
@@ -37,28 +36,22 @@ function addStatusHistoryEntry(order, entry) {
 }
 
 /**
- * Cria um novo pedido no Firestore
- * 
- * IMPORTANTE: Este serviço cria o pedido, mas o processamento de pagamento
- * deve ser feito via Cloud Functions para segurança.
- * 
+ * Cria um novo pedido NO SERVIDOR.
+ *
+ * O cliente envia apenas `items: [{ productId, quantity }]` + `customer` +
+ * `shippingAddress` + `paymentMethod`. Preços, subtotal e total são calculados
+ * pela Cloud Function `createOrder` a partir dos preços gravados em `products`
+ * — nunca enviados pelo cliente. Fecha a V-02 (price tampering via carrinho).
+ *
  * @param {Object} orderData - Dados do pedido
- * @param {string} orderData.userId - ID do usuário
- * @param {Array} orderData.items - Itens do pedido
+ * @param {Array} orderData.items - Itens do pedido [{ productId, quantity }]
  * @param {Object} orderData.customer - Dados do cliente
  * @param {Object} orderData.shippingAddress - Endereço de entrega
- * @param {number} orderData.subtotal - Subtotal (validado no servidor)
- * @param {number} orderData.shipping - Frete
- * @param {number} orderData.finalTotal - Total final
- * @returns {Promise<string>} ID do pedido criado
+ * @param {string} orderData.paymentMethod - 'pix' | 'boleto' | 'credit_card'
+ * @returns {Promise<{ orderId: string, finalTotal: number }>}
  */
 export async function createOrder(orderData) {
     try {
-        // Validações básicas (validações completas devem ser feitas no servidor)
-        if (!orderData.userId) {
-            throw new Error('ID do usuário é obrigatório');
-        }
-
         if (!orderData.items || orderData.items.length === 0) {
             throw new Error('Pedido deve conter pelo menos um item');
         }
@@ -71,69 +64,39 @@ export async function createOrder(orderData) {
             throw new Error('Endereço de entrega é obrigatório');
         }
 
-        // Estrutura do pedido
-        const order = {
-            userId: orderData.userId,
+        const createOrderCall = httpsCallable(functions, 'createOrder');
+        const result = await createOrderCall({
             items: orderData.items.map(item => ({
                 productId: item.productId,
-                name: item.name,
-                price: item.price, // Preço no momento da compra
-                quantity: item.quantity,
-                subtotal: item.price * item.quantity,
-                supplierId: item.supplierId || null,
-                supplierName: item.supplierName || null
+                quantity: item.quantity
             })),
-            subtotal: orderData.subtotal || 0,
-            shipping: orderData.shipping || 0,
-            discount: orderData.discount || 0,
-            finalTotal: orderData.finalTotal || 0,
-            customer: {
-                name: orderData.customer.name,
-                email: orderData.customer.email,
-                phone: orderData.customer.phone || '',
-                document: orderData.customer.document || '' // CPF/CNPJ
-            },
-            shippingAddress: {
-                street: orderData.shippingAddress.street,
-                complement: orderData.shippingAddress.complement || '',
-                neighborhood: orderData.shippingAddress.neighborhood || '',
-                city: orderData.shippingAddress.city,
-                state: orderData.shippingAddress.state,
-                zipCode: orderData.shippingAddress.zipCode,
-                country: orderData.shippingAddress.country || 'Brasil'
-            },
-            payment: {
-                method: orderData.paymentMethod || 'pix',
-                status: 'pending',
-                gateway: 'mercadopago',
-                gatewayTransactionId: null,
-                gatewayPaymentId: null,
-                pix: null,
-                boleto: null,
-                card: null,
-                createdAt: new Date(), // Usar Date() em vez de serverTimestamp() pois está dentro de objeto aninhado
-                approvedAt: null,
-                rejectedAt: null
-            },
-            orderStatus: 'pending',
-            tracking: null,
-            statusHistory: [
-                {
-                    status: 'pending',
-                    timestamp: new Date(), // Usar Date() no array, serverTimestamp() não funciona dentro de arrays
-                    changedBy: orderData.userId
-                }
-            ],
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp()
+            customer: orderData.customer,
+            shippingAddress: orderData.shippingAddress,
+            paymentMethod: orderData.paymentMethod
+        });
+
+        return {
+            orderId: result.data.orderId,
+            finalTotal: result.data.finalTotal
         };
-
-        const ordersRef = collection(db, 'orders');
-        const docRef = await addDoc(ordersRef, order);
-
-        return docRef.id;
     } catch (error) {
         console.error('Erro ao criar pedido:', error);
+
+        if (error.code === 'functions/unauthenticated') {
+            throw new Error('Você precisa estar logado para finalizar a compra');
+        }
+        if (error.code === 'functions/not-found') {
+            throw new Error(error.message || 'Produto não encontrado');
+        }
+        if (error.code === 'functions/invalid-argument') {
+            throw new Error(error.message || 'Dados inválidos');
+        }
+        if (error.code === 'functions/failed-precondition') {
+            throw new Error(error.message || 'Não foi possível criar o pedido');
+        }
+        if (error.message) {
+            throw new Error(error.message);
+        }
         throw error;
     }
 }
