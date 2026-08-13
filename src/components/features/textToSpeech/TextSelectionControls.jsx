@@ -100,11 +100,11 @@ const TextSelectionControls = ({ onClose }) => {
                     className="fixed z-50 pointer-events-none"
                     style={tooltipStyle}
                 >
-                    <div className="bg-primary text-white rounded-lg shadow-xl px-2 py-1.5 flex items-center gap-1.5 pointer-events-auto">
+                    <div className="bg-primary text-background rounded-lg shadow-xl px-2 py-1.5 flex items-center gap-1.5 pointer-events-auto">
                         {/* Botão Play/Pause */}
                         <button
                             onClick={handlePlayPause}
-                            className="p-1.5 rounded-md bg-white/20 hover:bg-white/30 transition-colors flex items-center justify-center"
+                            className="p-2 min-h-[44px] min-w-[44px] rounded-md bg-white/20 hover:bg-white/30 transition-colors flex items-center justify-center"
                             title={isPaused ? 'Continuar' : isPlaying ? 'Pausar' : 'Ouvir trecho'}
                             aria-label={isPaused ? 'Continuar' : isPlaying ? 'Pausar' : 'Ouvir trecho'}
                         >
@@ -119,7 +119,7 @@ const TextSelectionControls = ({ onClose }) => {
                         {(isPlaying || isPaused) && (
                             <button
                                 onClick={handleStop}
-                                className="p-1.5 rounded-md bg-white/20 hover:bg-white/30 transition-colors flex items-center justify-center"
+                                className="p-2 min-h-[44px] min-w-[44px] rounded-md bg-white/20 hover:bg-white/30 transition-colors flex items-center justify-center"
                                 title="Parar"
                                 aria-label="Parar reprodução"
                             >
@@ -135,7 +135,7 @@ const TextSelectionControls = ({ onClose }) => {
                         {/* Botão Fechar */}
                         <button
                             onClick={handleClose}
-                            className="p-1.5 rounded-md hover:bg-white/20 transition-colors flex items-center justify-center"
+                            className="p-2 min-h-[44px] min-w-[44px] rounded-md hover:bg-white/20 transition-colors flex items-center justify-center"
                             title="Fechar"
                             aria-label="Fechar controles de seleção"
                         >

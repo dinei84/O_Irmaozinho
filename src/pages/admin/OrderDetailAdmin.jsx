@@ -176,7 +176,7 @@ const OrderDetailAdmin = () => {
                                 className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${
                                     !canSave || saving
                                         ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                                        : 'bg-primary text-white hover:bg-primary/90'
+                                        : 'bg-primary text-background hover:bg-primary/90'
                                 }`}
                             >
                                 {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
@@ -372,7 +372,7 @@ const OrderDetailAdmin = () => {
                                         className={`w-full px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
                                             !canSave || saving
                                                 ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                                                : 'bg-primary text-white hover:bg-primary/90'
+                                                : 'bg-primary text-background hover:bg-primary/90'
                                         }`}
                                     >
                                         {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}

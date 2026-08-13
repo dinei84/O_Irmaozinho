@@ -61,11 +61,11 @@ const Header = () => {
                 <div className="flex items-center space-x-2">
                     <button
                         onClick={openCart}
-                        className="relative p-2 text-text-secondary hover:text-primary transition-colors"
+                        className="relative p-3 text-text-secondary hover:text-primary transition-colors"
                     >
                         <ShoppingCart size={24} />
                         {cartCount > 0 && (
-                            <span className="absolute -top-1 -right-1 bg-primary text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                            <span className="absolute -top-1 -right-1 bg-primary text-background text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                                 {cartCount}
                             </span>
                         )}
@@ -74,7 +74,7 @@ const Header = () => {
                     <div className="relative">
                         <button
                             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                            className="flex items-center gap-1 p-2 text-text-secondary hover:text-primary transition-colors"
+                            className="flex items-center gap-1 p-3 text-text-secondary hover:text-primary transition-colors"
                         >
                             <User size={24} />
                             <ChevronDown size={16} className="hidden md:block transition-transform" />
@@ -99,7 +99,7 @@ const Header = () => {
                                             <Link
                                                 to="/orders"
                                                 onClick={() => setIsUserMenuOpen(false)}
-                                                className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:bg-areia hover:text-primary transition-colors"
+                                                className="flex items-center gap-3 px-4 py-2 min-h-[44px] text-sm text-text-secondary hover:bg-areia hover:text-primary transition-colors"
                                             >
                                                 <Package size={18} />
                                                 Meus Pedidos
@@ -107,14 +107,14 @@ const Header = () => {
                                             <Link
                                                 to="/admin"
                                                 onClick={() => setIsUserMenuOpen(false)}
-                                                className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:bg-areia hover:text-primary transition-colors"
+                                                className="flex items-center gap-3 px-4 py-2 min-h-[44px] text-sm text-text-secondary hover:bg-areia hover:text-primary transition-colors"
                                             >
                                                 <User size={18} />
                                                 Painel Admin
                                             </Link>
                                             <button
                                                 onClick={handleLogout}
-                                                className="w-full flex items-center gap-3 px-4 py-2 text-sm text-primary hover:bg-pessego/30 transition-colors"
+                                                className="w-full flex items-center gap-3 px-4 py-2 min-h-[44px] text-sm text-primary hover:bg-pessego/30 transition-colors"
                                             >
                                                 <LogOut size={18} />
                                                 Sair
@@ -125,7 +125,7 @@ const Header = () => {
                                             <Link
                                                 to="/login"
                                                 onClick={() => setIsUserMenuOpen(false)}
-                                                className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:bg-areia hover:text-primary transition-colors"
+                                                className="flex items-center gap-3 px-4 py-2 min-h-[44px] text-sm text-text-secondary hover:bg-areia hover:text-primary transition-colors"
                                             >
                                                 <LogIn size={18} />
                                                 Entrar
@@ -133,7 +133,7 @@ const Header = () => {
                                             <Link
                                                 to="/signup"
                                                 onClick={() => setIsUserMenuOpen(false)}
-                                                className="flex items-center gap-3 px-4 py-2 text-sm text-text-secondary hover:bg-areia hover:text-primary transition-colors"
+                                                className="flex items-center gap-3 px-4 py-2 min-h-[44px] text-sm text-text-secondary hover:bg-areia hover:text-primary transition-colors"
                                             >
                                                 <User size={18} />
                                                 Criar Conta
