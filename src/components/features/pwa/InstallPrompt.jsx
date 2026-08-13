@@ -88,7 +88,7 @@ export default function InstallPrompt() {
             <button
               type="button"
               onClick={handleInstall}
-              className="mt-3 rounded-full bg-pessego px-5 py-2 font-sans font-bold text-text-primary transition-opacity hover:opacity-90"
+              className="mt-3 rounded-full bg-pessego px-5 py-3 font-sans font-bold text-text-primary transition-opacity hover:opacity-90"
             >
               Instalar
             </button>
@@ -98,7 +98,7 @@ export default function InstallPrompt() {
           type="button"
           onClick={handleDismiss}
           aria-label="Dispensar"
-          className="shrink-0 rounded-full p-1 text-pessego transition-opacity hover:opacity-70"
+          className="shrink-0 rounded-full p-1 min-h-[44px] min-w-[44px] flex items-center justify-center text-pessego transition-opacity hover:opacity-70"
         >
           <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />

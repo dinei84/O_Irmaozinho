@@ -86,7 +86,7 @@ const TextToSpeechPlayer = ({ text, title, className = '' }) => {
                     {(isPlaying || isPaused) && (
                         <button
                             onClick={handleStop}
-                            className="p-2 text-text-secondary hover:text-primary transition-colors"
+                            className="p-3 min-h-[44px] min-w-[44px] flex items-center justify-center text-text-secondary hover:text-primary transition-colors"
                             aria-label="Parar"
                         >
                             <Square size={18} />
@@ -94,7 +94,7 @@ const TextToSpeechPlayer = ({ text, title, className = '' }) => {
                     )}
                     <button
                         onClick={() => setIsExpanded(!isExpanded)}
-                        className="p-2 text-text-secondary hover:text-primary transition-colors rounded-lg hover:bg-[#E7D9C0]"
+                        className="p-3 min-h-[44px] min-w-[44px] flex items-center justify-center text-text-secondary hover:text-primary transition-colors rounded-lg hover:bg-[#E7D9C0]"
                         aria-label={isExpanded ? 'Recolher controles' : 'Expandir controles'}
                     >
                         {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}

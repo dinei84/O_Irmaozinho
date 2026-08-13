@@ -95,6 +95,7 @@ const Home = () => {
                             src="/assets/images/Podcast.png"
                             alt="Fé e Comunidade"
                             className="w-full h-full object-cover rounded-2xl shadow-2xl"
+                            fetchpriority="high"
                             onError={(e) => { e.target.src = 'https://placehold.co/600x600?text=O+Irmaozinho' }}
                         />
                     </div>
@@ -147,6 +148,8 @@ const Home = () => {
                                                 src={article.imageUrl || 'https://placehold.co/800x450?text=O+Irmaozinho'}
                                                 alt={article.title}
                                                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                loading="lazy"
+                                                decoding="async"
                                                 onError={(e) => { e.target.src = 'https://placehold.co/800x450?text=O+Irmaozinho' }}
                                             />
                                         </div>

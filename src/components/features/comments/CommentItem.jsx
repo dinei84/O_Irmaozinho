@@ -93,6 +93,8 @@ const CommentItem = ({ comment, currentUserId, onEdit, onDelete }) => {
                             src={comment.userAvatar}
                             alt={comment.userName}
                             className="w-10 h-10 rounded-full object-cover"
+                            loading="lazy"
+                            decoding="async"
                             onError={(e) => {
                                 e.target.style.display = 'none';
                                 e.target.nextSibling.style.display = 'flex';

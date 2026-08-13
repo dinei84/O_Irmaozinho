@@ -174,7 +174,7 @@ const OrdersManager = () => {
                             onClick={() => setFilter(value)}
                             className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                                 filter === value
-                                    ? 'bg-primary text-white'
+                                    ? 'bg-primary text-background'
                                     : 'bg-white text-text-secondary border border-gray-200 hover:border-primary hover:text-primary'
                             }`}
                         >

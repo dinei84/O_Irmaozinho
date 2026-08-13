@@ -325,6 +325,8 @@ const ArticleEditor = () => {
                                             src={formData.imageUrl}
                                             alt="Preview"
                                             className="w-full max-w-md h-48 object-cover rounded-lg"
+                                            loading="lazy"
+                                            decoding="async"
                                             onError={(e) => {
                                                 e.target.src = 'https://placehold.co/600x400?text=Imagem+Inválida';
                                             }}
