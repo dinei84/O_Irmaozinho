@@ -236,3 +236,25 @@ Servidor de dev **desligado**. Duas execuções consecutivas pós-change:
 - Branch pronta para revisão — **sem merge, sem push** (instrução da OS).
 - A validação de Lighthouse/perf real fica para produção (app não monta localmente sem `.env`
   do Firebase — estado pré-existente).
+
+## Verificação independente do CTO — Aprovado (2026-08-13)
+
+- **Build reconferido:** chunk principal 776,36 kB + um chunk por página
+  (Home 5.6 kB, ArticleDetail 30 kB, Checkout 35 kB, etc.) — code-splitting funcionando,
+  redução de ~24% no chunk inicial confirmada.
+- `npx vitest run` (2x): 284/298, baseline, zero regressão do `React.lazy`/`Suspense`.
+- `grep text-white` fora de tests: **vazio** — revisão de contraste completa, confirmada.
+- `Suspense` envolve corretamente todas as `<Routes>` com `PageLoader` de fallback.
+- Nenhuma lógica de dados/pagamento/`sanitize.js` tocada (diff conferido).
+- **Decisões avaliadas e aceitas:**
+  - *Aviso ">500 kB" persistente:* o agente manteve o escopo (só `React.lazy`) e não fez
+    `manualChunks` — decisão **correta** (é config de build, unidade de trabalho própria).
+    O DoD é atendido pela cláusula "chunk principal cai claramente". Registrado como
+    **DT-07** em `PROJECT_STATE.md` (split de vendor para zerar o aviso — micro-OS futura).
+  - *Toolbar do editor admin (Negrito/Itálico) em ~34px:* exceção **aceita** — controles
+    densos de editor de texto rico, tela interna de admin (fora do redesign público),
+    subir para 44px estouraria a toolbar em mobile. Padrão comum e documentado.
+- **Lighthouse:** honestamente `[~]` — a validar em produção; a prova de performance aqui é
+  o bundle (objetiva). De acordo.
+
+**Aprovado** — sem correções de código. Fecha a Fase 4 (redesign visual).
