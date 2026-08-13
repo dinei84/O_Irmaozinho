@@ -194,7 +194,7 @@ describe('CommentItem', () => {
             userAvatar: ''
         };
 
-        render(
+        const { container } = render(
             <CommentItem
                 comment={commentWithoutAvatar}
                 currentUserId="user123"
@@ -203,9 +203,9 @@ describe('CommentItem', () => {
             />
         );
 
-        // Verificar se o ícone de usuário padrão está presente
-        const iconContainer = screen.getByText('Test User').closest('div').querySelector('svg');
-        expect(iconContainer).toBeInTheDocument();
+        // Sem avatar: não deve haver <img>; deve haver o ícone padrão (lucide <User>)
+        expect(container.querySelector('img')).not.toBeInTheDocument();
+        expect(container.querySelector('.flex-shrink-0 svg')).toBeInTheDocument();
     });
 
     it('deve fechar modo de edição quando cancelar', async () => {

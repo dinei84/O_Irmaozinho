@@ -1,6 +1,12 @@
 import '@testing-library/jest-dom';
 import { cleanup } from '@testing-library/react';
 import { afterEach, vi } from 'vitest';
+import { MotionGlobalConfig } from 'framer-motion';
+
+// Desativa as animações do framer-motion nos testes: o <AnimatePresence mode="wait">
+// (usado no checkout) só monta o elemento entrante após o exit do anterior, o que
+// não acontece em jsdom. Com skipAnimations, a troca de step é imediata.
+MotionGlobalConfig.skipAnimations = true;
 
 afterEach(() => {
   cleanup();

@@ -2,6 +2,7 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
 import { AuthProvider } from '../../../../contexts/AuthContext';
 import CommentsSection from '../CommentsSection';
 import {
@@ -21,13 +22,10 @@ vi.mock('../../../../services/commentService', () => ({
     deleteComment: vi.fn()
 }));
 
-vi.mock('../../../../contexts/AuthContext', async () => {
-    const actual = await vi.importActual('../../../../contexts/AuthContext');
-    return {
-        ...actual,
-        useAuth: vi.fn()
-    };
-});
+vi.mock('../../../../contexts/AuthContext', () => ({
+    AuthProvider: ({ children }) => children,
+    useAuth: vi.fn()
+}));
 
 const mockComments = [
     {
@@ -68,7 +66,11 @@ const MockAuthProvider = ({ children, currentUser = null }) => {
         refreshToken: vi.fn()
     });
 
-    return <AuthProvider>{children}</AuthProvider>;
+    return (
+        <MemoryRouter>
+            <AuthProvider>{children}</AuthProvider>
+        </MemoryRouter>
+    );
 };
 
 describe('CommentsSection', () => {
@@ -94,7 +96,7 @@ describe('CommentsSection', () => {
         );
 
         expect(screen.getByText(/comentários/i)).toBeInTheDocument();
-        expect(getComments).toHaveBeenCalledWith('article123', 10, null);
+        expect(getComments).toHaveBeenCalledWith('article123', 10);
         expect(getCommentsCount).toHaveBeenCalledWith('article123');
     });
 
@@ -108,8 +110,8 @@ describe('CommentsSection', () => {
         );
 
         // Verificar se há um spinner ou elemento de loading
-        const loader = container.querySelector('.animate-spin') || container.querySelector('[class*="spinner"]');
-        expect(loader || getComments).toHaveBeenCalled();
+        const loader = container.querySelector('.animate-spin');
+        expect(loader).toBeTruthy();
     });
 
     it('deve exibir comentários após carregar', async () => {
@@ -152,7 +154,7 @@ describe('CommentsSection', () => {
         );
 
         await waitFor(() => {
-            expect(screen.getByText(/nenhum comentário ainda/i)).toBeInTheDocument();
+            expect(screen.getByText(/Seja o primeiro/i)).toBeInTheDocument();
         });
     });
 
@@ -170,7 +172,7 @@ describe('CommentsSection', () => {
         );
 
         await waitFor(() => {
-            expect(screen.getByPlaceholderText(/escreva seu comentário/i)).toBeInTheDocument();
+            expect(screen.getByPlaceholderText(/Deixe um comentário gentil/i)).toBeInTheDocument();
         });
     });
 
@@ -213,10 +215,10 @@ describe('CommentsSection', () => {
         );
 
         await waitFor(() => {
-            expect(screen.getByPlaceholderText(/escreva seu comentário/i)).toBeInTheDocument();
+            expect(screen.getByPlaceholderText(/Deixe um comentário gentil/i)).toBeInTheDocument();
         });
 
-        const textarea = screen.getByPlaceholderText(/escreva seu comentário/i);
+        const textarea = screen.getByPlaceholderText(/Deixe um comentário gentil/i);
         const submitButton = screen.getByRole('button', { name: /comentar/i });
 
         await user.type(textarea, 'Novo comentário');
@@ -250,10 +252,10 @@ describe('CommentsSection', () => {
         );
 
         await waitFor(() => {
-            expect(screen.getByPlaceholderText(/escreva seu comentário/i)).toBeInTheDocument();
+            expect(screen.getByPlaceholderText(/Deixe um comentário gentil/i)).toBeInTheDocument();
         });
 
-        const textarea = screen.getByPlaceholderText(/escreva seu comentário/i);
+        const textarea = screen.getByPlaceholderText(/Deixe um comentário gentil/i);
         const submitButton = screen.getByRole('button', { name: /comentar/i });
 
         await user.type(textarea, 'Comentário com erro');

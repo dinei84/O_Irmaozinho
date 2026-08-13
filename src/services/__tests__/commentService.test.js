@@ -89,21 +89,22 @@ describe('commentService', () => {
         collection.mockReturnValue(mockCommentRef);
         // Mock flexível do doc que pode ser sobrescrito em testes específicos
         doc.mockImplementation((ref, ...paths) => {
-            const path = paths[0];
             // Se for doc(collectionRef) - para criar novo documento
             if (ref === mockCommentRef && paths.length === 0) {
                 return { id: 'new-comment-id' };
             }
+            // doc(db, collection, id): o id é o último segmento do path.
+            const docId = paths[paths.length - 1];
             // Se for doc(db, 'content', articleId)
-            if (path === mockArticleId) {
+            if (docId === mockArticleId) {
                 return mockArticleRef;
             }
             // Se for doc(db, 'comments', commentId)
-            if (path === 'comment123') {
+            if (docId === 'comment123') {
                 return mockCommentDocRef;
             }
             // Default
-            return { id: path || 'default-id' };
+            return { id: docId || 'default-id' };
         });
         query.mockImplementation((...args) => ({ args }));
         where.mockImplementation((field, op, value) => ({ field, op, value }));
@@ -159,11 +160,7 @@ describe('commentService', () => {
             };
 
             runTransaction.mockImplementation(async (db, callback) => {
-                try {
-                    return await callback(mockTransaction);
-                } catch (error) {
-                    throw error;
-                }
+                return await callback(mockTransaction);
             });
 
             await expect(
@@ -351,7 +348,7 @@ describe('commentService', () => {
         it('deve atualizar comentário com sucesso', async () => {
             // Garantir que doc retorna o ref correto
             doc.mockImplementation((ref, ...paths) => {
-                if (paths[0] === 'comment123') {
+                if (paths[paths.length - 1] === 'comment123') {
                     return mockCommentDocRef;
                 }
                 return { id: 'default-id' };
@@ -446,9 +443,10 @@ describe('commentService', () => {
 
             // Mock do doc()
             doc.mockImplementation((ref, ...paths) => {
-                if (paths[0] === 'comment123') return mockCommentRef;
-                if (paths[0] === 'article123') return mockArticleRef;
-                return { id: paths[0] || 'default-id' };
+                const docId = paths[paths.length - 1];
+                if (docId === 'comment123') return mockCommentRef;
+                if (docId === 'article123') return mockArticleRef;
+                return { id: docId || 'default-id' };
             });
 
             // Mock do transaction.get

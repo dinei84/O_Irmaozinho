@@ -26,7 +26,9 @@ const BoletoPaymentForm = ({ orderId, boletoData }) => {
     }, [orderId]);
 
     const handleCopyBarcode = async () => {
-        const code = boletoData?.barcode || boletoData?.barcodeFormatted;
+        // Copia o mesmo valor exibido no input (formatado quando disponível),
+        // mantendo a consistência entre o que o usuário vê e o que é copiado.
+        const code = boletoData?.barcodeFormatted || boletoData?.barcode;
         if (code) {
             try {
                 await navigator.clipboard.writeText(code);

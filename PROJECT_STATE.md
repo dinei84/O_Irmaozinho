@@ -15,21 +15,32 @@ Esta é a primeira versão do `PROJECT_STATE.md` — o projeto passa a adotar o 
 **Branch:** `main` | **Commit topo no momento desta versão:** `d41bf2a`
 
 **Verificado nesta sessão (baseline real, não estimado):**
-- `npx vitest run`: **298 testes, 284 passando, 14 falhando** — as 14 falhas são **pré-existentes e conhecidas**, batendo com a baseline documentada em `docs/seguranca/RELATORIO_SPRINT_0.md` (284 passando / 14 falhas pré-existentes, "nenhuma regressão introduzida"). Não foram investigadas a fundo nesta sessão — ver §3.1.
-- `npm run test:rules` (19 testes de Firestore Rules via emulador): **não executado nesta sessão** (não roda por padrão sem subir o emulador do Firestore) — última execução registrada e confirmada é a do próprio Sprint 0 (19/19 passando).
-- `npx vite build`: não executado nesta sessão (sem alteração de código-fonte).
-- `npm run lint`: **quebrado** — não existe arquivo de configuração do ESLint no repositório (nem raiz, nem `functions/`), apesar do script e das dependências (`eslint`, `eslint-plugin-react` etc.) estarem no `package.json`. Ver DT-01.
-- Não existe `tsconfig.json` — o projeto é JavaScript puro (JSX), não há checagem de tipos a rodar.
+- `npx vitest run`: **343 testes, 343 passando, 0 falhando** — nova baseline após a
+  OS_HARDENING_001 (R-08 + triagem de testes). As 14 falhas pré-existentes (DT-02) foram
+  corrigidas, e 4 arquivos de teste que **crashavam no import** (transitivamente importavam
+  `src/lib/firebase.js`, que lança sem `.env`) passaram a coletar e executar — revelando ~37
+  testes "stale" do redesign que também foram corrigidos. Ver §3.3.
+- `npm run test:rules` (**23 testes** de Firestore Rules via emulador): **23/23 passando**
+  (4 novos testes de V-02 — criação de pedido negada no cliente — adicionados na OS_HARDENING_001).
+- `npm run lint`: **verde (0 erros, 61 warnings)** — config do ESLint criada na OS_HARDENING_001
+  (DT-01 resolvida).
+- `npx vite build`: limpo (aviso "chunk >500 kB" segue pré-existente, sem relação com esta OS).
 
 ---
 
 ## 1. Próximas ações (ordem de prioridade)
 
-1. **Deploy do Sprint 0 de segurança** — o código das 4 correções críticas está pronto e testado (`d41bf2a`), mas não está em produção. Até o deploy, as vulnerabilidades continuam exploráveis ao vivo. Ver `docs/seguranca/RELATORIO_SPRINT_0.md` para o checklist de saída.
-2. **R-08 / Fase 3.1 do `PLANO_DE_ACAO.md`** — criar pedido no servidor (`createOrder` callable, preços/estoque validados no backend). Enquanto isso não existe, a fraude de preço (V-02) **continua parcialmente possível** via adulteração do carrinho no `localStorage`, mesmo após o deploy do Sprint 0 — mitigação parcial já feita (Function ignora `amount` do cliente e lê `finalTotal` do pedido), mas o próprio `finalTotal` ainda nasce no cliente até o pedido ser criado server-side.
-3. **DT-01** — corrigir `npm run lint` (sem config de ESLint) antes de depender dele em qualquer pipeline de CI.
-4. **Fase 1 do `PLANO_DE_ACAO.md`** — App Check, migração de Functions para API v2, transações reais de estoque, idempotência do webhook, verificação de e-mail obrigatória.
-5. Investigar as 14 falhas pré-existentes de teste (§3.1) — hoje aceitas como baseline conhecida, mas nunca formalmente triadas uma a uma neste novo modelo de governança.
+1. **Deploy do Sprint 0 + R-08** — o código das correções de segurança (incluindo agora a
+   `createOrder` server-side, que fecha a V-02) está pronto e testado, mas não em produção.
+   Ver `docs/seguranca/RELATORIO_SPRINT_0.md` e `docs/os/OS_HARDENING_001*.md` para o checklist.
+2. **R-10** — assinatura do webhook do Mercado Pago (`x-signature` + idempotência) — o webhook
+   ainda é um endpoint público que aceita qualquer POST (ver `PLANO_DE_ACAO.md` Fase 0.4).
+3. **Testes das Cloud Functions com emulador** (`firebase-functions-test`) — o `createOrder`
+   novo tem a segurança provada por (a) teste de rules (create negado no cliente) e (b) leitura
+   de código; falta teste direto da function (ver DT-07).
+4. **Fase 1 do `PLANO_DE_ACAO.md`** — App Check, migração de Functions para API v2, transações
+   reais de estoque, verificação de e-mail obrigatória.
+5. **DT-08** — config de ESLint em `functions/` (o `npm run lint` do backend segue quebrado).
 
 ---
 
@@ -37,6 +48,7 @@ Esta é a primeira versão do `PROJECT_STATE.md` — o projeto passa a adotar o 
 
 | Marco | Descrição | Status |
 |---|---|---|
+| OS_HARDENING_001 (2026-08-13) | R-08 (pedido no servidor fecha V-02) + lint + triagem de testes (343/343) + CI/CD | ✅ Código concluído, aguardando revisão do CTO |
 | Auditoria de segurança (2026-07-13) | 14 vulnerabilidades encontradas, 4 críticas | ✅ Diagnosticado — `docs/seguranca/AUDITORIA_SEGURANCA.md` |
 | Sprint 0 de segurança (2026-07-13) | Fecha as 4 críticas no código + 35 testes novos (19 de rules) | ✅ Código concluído, **aguardando deploy** — `docs/seguranca/RELATORIO_SPRINT_0.md`, commit `d41bf2a` |
 | Reorganização de documentação | Docs obsoletos isolados em `garbage/`, `docs/` reorganizado por finalidade | ✅ Concluído — commit `1e30b4d` |
@@ -50,12 +62,12 @@ Esta é a primeira versão do `PROJECT_STATE.md` — o projeto passa a adotar o 
 
 | DT | Severidade | Descrição |
 |---|---|---|
-| DT-01 | MÉDIA | `npm run lint` não funciona — não existe `.eslintrc*`/`eslint.config.*` em nenhum lugar do repositório (raiz ou `functions/`), apesar do script e das dependências do ESLint estarem presentes no `package.json`. Bloqueia qualquer adoção de CI que dependa de lint. |
-| DT-02 | A investigar | 14 testes falhando em `npx vitest run` (de 298 totais) — aceitos como "pré-existentes" porque batem com a baseline do `RELATORIO_SPRINT_0.md`, mas nunca triados individualmente sob este novo modelo de governança. Arquivos com falha observados nesta sessão incluem `src/components/checkout/__tests__/BoletoPaymentForm.test.jsx` e `src/components/features/comments/__tests__/CommentItem.test.jsx` — não investigados a fundo, apenas confirmados como parte da contagem conhecida. |
 | DT-03 | BAIXA | `TextToSpeechPlayer.jsx` (reskin na OS_REDESIGN_005) não tem barra de progresso nem contador de tempo atual/total, presentes no `PROJECT_SPEC.md` §5.6 item 6 e no mockup do deck (slide 05, "1:48 / 6:12"). Implementar exigiria expor progresso/duração em `src/hooks/useTextToSpeech.js` — fora do escopo de um "reskin visual" (a OS explicitamente proibia reescrever lógica). Fica para uma OS futura dedicada. |
 | DT-04 | BAIXA/MÉDIA | Leitura offline **plena do texto** dos artigos (PWA, OS_REDESIGN_009). O Workbox cacheia shell + imagens, mas o texto vem do Firestore (gRPC/websocket) e não persiste offline. Exigiria `enableIndexedDbPersistence` do Firestore (lógica de dados, não PWA/visual). OS futura. |
 | DT-05 | BAIXA | `theme-color` dinâmico por tela (`PROJECT_SPEC.md` §6.3) não implementado na OS_REDESIGN_009 — entregue estático (`#FBF7EF`). Melhoria futura; o estático satisfaz o mínimo. |
 | DT-06 | BAIXA | Splash screen nativa iOS (`apple-touch-startup-image`) não implementada (OS_REDESIGN_009). Navegadores modernos geram splash a partir do manifest; iOS exige imagens dedicadas por resolução. Melhoria futura. |
+| DT-07 | MÉDIA | A Cloud Function `createOrder` (R-08) não tem teste direto com emulador de functions (`firebase-functions-test`). A segurança está provada por (a) teste de rules (`firestore.rules.test.js` — create negado no cliente) e (b) leitura de código, mas falta prova automatizada de que o preço vem de `products` e não do cliente. Registrar e cobrir numa OS futura (PLANO_DE_ACAO.md 5.2). |
+| DT-08 | BAIXA/MÉDIA | `functions/` segue **sem config de ESLint** própria — o `npm run lint` do backend (`functions/package.json`) falha por não existir `.eslintrc`/`eslint.config` ali (só `eslint-config-google` instalado). A OS_HARDENING_001 criou a config do **front** (raiz) e ignorou `functions/`; a do backend fica para uma OS futura. |
 | DT-07 | BAIXA | Aviso de build ">500 kB": mesmo após o code-splitting de rotas (OS_REDESIGN_010, chunk principal 1.014→776 kB), os vendors (Firebase SDK, framer-motion, react) seguem no chunk inicial. Zerar o aviso exige `build.rollupOptions.output.manualChunks` (split de vendor) — mudança de config de build, unidade de trabalho própria. Micro-OS futura; não bloqueante. |
 
 ### 3.2 Herdadas do plano de ação (não redigitadas aqui — ver fonte)
@@ -66,7 +78,10 @@ O `PLANO_DE_ACAO.md` já documenta, em detalhe e com correção sugerida, as dí
 
 | DT | Descrição | Status |
 |---|---|---|
-| V-01/R-03 | Valor do pagamento definido pelo cliente (price tampering) | ✅ Mitigado no código (Sprint 0) — **fechamento definitivo depende de R-08** (§1, item 2), aguarda deploy |
+| DT-01 | `npm run lint` quebrado (sem config ESLint) | ✅ Resolvido na OS_HARDENING_001 — `.eslintrc.cjs` criado (raiz/front), `npm run lint` verde (0 erros, 61 warnings) |
+| DT-02 | 14 testes falhando (baseline pré-existente) + 4 arquivos que crashavam no import | ✅ Resolvido na OS_HARDENING_001 — suíte triada; nova baseline **343/343** |
+| V-02/R-08 | Pedido montado no cliente (price tampering via carrinho/localStorage) | ✅ Resolvido na OS_HARDENING_001 — `createOrder` server-side + `orders` create negado nas rules |
+| V-01/R-03 | Valor do pagamento definido pelo cliente (price tampering) | ✅ Mitigado no código (Sprint 0) — fechamento definitivo agora completo via R-08, aguarda deploy |
 | V-03/R-02 | Firestore Rules permitiam update de `orders` por qualquer usuário autenticado | ✅ Resolvido no código (Sprint 0), aguarda deploy |
 | V-04/R-04 | XSS armazenado em artigos + rule temporária liberando criação de conteúdo para qualquer usuário | ✅ Resolvido no código (Sprint 0: DOMPurify + rule restaurada), aguarda deploy |
 | V-08/R-05 | Comentários: campos arbitráveis na edição + identidade forjável + janela de 1h desativada/quebrada | ✅ Resolvido no código (Sprint 0), aguarda deploy |

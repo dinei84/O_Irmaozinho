@@ -70,6 +70,14 @@ export function normalizeArticle(data) {
         normalized.imageUrl = data.imageUrl.trim();
     }
 
+    if (data.createdAt) {
+        normalized.createdAt = data.createdAt;
+    }
+
+    if (data.updatedAt) {
+        normalized.updatedAt = data.updatedAt;
+    }
+
     return normalized;
 }
 
@@ -92,12 +100,14 @@ export function validateProduct(data) {
         errors.push('Preço não pode ser maior que 1.000.000');
     }
     
-    // Estoque é opcional, mas se fornecido deve ser válido
-    if (data.stock !== undefined && data.stock !== null && data.stock !== '') {
-        const stockNum = Number(data.stock);
-        if (isNaN(stockNum) || stockNum < 0 || !Number.isInteger(stockNum)) {
-            errors.push('Estoque deve ser um número inteiro não negativo');
-        }
+    // Estoque é obrigatório e deve ser um inteiro não negativo (alinhado com
+    // `isValidProduct` nas Firestore Rules, que exigem `stock is int >= 0`).
+    const stockNum = Number(data.stock);
+    if (
+        data.stock === undefined || data.stock === null || data.stock === '' ||
+        isNaN(stockNum) || stockNum < 0 || !Number.isInteger(stockNum)
+    ) {
+        errors.push('Estoque deve ser um número inteiro não negativo');
     }
     
     if (typeof data.active !== 'boolean') {
@@ -113,10 +123,10 @@ export function validateProduct(data) {
         }
     }
     
-    // SupplierId é obrigatório
-    if (!data.supplierId || typeof data.supplierId !== 'string' || data.supplierId.trim().length === 0) {
-        errors.push('Fornecedor é obrigatório');
-    } else if (data.supplierId.length > 200) {
+    // SupplierId é opcional (a coleção `products` nas Firestore Rules também o
+    // trata como opcional — ver isValidProduct em firestore.rules). Quando
+    // presente, valida apenas o tamanho.
+    if (data.supplierId && typeof data.supplierId === 'string' && data.supplierId.length > 200) {
         errors.push('ID do fornecedor deve ter no máximo 200 caracteres');
     }
     
@@ -132,6 +142,7 @@ export function normalizeProduct(data) {
         description: (data.description || '').trim() || '',
         price: Number(data.price) || 0,
         stock: Number.isInteger(Number(data.stock)) ? Number(data.stock) : 0,
+        imageUrl: data.imageUrl ? data.imageUrl.trim() : '',
         category: data.category ? data.category.trim() : '',
         supplierId: data.supplierId ? data.supplierId.trim() : '',
         supplierName: data.supplierName ? data.supplierName.trim() : '',
@@ -139,10 +150,6 @@ export function normalizeProduct(data) {
         createdAt: data.createdAt,
         updatedAt: data.updatedAt
     };
-
-    if (data.imageUrl && data.imageUrl.trim()) {
-        normalized.imageUrl = data.imageUrl.trim();
-    }
 
     return normalized;
 }
