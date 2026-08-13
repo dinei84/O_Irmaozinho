@@ -35,6 +35,8 @@ const Footer = () => {
                                     src="/assets/images/Podcast.png"
                                     alt="O Irmãozinho Logo"
                                     className="w-full h-full object-cover"
+                                    loading="lazy"
+                                    decoding="async"
                                     onError={(e) => { e.target.src = 'https://placehold.co/200x200?text=Logo' }}
                                 />
                             </div>
@@ -46,21 +48,21 @@ const Footer = () => {
                 <div className="flex justify-center space-x-6 mb-6">
                     <a
                         href="#"
-                        className="flex items-center justify-center w-10 h-10 rounded-full bg-secondary-dark text-pessego hover:bg-primary hover:text-background transition-all duration-300 transform hover:scale-110"
+                        className="flex items-center justify-center w-11 h-11 rounded-full bg-secondary-dark text-pessego hover:bg-primary hover:text-background transition-all duration-300 transform hover:scale-110"
                         aria-label="Facebook"
                     >
                         <Facebook size={22} />
                     </a>
                     <a
                         href="#"
-                        className="flex items-center justify-center w-10 h-10 rounded-full bg-secondary-dark text-pessego hover:bg-primary hover:text-background transition-all duration-300 transform hover:scale-110"
+                        className="flex items-center justify-center w-11 h-11 rounded-full bg-secondary-dark text-pessego hover:bg-primary hover:text-background transition-all duration-300 transform hover:scale-110"
                         aria-label="Instagram"
                     >
                         <Instagram size={22} />
                     </a>
                     <a
                         href="#"
-                        className="flex items-center justify-center w-10 h-10 rounded-full bg-secondary-dark text-pessego hover:bg-primary hover:text-background transition-all duration-300 transform hover:scale-110"
+                        className="flex items-center justify-center w-11 h-11 rounded-full bg-secondary-dark text-pessego hover:bg-primary hover:text-background transition-all duration-300 transform hover:scale-110"
                         aria-label="Twitter"
                     >
                         <Twitter size={22} />

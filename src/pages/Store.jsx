@@ -120,6 +120,8 @@ const Store = () => {
                                                 src={product.imageUrl}
                                                 alt={product.name}
                                                 className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                                                loading="lazy"
+                                                decoding="async"
                                                 onError={(e) => {
                                                     e.target.src = 'https://placehold.co/400x400?text=Produto'
                                                 }}
@@ -184,9 +186,9 @@ const Store = () => {
                             onClick={(e) => e.stopPropagation()}
                         >
                             {/* Close Button */}
-                            <button
+<button
                                 onClick={closeProductModal}
-                                className="absolute top-4 right-4 p-2 bg-surface rounded-full shadow-lg hover:bg-areia transition-colors z-10"
+                                className="p-3 bg-surface rounded-full shadow-lg hover:bg-areia transition-colors z-10"
                             >
                                 <X size={24} className="text-text-secondary" />
                             </button>
@@ -200,6 +202,8 @@ const Store = () => {
                                                 src={selectedProduct.imageUrl}
                                                 alt={selectedProduct.name}
                                                 className="w-full h-full object-cover"
+                                                loading="lazy"
+                                                decoding="async"
                                                 onError={(e) => {
                                                     e.target.src = 'https://placehold.co/600x600?text=Produto'
                                                 }}

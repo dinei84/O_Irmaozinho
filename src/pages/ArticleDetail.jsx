@@ -178,7 +178,7 @@ const ArticleDetail = () => {
                         <div className="flex items-center gap-3">
                             <button
                                 onClick={handleShare}
-                                className="p-2 text-text-secondary hover:text-primary transition-colors rounded-full hover:bg-primary/10"
+                                className="p-3 text-text-secondary hover:text-primary transition-colors rounded-full hover:bg-primary/10"
                                 aria-label="Compartilhar"
                             >
                                 <Share2 size={20} />
@@ -203,6 +203,8 @@ const ArticleDetail = () => {
                                 src={article.imageUrl}
                                 alt={article.title}
                                 className="w-full aspect-[16/9] object-cover"
+                                loading="lazy"
+                                decoding="async"
                                 onError={(e) => { e.target.style.display = 'none' }}
                             />
                         </div>
@@ -249,6 +251,8 @@ const ArticleDetail = () => {
                                                 src={related.imageUrl}
                                                 alt={related.title}
                                                 className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                                                loading="lazy"
+                                                decoding="async"
                                                 onError={(e) => { e.target.src = 'https://placehold.co/800x450?text=Artigo' }}
                                             />
                                         </div>

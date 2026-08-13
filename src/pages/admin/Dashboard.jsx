@@ -249,6 +249,8 @@ const Dashboard = () => {
                                                                     src={article.imageUrl}
                                                                     alt={article.title}
                                                                     className="w-12 h-12 rounded-lg object-cover"
+                                                                    loading="lazy"
+                                                                    decoding="async"
                                                                     onError={(e) => { e.target.style.display = 'none' }}
                                                                 />
                                                             )}
@@ -274,13 +276,13 @@ const Dashboard = () => {
                                                         <div className="flex justify-end gap-2">
                                                             <Link
                                                                 to={`/admin/edit/${article.id}`}
-                                                                className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                                                                className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-primary hover:bg-primary/10 rounded-lg transition-colors"
                                                             >
                                                                 <Edit2 size={18} />
                                                             </Link>
                                                             <button
                                                                 onClick={() => handleDelete(article.id)}
-                                                                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                                                className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                                                             >
                                                                 <Trash2 size={18} />
                                                             </button>

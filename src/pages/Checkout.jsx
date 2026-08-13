@@ -443,6 +443,8 @@ const Checkout = () => {
                                                         src={item.imageUrl}
                                                         alt={item.name}
                                                         className="w-full h-full object-cover"
+                                                        loading="lazy"
+                                                        decoding="async"
                                                         onError={(e) => {
                                                             e.target.src = 'https://placehold.co/200x200?text=Produto';
                                                         }}

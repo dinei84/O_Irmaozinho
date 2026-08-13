@@ -51,7 +51,7 @@ const CartDrawer = () => {
                                 </h2>
                                 <button
                                     onClick={closeCart}
-                                    className="p-2 hover:bg-areia rounded-lg transition-colors"
+                                    className="p-3 hover:bg-areia rounded-lg transition-colors"
                                 >
                                     <X size={24} className="text-text-secondary" />
                                 </button>
@@ -95,6 +95,8 @@ const CartDrawer = () => {
                                                             src={item.imageUrl}
                                                             alt={item.name}
                                                             className="w-full h-full object-cover"
+                                                            loading="lazy"
+                                                            decoding="async"
                                                             onError={(e) => {
                                                                 e.target.src = 'https://placehold.co/200x200?text=Produto'
                                                             }}
@@ -124,7 +126,7 @@ const CartDrawer = () => {
                                                 {/* Remove Button */}
                                                 <button
                                                     onClick={() => removeFromCart(item.id)}
-                                                    className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors self-start"
+                                                    className="p-3 min-h-[44px] min-w-[44px] flex items-center justify-center text-red-500 hover:bg-red-50 rounded-lg transition-colors self-start"
                                                     title="Remover item"
                                                 >
                                                     <Trash2 size={18} />
@@ -137,7 +139,7 @@ const CartDrawer = () => {
                                                     <button
                                                         onClick={() => handleQuantityChange(item.id, item.quantity, -1)}
                                                         disabled={item.quantity <= 1}
-                                                        className="w-8 h-8 rounded-lg border-2 border-borda flex items-center justify-center hover:border-primary hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                        className="w-11 h-11 rounded-lg border-2 border-borda flex items-center justify-center hover:border-primary hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                                     >
                                                         <Minus size={16} />
                                                     </button>
@@ -147,7 +149,7 @@ const CartDrawer = () => {
                                                     <button
                                                         onClick={() => handleQuantityChange(item.id, item.quantity, 1)}
                                                         disabled={item.quantity >= (item.stock || 999)}
-                                                        className="w-8 h-8 rounded-lg border-2 border-borda flex items-center justify-center hover:border-primary hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                        className="w-11 h-11 rounded-lg border-2 border-borda flex items-center justify-center hover:border-primary hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                                     >
                                                         <Plus size={16} />
                                                     </button>

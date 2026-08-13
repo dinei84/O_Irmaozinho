@@ -109,6 +109,8 @@ const PixPaymentForm = ({ orderId, pixData }) => {
                             src={`data:image/png;base64,${pixData.qrCodeBase64}`}
                             alt="QR Code PIX"
                             className="w-64 h-64"
+                            loading="lazy"
+                            decoding="async"
                         />
                     </div>
                 ) : (
