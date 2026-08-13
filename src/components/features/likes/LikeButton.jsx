@@ -104,7 +104,7 @@ const LikeButton = ({ contentId, initialLikesCount = 0, onLikeChange, className 
                 onClick={handleToggleLike}
                 disabled={loading || !currentUser}
                 className={`
-                    flex items-center gap-2 px-3 py-2 rounded-lg
+                    flex items-center gap-2 px-3 py-3 rounded-lg
                     transition-all duration-200
                     ${isLiked 
                         ? 'text-red-500 hover:text-red-600 bg-red-50' 

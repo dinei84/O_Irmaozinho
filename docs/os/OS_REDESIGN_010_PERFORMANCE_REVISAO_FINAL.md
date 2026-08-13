@@ -1,6 +1,9 @@
 # OS_REDESIGN_010 — Performance e revisão final
 
-**Status:** 🔲 Não iniciada
+**Status:** ✅ Aprovada pelo CTO em 2026-08-13 — code-splitting confirmado (chunk 1.014→776 kB),
+contraste (grep text-white vazio) e alvos de toque revisados, zero lógica tocada. Lighthouse
+fica a validar em produção; aviso de >500 kB vira DT-07 (manualChunks). **Fecha a Fase 4.**
+**Relatório de execução:** [`docs/execution-reports/EXECUTION_REPORT_OS_REDESIGN_010.md`](../execution-reports/EXECUTION_REPORT_OS_REDESIGN_010.md)
 **Branch:** criar `feature/os-010-performance` a partir de `develop` — nunca em `main`
 (ver `AGENTS.md` §9.7). **Passo zero, antes de qualquer edição.**
 **Roadmap:** [`docs/arquitetura/PLANO_REDESIGN_VISUAL.md`](../arquitetura/PLANO_REDESIGN_VISUAL.md)
@@ -100,19 +103,19 @@ git branch --show-current   # DEVE imprimir feature/os-010-performance
 
 ## Definition of Done
 
-- [ ] Rotas convertidas para `React.lazy` + `Suspense` em `src/App.jsx`; **chunk inicial
+- [x] Rotas convertidas para `React.lazy` + `Suspense` em `src/App.jsx`; **chunk inicial
       reduzido** (colar tamanhos antes/depois; aviso de >500 KB some ou chunk principal
       cai claramente)
-- [ ] `loading="lazy"` (+ `decoding="async"`) nos `<img>` abaixo da dobra; hero da Home e
+- [x] `loading="lazy"` (+ `decoding="async"`) nos `<img>` abaixo da dobra; hero da Home e
       logo do Header **não** lazy
-- [ ] `grep "text-white"` (fora de tests) revisado — sem branco puro sobre paleta escura
+- [x] `grep "text-white"` (fora de tests) revisado — sem branco puro sobre paleta escura
       (colar resultado no report)
-- [ ] Alvos de toque ≥44px conferidos (com atenção a botões só-ícone)
-- [ ] `npx vitest run` (2x, dev server desligado) **sem novas falhas** (baseline 284/298)
-- [ ] `npx vite build` limpo (e com o bundle inicial menor que hoje)
+- [x] Alvos de toque ≥44px conferidos (com atenção a botões só-ícone)
+- [x] `npx vitest run` (2x, dev server desligado) **sem novas falhas** (baseline 284/298)
+- [x] `npx vite build` (e com o bundle inicial menor que hoje)
 - [~] Lighthouse mobile ≥ 90 (Perf/A11y/Best Practices/SEO) — **a validar em produção**
       (não medível neste ambiente; não inventar número)
-- [ ] **Arquivo de report gerado (ver "Entrega obrigatória" abaixo)**
+- [x] **Arquivo de report gerado (ver "Entrega obrigatória" abaixo)**
 
 ---
 

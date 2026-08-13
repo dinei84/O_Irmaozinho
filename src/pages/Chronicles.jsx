@@ -85,6 +85,8 @@ const Chronicles = () => {
                                         src={featuredChronicle.imageUrl}
                                         alt={featuredChronicle.title}
                                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                                        loading="lazy"
+                                        decoding="async"
                                         onError={(e) => { e.target.src = 'https://placehold.co/800x600?text=Crônica+Destaque' }}
                                     />
                                 </div>
@@ -141,6 +143,8 @@ const Chronicles = () => {
                                                 src={chronicle.imageUrl || 'https://placehold.co/800x450?text=O+Irmaozinho'}
                                                 alt={chronicle.title}
                                                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                loading="lazy"
+                                                decoding="async"
                                                 onError={(e) => { e.target.src = 'https://placehold.co/800x450?text=O+Irmaozinho' }}
                                             />
                                         </div>

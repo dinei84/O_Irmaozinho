@@ -56,6 +56,7 @@ Esta é a primeira versão do `PROJECT_STATE.md` — o projeto passa a adotar o 
 | DT-04 | BAIXA/MÉDIA | Leitura offline **plena do texto** dos artigos (PWA, OS_REDESIGN_009). O Workbox cacheia shell + imagens, mas o texto vem do Firestore (gRPC/websocket) e não persiste offline. Exigiria `enableIndexedDbPersistence` do Firestore (lógica de dados, não PWA/visual). OS futura. |
 | DT-05 | BAIXA | `theme-color` dinâmico por tela (`PROJECT_SPEC.md` §6.3) não implementado na OS_REDESIGN_009 — entregue estático (`#FBF7EF`). Melhoria futura; o estático satisfaz o mínimo. |
 | DT-06 | BAIXA | Splash screen nativa iOS (`apple-touch-startup-image`) não implementada (OS_REDESIGN_009). Navegadores modernos geram splash a partir do manifest; iOS exige imagens dedicadas por resolução. Melhoria futura. |
+| DT-07 | BAIXA | Aviso de build ">500 kB": mesmo após o code-splitting de rotas (OS_REDESIGN_010, chunk principal 1.014→776 kB), os vendors (Firebase SDK, framer-motion, react) seguem no chunk inicial. Zerar o aviso exige `build.rollupOptions.output.manualChunks` (split de vendor) — mudança de config de build, unidade de trabalho própria. Micro-OS futura; não bloqueante. |
 
 ### 3.2 Herdadas do plano de ação (não redigitadas aqui — ver fonte)
 
