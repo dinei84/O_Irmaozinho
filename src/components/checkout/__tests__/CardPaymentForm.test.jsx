@@ -235,7 +235,7 @@ describe('CardPaymentForm', () => {
         const cvvInput = screen.getByPlaceholderText(/123/i);
 
         fireEvent.change(cardInput, { target: { value: '1234567812345678' } });
-        fireEvent.change(expiryInput, { target: { value: '12/25' } });
+        fireEvent.change(expiryInput, { target: { value: '12/30' } });
         fireEvent.change(cvvInput, { target: { value: '123' } });
 
         const submitButton = screen.getByRole('button', { name: /Pagar/i });
@@ -249,7 +249,7 @@ describe('CardPaymentForm', () => {
                 cardNumber: '1234567812345678',
                 cardholderName: mockCustomer.name,
                 cardExpirationMonth: '12',
-                cardExpirationYear: '2025',
+                cardExpirationYear: '2030',
                 securityCode: '123',
                 identificationNumber: mockCustomer.document
             });
@@ -293,7 +293,7 @@ describe('CardPaymentForm', () => {
         const cvvInput = screen.getByPlaceholderText(/123/i);
 
         fireEvent.change(cardInput, { target: { value: '1234567812345678' } });
-        fireEvent.change(expiryInput, { target: { value: '12/25' } });
+        fireEvent.change(expiryInput, { target: { value: '12/30' } });
         fireEvent.change(cvvInput, { target: { value: '123' } });
 
         const submitButton = screen.getByRole('button', { name: /Pagar/i });
@@ -313,12 +313,11 @@ describe('CardPaymentForm', () => {
         const mockToken = 'card_token_abc123';
         mockCreateCardToken.mockResolvedValue(mockToken);
         createCardPaymentIntent.mockResolvedValue({
-            success: true,
+            success: false,
             status: 'rejected',
             paymentId: 'payment123',
             card: {
-                status: 'rejected',
-                statusDetail: 'cc_rejected_insufficient_amount'
+                status: 'rejected'
             }
         });
 
@@ -337,7 +336,7 @@ describe('CardPaymentForm', () => {
         const cvvInput = screen.getByPlaceholderText(/123/i);
 
         fireEvent.change(cardInput, { target: { value: '1234567812345678' } });
-        fireEvent.change(expiryInput, { target: { value: '12/25' } });
+        fireEvent.change(expiryInput, { target: { value: '12/30' } });
         fireEvent.change(cvvInput, { target: { value: '123' } });
 
         const submitButton = screen.getByRole('button', { name: /Pagar/i });
@@ -354,7 +353,7 @@ describe('CardPaymentForm', () => {
     });
 
     it('deve permitir selecionar número de parcelas', () => {
-        render(
+        const { container } = render(
             <CardPaymentForm
                 orderId={mockOrderId}
                 amount={mockAmount}
@@ -364,9 +363,7 @@ describe('CardPaymentForm', () => {
             />
         );
 
-        const installmentsSelect = screen.getByRole('combobox', { name: /Parcelas/i }) || 
-                                   screen.getByLabelText(/Parcelas/i) ||
-                                   document.querySelector('select');
+        const installmentsSelect = container.querySelector('select');
         expect(installmentsSelect).toBeInTheDocument();
 
         fireEvent.change(installmentsSelect, { target: { value: '3' } });
@@ -385,9 +382,7 @@ describe('CardPaymentForm', () => {
             />
         );
 
-        // O texto pode estar dividido em múltiplos elementos
-        expect(screen.getByRole('button', { name: /Pagar/i })).toBeInTheDocument();
-        expect(screen.getByText(/100,50/i)).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /Pagar R\$ 100,50/i })).toBeInTheDocument();
     });
 
     it('deve exibir loading durante processamento', async () => {
@@ -415,7 +410,7 @@ describe('CardPaymentForm', () => {
         const cvvInput = screen.getByPlaceholderText(/123/i);
 
         fireEvent.change(cardInput, { target: { value: '1234567812345678' } });
-        fireEvent.change(expiryInput, { target: { value: '12/25' } });
+        fireEvent.change(expiryInput, { target: { value: '12/30' } });
         fireEvent.change(cvvInput, { target: { value: '123' } });
 
         const submitButton = screen.getByRole('button', { name: /Pagar/i });

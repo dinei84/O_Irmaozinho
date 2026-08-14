@@ -21,6 +21,21 @@ vi.mock('react-router-dom', async () => {
     };
 });
 
+// Evita chamada de rede real: Checkout, PixPaymentForm e BoletoPaymentForm abrem um
+// listener onSnapshot(doc(db, 'orders', orderId)) para acompanhar o status do pagamento.
+// Sem estes mocks, esse onSnapshot roda contra o Firestore real (test-project), a promise
+// pendente vaza para os testes seguintes e deixa a suíte instável (flaky). Mockamos o
+// firestore (onSnapshot vira um unsubscribe no-op) e o módulo lib/firebase (db inerte).
+vi.mock('firebase/firestore', () => ({
+    onSnapshot: vi.fn(() => vi.fn()),
+    doc: vi.fn(() => ({})),
+}));
+vi.mock('../../lib/firebase', () => ({
+    db: {},
+    auth: {},
+    functions: {},
+}));
+
 describe('Checkout - Integração', () => {
     const mockCurrentUser = {
         uid: 'user123',
@@ -70,6 +85,33 @@ describe('Checkout - Integração', () => {
         );
     };
 
+    const fillCustomerData = () => {
+        fireEvent.change(screen.getByLabelText(/nome/i), { target: { value: 'João Silva' } });
+        fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'joao@example.com' } });
+        fireEvent.change(screen.getByLabelText(/telefone/i), { target: { value: '11999999999' } });
+        fireEvent.change(screen.getByLabelText(/cpf|cnpj/i), { target: { value: '12345678901' } });
+    };
+
+    const fillShippingAddress = () => {
+        fireEvent.change(screen.getByLabelText(/cep/i), { target: { value: '01234567' } });
+        fireEvent.change(screen.getByLabelText(/rua|logradouro/i), { target: { value: 'Rua Teste' } });
+        fireEvent.change(screen.getByLabelText(/número/i), { target: { value: '123' } });
+        fireEvent.change(screen.getByLabelText(/bairro/i), { target: { value: 'Centro' } });
+        fireEvent.change(screen.getByLabelText(/cidade/i), { target: { value: 'São Paulo' } });
+        fireEvent.change(screen.getByLabelText(/estado/i), { target: { value: 'SP' } });
+    };
+
+    const goToPaymentStep = async () => {
+        fillCustomerData();
+        fireEvent.click(screen.getByText(/Continuar/i));
+
+        await waitFor(() => {
+            expect(screen.getByLabelText(/cep/i)).toBeInTheDocument();
+        });
+
+        fillShippingAddress();
+    };
+
     describe('Fluxo PIX', () => {
         it('deve completar fluxo PIX completo', async () => {
             const mockOrderId = 'order123';
@@ -79,65 +121,29 @@ describe('Checkout - Integração', () => {
                 expiresAt: Date.now() + 30 * 60 * 1000
             };
 
-            createOrder.mockResolvedValue(mockOrderId);
+            // R-08: o pedido é criado no servidor; o cliente não envia preço.
+            createOrder.mockResolvedValue({ orderId: mockOrderId, finalTotal: mockCartTotal });
             createPixPaymentIntent.mockResolvedValue(mockPixData);
 
             renderCheckout();
 
-            // Step 1: Preencher dados do cliente
-            const nameInput = screen.getByLabelText(/nome/i);
-            const emailInput = screen.getByLabelText(/email/i);
-            const phoneInput = screen.getByLabelText(/telefone/i);
-            const documentInput = screen.getByLabelText(/cpf|cnpj/i);
+            await goToPaymentStep();
 
-            fireEvent.change(nameInput, { target: { value: 'João Silva' } });
-            fireEvent.change(emailInput, { target: { value: 'joao@example.com' } });
-            fireEvent.change(phoneInput, { target: { value: '11999999999' } });
-            fireEvent.change(documentInput, { target: { value: '12345678901' } });
+            fireEvent.click(screen.getByRole('button', { name: /PIX/i }));
 
-            const continueButton = screen.getByText(/Continuar/i);
-            fireEvent.click(continueButton);
+            fireEvent.click(screen.getByText(/Finalizar Pedido/i));
 
-            // Step 2: Preencher endereço
+            // Verificar criação do pedido (sem preço/total enviados pelo cliente — R-08)
             await waitFor(() => {
-                expect(screen.getByText(/Endereço/i)).toBeInTheDocument();
-            });
-
-            const zipCodeInput = screen.getByLabelText(/cep/i);
-            const streetInput = screen.getByLabelText(/rua|logradouro/i);
-            const numberInput = screen.getByLabelText(/número/i);
-            const neighborhoodInput = screen.getByLabelText(/bairro/i);
-            const cityInput = screen.getByLabelText(/cidade/i);
-            const stateInput = screen.getByLabelText(/estado/i);
-
-            fireEvent.change(zipCodeInput, { target: { value: '01234567' } });
-            fireEvent.change(streetInput, { target: { value: 'Rua Teste' } });
-            fireEvent.change(numberInput, { target: { value: '123' } });
-            fireEvent.change(neighborhoodInput, { target: { value: 'Centro' } });
-            fireEvent.change(cityInput, { target: { value: 'São Paulo' } });
-            fireEvent.change(stateInput, { target: { value: 'SP' } });
-
-            // Selecionar PIX
-            const pixOption = screen.getByText(/PIX/i);
-            fireEvent.click(pixOption);
-
-            const finalizeButton = screen.getByText(/Finalizar Pedido/i);
-            fireEvent.click(finalizeButton);
-
-            // Verificar criação do pedido
-            await waitFor(() => {
-                expect(createOrder).toHaveBeenCalledWith(
-                    expect.objectContaining({
-                        userId: mockCurrentUser.uid,
-                        items: expect.arrayContaining([
-                            expect.objectContaining({
-                                productId: 'product1',
-                                quantity: 2
-                            })
-                        ]),
-                        finalTotal: mockCartTotal
-                    })
-                );
+                expect(createOrder).toHaveBeenCalledWith({
+                    items: [
+                        { productId: 'product1', quantity: 2 },
+                        { productId: 'product2', quantity: 1 }
+                    ],
+                    customer: expect.objectContaining({ name: 'João Silva', email: 'joao@example.com' }),
+                    shippingAddress: expect.objectContaining({ city: 'São Paulo', state: 'SP' }),
+                    paymentMethod: 'pix'
+                });
             });
 
             // Verificar criação do pagamento PIX
@@ -163,45 +169,14 @@ describe('Checkout - Integração', () => {
                 dueDate: Date.now() + 3 * 24 * 60 * 60 * 1000
             };
 
-            createOrder.mockResolvedValue(mockOrderId);
+            createOrder.mockResolvedValue({ orderId: mockOrderId, finalTotal: mockCartTotal });
             createBoletoPaymentIntent.mockResolvedValue(mockBoletoData);
 
             renderCheckout();
 
-            // Preencher dados do cliente
-            const nameInput = screen.getByLabelText(/nome/i);
-            const emailInput = screen.getByLabelText(/email/i);
-            const phoneInput = screen.getByLabelText(/telefone/i);
-            const documentInput = screen.getByLabelText(/cpf|cnpj/i);
+            await goToPaymentStep();
 
-            fireEvent.change(nameInput, { target: { value: 'João Silva' } });
-            fireEvent.change(emailInput, { target: { value: 'joao@example.com' } });
-            fireEvent.change(phoneInput, { target: { value: '11999999999' } });
-            fireEvent.change(documentInput, { target: { value: '12345678901' } });
-
-            fireEvent.click(screen.getByText(/Continuar/i));
-
-            // Preencher endereço
-            await waitFor(() => {
-                const zipCodeInput = screen.getByLabelText(/cep/i);
-                fireEvent.change(zipCodeInput, { target: { value: '01234567' } });
-            });
-
-            const streetInput = screen.getByLabelText(/rua|logradouro/i);
-            const numberInput = screen.getByLabelText(/número/i);
-            const neighborhoodInput = screen.getByLabelText(/bairro/i);
-            const cityInput = screen.getByLabelText(/cidade/i);
-            const stateInput = screen.getByLabelText(/estado/i);
-
-            fireEvent.change(streetInput, { target: { value: 'Rua Teste' } });
-            fireEvent.change(numberInput, { target: { value: '123' } });
-            fireEvent.change(neighborhoodInput, { target: { value: 'Centro' } });
-            fireEvent.change(cityInput, { target: { value: 'São Paulo' } });
-            fireEvent.change(stateInput, { target: { value: 'SP' } });
-
-            // Selecionar Boleto
-            const boletoOption = screen.getByText(/Boleto/i);
-            fireEvent.click(boletoOption);
+            fireEvent.click(screen.getByRole('button', { name: /Boleto/i }));
 
             fireEvent.click(screen.getByText(/Finalizar Pedido/i));
 
@@ -212,7 +187,7 @@ describe('Checkout - Integração', () => {
 
             // Verificar exibição do boleto
             await waitFor(() => {
-                expect(screen.getByText(/Pagamento por Boleto/i)).toBeInTheDocument();
+                expect(screen.getByRole('heading', { level: 1, name: /Pagamento por Boleto/i })).toBeInTheDocument();
             });
         });
     });
@@ -246,24 +221,14 @@ describe('Checkout - Integração', () => {
         it('deve validar CEP no formato correto', async () => {
             renderCheckout();
 
-            // Preencher step 1
-            const nameInput = screen.getByLabelText(/nome/i);
-            const emailInput = screen.getByLabelText(/email/i);
-            const phoneInput = screen.getByLabelText(/telefone/i);
-            const documentInput = screen.getByLabelText(/cpf|cnpj/i);
-
-            fireEvent.change(nameInput, { target: { value: 'João Silva' } });
-            fireEvent.change(emailInput, { target: { value: 'joao@example.com' } });
-            fireEvent.change(phoneInput, { target: { value: '11999999999' } });
-            fireEvent.change(documentInput, { target: { value: '12345678901' } });
-
+            fillCustomerData();
             fireEvent.click(screen.getByText(/Continuar/i));
 
-            // Tentar avançar sem CEP válido
             await waitFor(() => {
-                const zipCodeInput = screen.getByLabelText(/cep/i);
-                fireEvent.change(zipCodeInput, { target: { value: '123' } });
+                expect(screen.getByLabelText(/cep/i)).toBeInTheDocument();
             });
+
+            fireEvent.change(screen.getByLabelText(/cep/i), { target: { value: '123' } });
 
             fireEvent.click(screen.getByText(/Finalizar Pedido/i));
 
@@ -280,19 +245,7 @@ describe('Checkout - Integração', () => {
 
             renderCheckout();
 
-            // Preencher e avançar
-            const nameInput = screen.getByLabelText(/nome/i);
-            fireEvent.change(nameInput, { target: { value: 'João Silva' } });
-            // ... outros campos
-
-            fireEvent.click(screen.getByText(/Continuar/i));
-
-            await waitFor(() => {
-                // Preencher endereço e tentar finalizar
-                const zipCodeInput = screen.getByLabelText(/cep/i);
-                fireEvent.change(zipCodeInput, { target: { value: '01234567' } });
-                // ... outros campos
-            });
+            await goToPaymentStep();
 
             fireEvent.click(screen.getByText(/Finalizar Pedido/i));
 
@@ -304,13 +257,16 @@ describe('Checkout - Integração', () => {
         it('deve exibir botão "Tentar Novamente" se pagamento PIX falhar', async () => {
             const mockOrderId = 'order123';
             const mockError = new Error('Erro ao processar pagamento');
-            createOrder.mockResolvedValue(mockOrderId);
+            createOrder.mockResolvedValue({ orderId: mockOrderId, finalTotal: mockCartTotal });
             createPixPaymentIntent.mockRejectedValue(mockError);
 
             renderCheckout();
 
-            // Preencher e avançar até finalizar
-            // ... (similar ao teste anterior)
+            await goToPaymentStep();
+
+            fireEvent.click(screen.getByRole('button', { name: /PIX/i }));
+
+            fireEvent.click(screen.getByText(/Finalizar Pedido/i));
 
             await waitFor(() => {
                 expect(screen.getByText(/Tentar Novamente/i)).toBeInTheDocument();

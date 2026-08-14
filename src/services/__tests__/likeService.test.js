@@ -65,30 +65,16 @@ describe('likeService', () => {
 
     describe('toggleLike', () => {
         it('deve criar curtida quando não existe', async () => {
-            const mockTransaction = vi.fn(async (transaction) => {
-                const likeDoc = { exists: () => false };
-                const contentDoc = { exists: () => true };
-                
-                transaction.get = vi.fn((ref) => {
+            const likeDoc = { exists: () => false };
+            const contentDoc = { exists: () => true };
+            const mockTransaction = {
+                get: vi.fn((ref) => {
                     if (ref === mockLikeRef) return Promise.resolve(likeDoc);
                     if (ref === mockContentRef) return Promise.resolve(contentDoc);
-                });
-                
-                transaction.set = vi.fn();
-                transaction.update = vi.fn();
-                
-                transaction.set(mockLikeRef, {
-                    contentId: mockContentId,
-                    userId: mockUserId,
-                    createdAt: 'MOCK_TIMESTAMP'
-                });
-                transaction.update(mockContentRef, {
-                    likesCount: { increment: 1 },
-                    updatedAt: 'MOCK_TIMESTAMP'
-                });
-                
-                return { action: 'liked', likeId: mockLikeId };
-            });
+                }),
+                set: vi.fn(),
+                update: vi.fn()
+            };
 
             runTransaction.mockImplementation((dbInstance, callback) => {
                 return callback(mockTransaction);
@@ -102,26 +88,16 @@ describe('likeService', () => {
         });
 
         it('deve deletar curtida quando já existe', async () => {
-            const mockTransaction = vi.fn(async (transaction) => {
-                const likeDoc = { exists: () => true };
-                const contentDoc = { exists: () => true };
-                
-                transaction.get = vi.fn((ref) => {
+            const likeDoc = { exists: () => true };
+            const contentDoc = { exists: () => true };
+            const mockTransaction = {
+                get: vi.fn((ref) => {
                     if (ref === mockLikeRef) return Promise.resolve(likeDoc);
                     if (ref === mockContentRef) return Promise.resolve(contentDoc);
-                });
-                
-                transaction.delete = vi.fn();
-                transaction.update = vi.fn();
-                
-                transaction.delete(mockLikeRef);
-                transaction.update(mockContentRef, {
-                    likesCount: { increment: -1 },
-                    updatedAt: 'MOCK_TIMESTAMP'
-                });
-                
-                return { action: 'unliked', likeId: mockLikeId };
-            });
+                }),
+                delete: vi.fn(),
+                update: vi.fn()
+            };
 
             runTransaction.mockImplementation((dbInstance, callback) => {
                 return callback(mockTransaction);
@@ -140,23 +116,23 @@ describe('likeService', () => {
         });
 
         it('deve lançar erro quando artigo não existe', async () => {
-            const mockTransaction = vi.fn(async (transaction) => {
-                const likeDoc = { exists: () => false };
-                const contentDoc = { exists: () => false };
-                
-                transaction.get = vi.fn((ref) => {
+            const likeDoc = { exists: () => false };
+            const contentDoc = { exists: () => false };
+            const mockTransaction = {
+                get: vi.fn((ref) => {
                     if (ref === mockLikeRef) return Promise.resolve(likeDoc);
                     if (ref === mockContentRef) return Promise.resolve(contentDoc);
-                });
-                
-                throw new Error('Artigo não encontrado');
-            });
+                }),
+                set: vi.fn(),
+                delete: vi.fn(),
+                update: vi.fn()
+            };
 
             runTransaction.mockImplementation((dbInstance, callback) => {
                 return callback(mockTransaction);
             });
 
-            await expect(toggleLike(mockContentId, mockUserId)).rejects.toThrow();
+            await expect(toggleLike(mockContentId, mockUserId)).rejects.toThrow('Artigo não encontrado');
         });
     });
 

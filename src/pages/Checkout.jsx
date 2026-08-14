@@ -187,25 +187,16 @@ const Checkout = () => {
         setError(null);
 
         try {
-            // Recalcular totais (não confiar no frontend)
-            const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const shipping = 0; // Por enquanto sem cálculo de frete
-            const discount = 0; // Sem cupons no MVP
-            const finalTotal = subtotal + shipping - discount;
-
-            // Preparar itens do pedido
+            // O preço NÃO é calculado nem enviado pelo cliente. A Cloud Function
+            // `createOrder` busca os preços reais no Firestore e calcula o total
+            // no servidor (fecha a V-02). Aqui só vão productId + quantity.
             const orderItems = cartItems.map(item => ({
                 productId: item.id,
-                name: item.name,
-                price: item.price,
-                quantity: item.quantity,
-                supplierId: item.supplierId || null,
-                supplierName: item.supplierName || null
+                quantity: item.quantity
             }));
 
-            // Criar pedido no Firestore
-            const newOrderId = await createOrder({
-                userId: currentUser.uid,
+            // Criar pedido no servidor
+            const result = await createOrder({
                 items: orderItems,
                 customer: customerData,
                 shippingAddress: {
@@ -213,15 +204,12 @@ const Checkout = () => {
                     street: `${shippingAddress.street}, ${shippingAddress.number}`,
                     complement: shippingAddress.complement || ''
                 },
-                subtotal,
-                shipping,
-                discount,
-                finalTotal,
                 paymentMethod
             });
 
+            const newOrderId = result.orderId;
             setOrderId(newOrderId);
-            setOrderTotal(finalTotal);
+            setOrderTotal(result.finalTotal);
 
             if (paymentMethod === 'pix') {
                 try {

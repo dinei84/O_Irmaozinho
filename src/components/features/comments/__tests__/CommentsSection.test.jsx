@@ -2,6 +2,7 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
 import { AuthProvider } from '../../../../contexts/AuthContext';
 import CommentsSection from '../CommentsSection';
 import {
@@ -21,13 +22,10 @@ vi.mock('../../../../services/commentService', () => ({
     deleteComment: vi.fn()
 }));
 
-vi.mock('../../../../contexts/AuthContext', async () => {
-    const actual = await vi.importActual('../../../../contexts/AuthContext');
-    return {
-        ...actual,
-        useAuth: vi.fn()
-    };
-});
+vi.mock('../../../../contexts/AuthContext', () => ({
+    AuthProvider: ({ children }) => children,
+    useAuth: vi.fn()
+}));
 
 const mockComments = [
     {
@@ -68,7 +66,11 @@ const MockAuthProvider = ({ children, currentUser = null }) => {
         refreshToken: vi.fn()
     });
 
-    return <AuthProvider>{children}</AuthProvider>;
+    return (
+        <MemoryRouter>
+            <AuthProvider>{children}</AuthProvider>
+        </MemoryRouter>
+    );
 };
 
 describe('CommentsSection', () => {
@@ -94,7 +96,7 @@ describe('CommentsSection', () => {
         );
 
         expect(screen.getByText(/comentários/i)).toBeInTheDocument();
-        expect(getComments).toHaveBeenCalledWith('article123', 10, null);
+        expect(getComments).toHaveBeenCalledWith('article123', 10);
         expect(getCommentsCount).toHaveBeenCalledWith('article123');
     });
 
@@ -108,8 +110,8 @@ describe('CommentsSection', () => {
         );
 
         // Verificar se há um spinner ou elemento de loading
-        const loader = container.querySelector('.animate-spin') || container.querySelector('[class*="spinner"]');
-        expect(loader || getComments).toHaveBeenCalled();
+        const loader = container.querySelector('.animate-spin');
+        expect(loader).toBeTruthy();
     });
 
     it('deve exibir comentários após carregar', async () => {
@@ -152,7 +154,7 @@ describe('CommentsSection', () => {
         );
 
         await waitFor(() => {
-            expect(screen.getByText(/nenhum comentário ainda/i)).toBeInTheDocument();
+            expect(screen.getByText(/Seja o primeiro/i)).toBeInTheDocument();
         });
     });
 
@@ -170,7 +172,7 @@ describe('CommentsSection', () => {
         );
 
         await waitFor(() => {
-            expect(screen.getByPlaceholderText(/escreva seu comentário/i)).toBeInTheDocument();
+            expect(screen.getByPlaceholderText(/Deixe um comentário gentil/i)).toBeInTheDocument();
         });
     });
 
@@ -213,10 +215,10 @@ describe('CommentsSection', () => {
         );
 
         await waitFor(() => {
-            expect(screen.getByPlaceholderText(/escreva seu comentário/i)).toBeInTheDocument();
+            expect(screen.getByPlaceholderText(/Deixe um comentário gentil/i)).toBeInTheDocument();
         });
 
-        const textarea = screen.getByPlaceholderText(/escreva seu comentário/i);
+        const textarea = screen.getByPlaceholderText(/Deixe um comentário gentil/i);
         const submitButton = screen.getByRole('button', { name: /comentar/i });
 
         await user.type(textarea, 'Novo comentário');
@@ -250,10 +252,10 @@ describe('CommentsSection', () => {
         );
 
         await waitFor(() => {
-            expect(screen.getByPlaceholderText(/escreva seu comentário/i)).toBeInTheDocument();
+            expect(screen.getByPlaceholderText(/Deixe um comentário gentil/i)).toBeInTheDocument();
         });
 
-        const textarea = screen.getByPlaceholderText(/escreva seu comentário/i);
+        const textarea = screen.getByPlaceholderText(/Deixe um comentário gentil/i);
         const submitButton = screen.getByRole('button', { name: /comentar/i });
 
         await user.type(textarea, 'Comentário com erro');
@@ -267,23 +269,24 @@ describe('CommentsSection', () => {
     it('deve carregar mais comentários quando botão for clicado', async () => {
         const user = userEvent.setup();
 
-        getComments
-            .mockResolvedValueOnce({
-                comments: mockComments,
-                hasMore: true,
-                lastComment: mockComments[mockComments.length - 1]
-            })
-            .mockResolvedValueOnce({
-                comments: [{
-                    id: 'comment3',
-                    content: 'Terceiro comentário',
-                    createdAt: { toMillis: () => Date.now() - 3000, toDate: () => new Date(Date.now() - 3000) },
-                    updatedAt: { toMillis: () => Date.now() - 3000, toDate: () => new Date(Date.now() - 3000) },
-                    isDeleted: false
-                }],
-                hasMore: false,
-                lastComment: null
-            });
+        // Mock determinístico por argumento (não por ordem de chamada): a 1ª página
+        // (sem cursor) devolve hasMore=true; o "carregar mais" (com cursor = lastComment)
+        // devolve a 2ª página. Isso evita a fragilidade da fila mockResolvedValueOnce, que
+        // pode ser corrompida por atualizações de estado assíncronas vazando entre testes
+        // sob paralelismo (era a causa raiz da instabilidade deste teste).
+        const terceiroComentario = {
+            id: 'comment3',
+            content: 'Terceiro comentário',
+            createdAt: { toMillis: () => Date.now() - 3000, toDate: () => new Date(Date.now() - 3000) },
+            updatedAt: { toMillis: () => Date.now() - 3000, toDate: () => new Date(Date.now() - 3000) },
+            isDeleted: false
+        };
+        getComments.mockImplementation((_articleId, _pageSize, cursor) =>
+            Promise.resolve(cursor
+                ? { comments: [terceiroComentario], hasMore: false, lastComment: null }
+                : { comments: mockComments, hasMore: true, lastComment: mockComments[mockComments.length - 1] }
+            )
+        );
 
         render(
             <MockAuthProvider>
@@ -291,16 +294,13 @@ describe('CommentsSection', () => {
             </MockAuthProvider>
         );
 
-        await waitFor(() => {
-            expect(screen.getByText(/carregar mais/i)).toBeInTheDocument();
-        });
-
-        const loadMoreButton = screen.getByText(/carregar mais/i);
+        // Espera o botão "carregar mais" aparecer (hasMore=true após o 1º load)
+        const loadMoreButton = await screen.findByRole('button', { name: /carregar mais/i });
         await user.click(loadMoreButton);
 
-        await waitFor(() => {
-            expect(getComments).toHaveBeenCalledTimes(2);
-        });
+        // Asserção robusta a timing: espera o comentário da 2ª página aparecer no DOM
+        // (findBy* faz retry até o timeout — não corre com a contagem de chamadas do mock).
+        expect(await screen.findByText('Terceiro comentário')).toBeInTheDocument();
     });
 
     it('deve exibir erro quando carregar comentários falhar', async () => {

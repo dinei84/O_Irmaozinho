@@ -72,20 +72,20 @@ describe('userService', () => {
 
     describe('updateLastLogin', () => {
         it('deve atualizar último login do usuário', async () => {
-            updateDoc.mockResolvedValue();
+            setDoc.mockResolvedValue();
 
             await updateLastLogin(mockUserId);
 
             expect(doc).toHaveBeenCalledWith(db, 'users', mockUserId);
-            expect(updateDoc).toHaveBeenCalledWith(mockUserRef, {
+            expect(setDoc).toHaveBeenCalledWith(mockUserRef, {
                 lastLoginAt: 'MOCK_TIMESTAMP',
                 updatedAt: 'MOCK_TIMESTAMP'
-            });
+            }, { merge: true });
         });
 
-        it('não deve lançar erro quando updateDoc falha', async () => {
+        it('não deve lançar erro quando setDoc falha', async () => {
             const mockError = new Error('Firestore error');
-            updateDoc.mockRejectedValue(mockError);
+            setDoc.mockRejectedValue(mockError);
             const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
             await expect(updateLastLogin(mockUserId)).resolves.not.toThrow();
