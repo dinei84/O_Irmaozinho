@@ -89,15 +89,16 @@ const Home = () => {
                     transition={{ duration: 0.7, delay: 0.2 }}
                     className="order-1 lg:order-2 flex justify-center"
                 >
-                    <div className="relative w-full max-w-lg aspect-square">
-                        <div className="absolute inset-4 rounded-full border-2 border-dashed border-primary/20 animate-spin-slow" />
-                        <img
-                            src="/assets/images/Podcast.png"
-                            alt="Fé e Comunidade"
-                            className="w-full h-full object-cover rounded-2xl shadow-2xl"
-                            fetchPriority="high"
-                            onError={(e) => { e.target.src = 'https://placehold.co/600x600?text=O+Irmaozinho' }}
-                        />
+                    <div className="relative w-full max-w-lg aspect-square flex items-center justify-center">
+                        <div className="absolute inset-0 rounded-full border-2 border-dashed border-primary/20 animate-spin-slow" />
+                        <div className="relative w-3/4 h-3/4 rounded-full bg-areia flex items-center justify-center shadow-2xl">
+                            <img
+                                src="/assets/icons/logo-symbol.svg"
+                                alt="O Irmãozinho"
+                                className="w-1/2 h-1/2"
+                                fetchPriority="high"
+                            />
+                        </div>
                     </div>
                 </motion.div>
             </section>
