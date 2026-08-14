@@ -8,6 +8,19 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/test/setupTests.js',
+    // Variáveis de ambiente dummy para que `src/lib/firebase.js` possa ser
+    // importado nos testes sem um `.env` real (o app valida e lança se faltar).
+    // São valores fictícios (não segredos) — os testes que usam Firestore de fato
+    // mockam `../lib/firebase`, e aqui só se evita o throw no import.
+    env: {
+      VITE_FIREBASE_API_KEY: 'test-api-key',
+      VITE_FIREBASE_AUTH_DOMAIN: 'test.firebaseapp.com',
+      VITE_FIREBASE_PROJECT_ID: 'test-project',
+      VITE_FIREBASE_STORAGE_BUCKET: 'test.appspot.com',
+      VITE_FIREBASE_MESSAGING_SENDER_ID: '000000000000',
+      VITE_FIREBASE_APP_ID: '1:000000000000:web:test',
+      VITE_MERCADOPAGO_PUBLIC_KEY: 'test-mp-public-key'
+    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

@@ -95,7 +95,7 @@ const Home = () => {
                             src="/assets/images/Podcast.png"
                             alt="Fé e Comunidade"
                             className="w-full h-full object-cover rounded-2xl shadow-2xl"
-                            fetchpriority="high"
+                            fetchPriority="high"
                             onError={(e) => { e.target.src = 'https://placehold.co/600x600?text=O+Irmaozinho' }}
                         />
                     </div>

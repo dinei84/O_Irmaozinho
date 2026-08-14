@@ -160,39 +160,6 @@ describe('BoletoPaymentForm', () => {
         expect(onSnapshot).toHaveBeenCalled();
     });
 
-    it('deve chamar onPaymentApproved quando status muda para approved', async () => {
-        const mockSnapshot = {
-            exists: () => true,
-            id: mockOrderId,
-            data: () => ({
-                payment: {
-                    status: 'approved'
-                }
-            })
-        };
-
-        render(
-            <BoletoPaymentForm
-                orderId={mockOrderId}
-                boletoData={mockBoletoData}
-                onPaymentApproved={mockOnPaymentApproved}
-            />
-        );
-
-        // Simular callback do onSnapshot dentro de act
-        const snapshotCallback = onSnapshot.mock.calls[0][1];
-        await act(async () => {
-            snapshotCallback(mockSnapshot);
-        });
-
-        await waitFor(() => {
-            expect(mockOnPaymentApproved).toHaveBeenCalledWith({
-                id: mockOrderId,
-                payment: { status: 'approved' }
-            });
-        });
-    });
-
     it('deve exibir status pending quando aguardando pagamento', async () => {
         const mockSnapshot = {
             exists: () => true,

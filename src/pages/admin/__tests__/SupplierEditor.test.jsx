@@ -60,7 +60,7 @@ describe('SupplierEditor', () => {
             
             expect(screen.getByText('Novo Fornecedor')).toBeInTheDocument();
             expect(screen.getByLabelText(/nome do fornecedor/i)).toBeInTheDocument();
-            expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+            expect(screen.getByLabelText(/^Email \*/i)).toBeInTheDocument();
         });
 
         it('deve renderizar todas as seções do formulário', () => {
@@ -121,7 +121,7 @@ describe('SupplierEditor', () => {
             
             // Preencher campos básicos
             await user.type(screen.getByLabelText(/nome do fornecedor/i), 'Fornecedor ABC');
-            await user.type(screen.getByLabelText(/^email$/i), 'contato@abc.com');
+            await user.type(screen.getByLabelText(/^Email \*/i), 'contato@abc.com');
             
             // Selecionar método email sem preencher orderEmail
             const orderMethodSelect = screen.getByLabelText(/método de pedido/i);
@@ -151,7 +151,12 @@ describe('SupplierEditor', () => {
             
             // Preencher formulário básico
             await user.type(screen.getByLabelText(/nome do fornecedor/i), 'Fornecedor ABC');
-            await user.type(screen.getByLabelText(/^email$/i), 'contato@abc.com');
+            await user.type(screen.getByLabelText(/^Email \*/i), 'contato@abc.com');
+            await user.type(screen.getByLabelText(/email para pedidos/i), 'pedidos@abc.com');
+            // Selecionar pagamento 'none' para evitar a exigência de dados bancários
+            const paymentMethodSelect = screen.getByLabelText(/forma de pagamento/i);
+            await user.selectOptions(paymentMethodSelect, 'none');
+
             
             const submitButton = screen.getByRole('button', { name: /criar fornecedor/i });
             await user.click(submitButton);
@@ -166,7 +171,8 @@ describe('SupplierEditor', () => {
             renderSupplierEditor();
             
             await user.type(screen.getByLabelText(/nome do fornecedor/i), 'Fornecedor ABC');
-            await user.type(screen.getByLabelText(/^email$/i), 'contato@abc.com');
+            await user.type(screen.getByLabelText(/^Email \*/i), 'contato@abc.com');
+            await user.type(screen.getByLabelText(/email para pedidos/i), 'pedidos@abc.com');
             
             // Mudar para "none" - dados bancários devem ser limpos
             const paymentMethodSelect = screen.getByLabelText(/forma de pagamento/i);
@@ -187,7 +193,12 @@ describe('SupplierEditor', () => {
             renderSupplierEditor();
             
             await user.type(screen.getByLabelText(/nome do fornecedor/i), 'Fornecedor ABC');
-            await user.type(screen.getByLabelText(/^email$/i), 'contato@abc.com');
+            await user.type(screen.getByLabelText(/^Email \*/i), 'contato@abc.com');
+            await user.type(screen.getByLabelText(/email para pedidos/i), 'pedidos@abc.com');
+            // Selecionar pagamento 'none' para evitar a exigência de dados bancários
+            const paymentMethodSelect = screen.getByLabelText(/forma de pagamento/i);
+            await user.selectOptions(paymentMethodSelect, 'none');
+
             
             const submitButton = screen.getByRole('button', { name: /criar fornecedor/i });
             await user.click(submitButton);
@@ -199,27 +210,27 @@ describe('SupplierEditor', () => {
 
         it('deve navegar para lista de fornecedores após criar com sucesso', async () => {
             const user = userEvent.setup();
-            vi.useFakeTimers();
-            
+
             renderSupplierEditor();
-            
+
             await user.type(screen.getByLabelText(/nome do fornecedor/i), 'Fornecedor ABC');
-            await user.type(screen.getByLabelText(/^email$/i), 'contato@abc.com');
-            
+            await user.type(screen.getByLabelText(/^Email \*/i), 'contato@abc.com');
+            await user.type(screen.getByLabelText(/email para pedidos/i), 'pedidos@abc.com');
+            // Selecionar pagamento 'none' para evitar a exigência de dados bancários
+            const paymentMethodSelect = screen.getByLabelText(/forma de pagamento/i);
+            await user.selectOptions(paymentMethodSelect, 'none');
+
             const submitButton = screen.getByRole('button', { name: /criar fornecedor/i });
             await user.click(submitButton);
-            
+
             await waitFor(() => {
                 expect(screen.getByText(/fornecedor criado com sucesso/i)).toBeInTheDocument();
             });
-            
-            vi.advanceTimersByTime(1500);
-            
+
+            // O componente agenda a navegação com setTimeout(1500) — aguardar o disparo real
             await waitFor(() => {
                 expect(mockNavigate).toHaveBeenCalledWith('/admin/suppliers');
-            });
-            
-            vi.useRealTimers();
+            }, { timeout: 3000 });
         });
     });
 
@@ -268,7 +279,12 @@ describe('SupplierEditor', () => {
             renderSupplierEditor();
             
             await user.type(screen.getByLabelText(/nome do fornecedor/i), 'Fornecedor ABC');
-            await user.type(screen.getByLabelText(/^email$/i), 'contato@abc.com');
+            await user.type(screen.getByLabelText(/^Email \*/i), 'contato@abc.com');
+            await user.type(screen.getByLabelText(/email para pedidos/i), 'pedidos@abc.com');
+            // Selecionar pagamento 'none' para evitar a exigência de dados bancários
+            const paymentMethodSelect = screen.getByLabelText(/forma de pagamento/i);
+            await user.selectOptions(paymentMethodSelect, 'none');
+
             
             const submitButton = screen.getByRole('button', { name: /criar fornecedor/i });
             await user.click(submitButton);

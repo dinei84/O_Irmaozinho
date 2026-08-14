@@ -18,6 +18,13 @@ const paymentConfig = require('./config/payment.config');
 const PAYMENT_METHODS = ['pix', 'boleto', 'credit_card'];
 
 /**
+ * Arredonda para 2 casas decimais (evita erro de ponto flutuante em dinheiro).
+ */
+function round2(value) {
+    return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
+}
+
+/**
  * Reduz o estoque de produtos no Firestore
  * Usa transação para garantir atomicidade
  */
@@ -85,6 +92,200 @@ async function reduceProductStock(items) {
         return results;
     }
 }
+
+/**
+ * Cloud Function: createOrder
+ * Cria o pedido NO SERVIDOR, buscando os preços reais no Firestore.
+ *
+ * O cliente envia APENAS `items: [{ productId, quantity }]` + `customer` +
+ * `shippingAddress` + `paymentMethod`. Subtotal/frete/desconto/total são
+ * calculados aqui a partir dos preços gravados em `products` — nunca aceitos
+ * do cliente. Fecha a V-02 (pedido de R$ 0,01 via carrinho adulterado no
+ * localStorage). Ver docs/seguranca/AUDITORIA_SEGURANCA.md.
+ *
+ * @param {Array} data.items - [{ productId: string, quantity: int }]
+ * @param {Object} data.customer - { name, email, phone?, document? }
+ * @param {Object} data.shippingAddress - { street, city, state, zipCode, ... }
+ * @param {string} data.paymentMethod - 'pix' | 'boleto' | 'credit_card'
+ * @returns {Promise<{ orderId: string, finalTotal: number }>}
+ */
+exports.createOrder = functions.https.onCall(async (data, context) => {
+    if (!context.auth) {
+        throw new functions.https.HttpsError(
+            'unauthenticated',
+            'Usuário deve estar autenticado para criar um pedido'
+        );
+    }
+
+    const { items, customer, shippingAddress, paymentMethod } = data || {};
+
+    if (!Array.isArray(items) || items.length === 0) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Pedido deve conter pelo menos um item'
+        );
+    }
+    if (items.length > 100) {
+        throw new functions.https.HttpsError('invalid-argument', 'Muitos itens no pedido');
+    }
+    for (const item of items) {
+        if (!item || typeof item.productId !== 'string' || !item.productId.trim()) {
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                'Cada item precisa de um productId válido'
+            );
+        }
+        const quantity = parseInt(item.quantity, 10);
+        if (!Number.isInteger(quantity) || quantity < 1 || quantity > 999) {
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                'Quantidade inválida para o item'
+            );
+        }
+    }
+    if (!customer || typeof customer.name !== 'string' || !customer.name.trim()) {
+        throw new functions.https.HttpsError('invalid-argument', 'Dados do cliente são obrigatórios');
+    }
+    if (typeof customer.email !== 'string' || !/^\S+@\S+\.\S+$/.test(customer.email)) {
+        throw new functions.https.HttpsError('invalid-argument', 'Email do cliente é obrigatório');
+    }
+    if (
+        !shippingAddress ||
+        typeof shippingAddress.street !== 'string' || !shippingAddress.street.trim() ||
+        typeof shippingAddress.city !== 'string' || !shippingAddress.city.trim() ||
+        typeof shippingAddress.state !== 'string' || !shippingAddress.state.trim() ||
+        typeof shippingAddress.zipCode !== 'string' || !shippingAddress.zipCode.trim()
+    ) {
+        throw new functions.https.HttpsError('invalid-argument', 'Endereço de entrega é obrigatório');
+    }
+    if (!PAYMENT_METHODS.includes(paymentMethod)) {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            `paymentMethod deve ser um de: ${PAYMENT_METHODS.join(', ')}`
+        );
+    }
+
+    try {
+        // Resolve preços reais a partir do Firestore (nunca do cliente).
+        const orderItems = [];
+        let subtotal = 0;
+
+        for (const item of items) {
+            const productRef = db.collection('products').doc(item.productId);
+            const productDoc = await productRef.get();
+
+            if (!productDoc.exists) {
+                throw new functions.https.HttpsError(
+                    'not-found',
+                    `Produto não encontrado: ${item.productId}`
+                );
+            }
+
+            const product = productDoc.data();
+
+            if (product.active !== true) {
+                throw new functions.https.HttpsError(
+                    'failed-precondition',
+                    `Produto indisponível: ${product.name || item.productId}`
+                );
+            }
+
+            const quantity = parseInt(item.quantity, 10);
+
+            if (typeof product.stock === 'number' && product.stock < quantity) {
+                throw new functions.https.HttpsError(
+                    'failed-precondition',
+                    `Estoque insuficiente para "${product.name || item.productId}"`
+                );
+            }
+
+            const price = Number(product.price);
+            if (!Number.isFinite(price) || price < 0) {
+                throw new functions.https.HttpsError(
+                    'failed-precondition',
+                    `Preço inválido para o produto "${product.name || item.productId}"`
+                );
+            }
+
+            const itemSubtotal = round2(price * quantity);
+            subtotal += itemSubtotal;
+            orderItems.push({
+                productId: item.productId,
+                name: product.name || item.productId,
+                price,
+                quantity,
+                subtotal: itemSubtotal,
+                supplierId: product.supplierId || null,
+                supplierName: product.supplierName || null
+            });
+        }
+
+        // Frete/desconto: sem cálculo no MVP (0). Total recalculado no servidor.
+        const shipping = 0;
+        const discount = 0;
+        const finalTotal = round2(subtotal + shipping - discount);
+
+        const order = {
+            userId: context.auth.uid,
+            items: orderItems,
+            subtotal,
+            shipping,
+            discount,
+            finalTotal,
+            customer: {
+                name: String(customer.name).trim(),
+                email: String(customer.email).trim(),
+                phone: customer.phone ? String(customer.phone).trim() : '',
+                document: customer.document ? String(customer.document).trim() : ''
+            },
+            shippingAddress: {
+                street: String(shippingAddress.street).trim(),
+                complement: shippingAddress.complement ? String(shippingAddress.complement).trim() : '',
+                neighborhood: shippingAddress.neighborhood ? String(shippingAddress.neighborhood).trim() : '',
+                city: String(shippingAddress.city).trim(),
+                state: String(shippingAddress.state).trim(),
+                zipCode: String(shippingAddress.zipCode).trim(),
+                country: shippingAddress.country || 'Brasil'
+            },
+            payment: {
+                method: paymentMethod,
+                status: 'pending',
+                gateway: 'mercadopago',
+                gatewayTransactionId: null,
+                gatewayPaymentId: null,
+                pix: null,
+                boleto: null,
+                card: null,
+                createdAt: admin.firestore.Timestamp.now(),
+                approvedAt: null,
+                rejectedAt: null
+            },
+            orderStatus: 'pending',
+            tracking: null,
+            statusHistory: [
+                {
+                    status: 'pending',
+                    timestamp: admin.firestore.Timestamp.now(),
+                    changedBy: context.auth.uid
+                }
+            ],
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        };
+
+        const orderRef = await db.collection('orders').add(order);
+
+        return { orderId: orderRef.id, finalTotal };
+    } catch (error) {
+        console.error('Erro ao criar pedido (servidor):', error);
+
+        if (error instanceof functions.https.HttpsError) {
+            throw error;
+        }
+
+        throw new functions.https.HttpsError('internal', 'Erro ao criar pedido. Tente novamente.');
+    }
+});
 
 /**
  * Cloud Function: createPaymentIntent

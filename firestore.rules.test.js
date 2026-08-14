@@ -123,6 +123,53 @@ beforeEach(async () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+describe('V-02 · criação de pedido no servidor (price tampering)', () => {
+    // Pedido com total adulterado (R$ 0,01) — exatamente o exploit da V-02.
+    const pedidoFraudulento = {
+        userId: ALICE,
+        items: [{ productId: 'p1', name: 'Livro', price: 500, quantity: 1, subtotal: 500 }],
+        subtotal: 0.01,
+        finalTotal: 0.01,
+        customer: { name: 'Alice', email: 'alice@teste.com' },
+        shippingAddress: { street: 'Rua 2', city: 'SP', state: 'SP', zipCode: '01000-000' },
+        payment: { method: 'pix', status: 'pending', gateway: 'mercadopago' },
+        orderStatus: 'pending',
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+    };
+
+    it('ATAQUE: usuário autenticado NÃO cria pedido direto (total adulterado)', async () => {
+        const db = asUser(ALICE);
+        await assertFails(
+            setDoc(doc(db, 'orders/pedido-fraudulento'), pedidoFraudulento)
+        );
+    });
+
+    it('ATAQUE: visitante anônimo NÃO cria pedido', async () => {
+        const db = anonymous();
+        await assertFails(
+            setDoc(doc(db, 'orders/pedido-anonimo'), pedidoFraudulento)
+        );
+    });
+
+    it('LEGÍTIMO: dono ainda lê o próprio pedido', async () => {
+        const db = asUser(ALICE);
+        await assertSucceeds(getDoc(doc(db, 'orders/pedido-da-alice')));
+    });
+
+    it('LEGÍTIMO: dono ainda cancela o próprio pedido pendente', async () => {
+        const db = asUser(ALICE);
+        await assertSucceeds(
+            updateDoc(doc(db, 'orders/pedido-da-alice'), {
+                orderStatus: 'cancelled',
+                updatedAt: serverTimestamp(),
+                statusHistory: [{ status: 'cancelled', changedBy: ALICE }]
+            })
+        );
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 describe('V-03 · escrita em pedidos', () => {
     it('ATAQUE: usuário autenticado NÃO altera o pedido de outro usuário', async () => {
         const db = asUser(ALICE);
