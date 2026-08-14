@@ -30,14 +30,13 @@ const Footer = () => {
                     <div className="flex items-center justify-center md:justify-end pt-4">
                         <div className="relative w-40 h-40 p-2">
                             <div className="absolute inset-0 rounded-full border-2 border-dashed border-primary/30 animate-spin-slow"></div>
-                            <div className="relative w-full h-full rounded-full bg-primary/10 overflow-hidden shadow-lg">
+                            <div className="relative w-full h-full rounded-full bg-background flex items-center justify-center shadow-lg">
                                 <img
-                                    src="/assets/images/Podcast.png"
+                                    src="/assets/icons/logo-symbol.svg"
                                     alt="O Irmãozinho Logo"
-                                    className="w-full h-full object-cover"
+                                    className="w-1/2 h-1/2"
                                     loading="lazy"
                                     decoding="async"
-                                    onError={(e) => { e.target.src = 'https://placehold.co/200x200?text=Logo' }}
                                 />
                             </div>
                         </div>
