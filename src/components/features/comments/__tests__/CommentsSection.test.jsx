@@ -269,23 +269,24 @@ describe('CommentsSection', () => {
     it('deve carregar mais comentários quando botão for clicado', async () => {
         const user = userEvent.setup();
 
-        getComments
-            .mockResolvedValueOnce({
-                comments: mockComments,
-                hasMore: true,
-                lastComment: mockComments[mockComments.length - 1]
-            })
-            .mockResolvedValueOnce({
-                comments: [{
-                    id: 'comment3',
-                    content: 'Terceiro comentário',
-                    createdAt: { toMillis: () => Date.now() - 3000, toDate: () => new Date(Date.now() - 3000) },
-                    updatedAt: { toMillis: () => Date.now() - 3000, toDate: () => new Date(Date.now() - 3000) },
-                    isDeleted: false
-                }],
-                hasMore: false,
-                lastComment: null
-            });
+        // Mock determinístico por argumento (não por ordem de chamada): a 1ª página
+        // (sem cursor) devolve hasMore=true; o "carregar mais" (com cursor = lastComment)
+        // devolve a 2ª página. Isso evita a fragilidade da fila mockResolvedValueOnce, que
+        // pode ser corrompida por atualizações de estado assíncronas vazando entre testes
+        // sob paralelismo (era a causa raiz da instabilidade deste teste).
+        const terceiroComentario = {
+            id: 'comment3',
+            content: 'Terceiro comentário',
+            createdAt: { toMillis: () => Date.now() - 3000, toDate: () => new Date(Date.now() - 3000) },
+            updatedAt: { toMillis: () => Date.now() - 3000, toDate: () => new Date(Date.now() - 3000) },
+            isDeleted: false
+        };
+        getComments.mockImplementation((_articleId, _pageSize, cursor) =>
+            Promise.resolve(cursor
+                ? { comments: [terceiroComentario], hasMore: false, lastComment: null }
+                : { comments: mockComments, hasMore: true, lastComment: mockComments[mockComments.length - 1] }
+            )
+        );
 
         render(
             <MockAuthProvider>
@@ -293,16 +294,13 @@ describe('CommentsSection', () => {
             </MockAuthProvider>
         );
 
-        await waitFor(() => {
-            expect(screen.getByText(/carregar mais/i)).toBeInTheDocument();
-        });
-
-        const loadMoreButton = screen.getByText(/carregar mais/i);
+        // Espera o botão "carregar mais" aparecer (hasMore=true após o 1º load)
+        const loadMoreButton = await screen.findByRole('button', { name: /carregar mais/i });
         await user.click(loadMoreButton);
 
-        await waitFor(() => {
-            expect(getComments).toHaveBeenCalledTimes(2);
-        });
+        // Asserção robusta a timing: espera o comentário da 2ª página aparecer no DOM
+        // (findBy* faz retry até o timeout — não corre com a contagem de chamadas do mock).
+        expect(await screen.findByText('Terceiro comentário')).toBeInTheDocument();
     });
 
     it('deve exibir erro quando carregar comentários falhar', async () => {

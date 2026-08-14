@@ -21,6 +21,21 @@ vi.mock('react-router-dom', async () => {
     };
 });
 
+// Evita chamada de rede real: Checkout, PixPaymentForm e BoletoPaymentForm abrem um
+// listener onSnapshot(doc(db, 'orders', orderId)) para acompanhar o status do pagamento.
+// Sem estes mocks, esse onSnapshot roda contra o Firestore real (test-project), a promise
+// pendente vaza para os testes seguintes e deixa a suíte instável (flaky). Mockamos o
+// firestore (onSnapshot vira um unsubscribe no-op) e o módulo lib/firebase (db inerte).
+vi.mock('firebase/firestore', () => ({
+    onSnapshot: vi.fn(() => vi.fn()),
+    doc: vi.fn(() => ({})),
+}));
+vi.mock('../../lib/firebase', () => ({
+    db: {},
+    auth: {},
+    functions: {},
+}));
+
 describe('Checkout - Integração', () => {
     const mockCurrentUser = {
         uid: 'user123',
