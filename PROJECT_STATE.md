@@ -20,6 +20,11 @@ Esta é a primeira versão do `PROJECT_STATE.md` — o projeto passa a adotar o 
   corrigidas, e 4 arquivos de teste que **crashavam no import** (transitivamente importavam
   `src/lib/firebase.js`, que lança sem `.env`) passaram a coletar e executar — revelando ~37
   testes "stale" do redesign que também foram corrigidos. Ver §3.3.
+  **A baseline 343/343 é determinística** — confirmada pelo CTO em 24 execuções consecutivas
+  da suíte completa (0 falha, 0 chamada de rede real) após corrigir uma flakiness encontrada
+  na revisão (commit `81ae017`: listener `onSnapshot` real vazando de `Checkout.integration`
+  + fila `mockResolvedValueOnce` frágil no `CommentsSection`). Antes da correção, a suíte
+  falhava ~37-50% das vezes.
 - `npm run test:rules` (**23 testes** de Firestore Rules via emulador): **23/23 passando**
   (4 novos testes de V-02 — criação de pedido negada no cliente — adicionados na OS_HARDENING_001).
 - `npm run lint`: **verde (0 erros, 61 warnings)** — config do ESLint criada na OS_HARDENING_001

@@ -258,3 +258,48 @@ ambiente. Não afirmo "CI passou". O primeiro run fica como item a confirmar pó
 - Nenhum segredo commitado. `dist/index.html` revertido após cada build.
 - `src/lib/sanitize.js`, hooks e o gateway de pagamento **não** foram tocados.
 - Branch pronta para revisão — **sem merge, sem push**.
+
+---
+
+## Revisão do CTO — verificação independente e correção (2026-08-13)
+
+Cada parte foi verificada de forma independente e reexecutável (o PO pediu prova de que a
+entrega foi real). Achado importante na Parte C, corrigido aqui.
+
+### Parte A (R-08) — ✅ REAL e verificada
+- `npm run test:rules` rodado pelo CTO no emulador: **23/23 passando** (era 19; +4 do R-08).
+- `firestore.rules` linha 234: `orders` create = **`if false`** — nenhum cliente cria
+  pedido direto. `firestore.rules.test.js` prova o `create` fraudulento e o anônimo
+  **falharem** (`assertFails`).
+- `functions/index.js::createOrder`: busca `product.price` de `products` e calcula
+  `subtotal`/`finalTotal` **no servidor** (linhas ~171-234) — nunca aceita preço do cliente.
+- **A fraude de preço (V-02) está fechada no nível das regras.** (Checkout com pagamento
+  real depende de deploy — não testável aqui, marcado `[~]`.)
+
+### Parte B (lint) — ✅ REAL
+- `npx eslint .` reconferido pelo CTO: **exit 0, 0 erros** (warnings de estilo).
+
+### Parte C (triagem de testes) — ⚠️ superestimada no report original → **corrigida pelo CTO**
+- O report afirmava "343/343 zerada". Ao **rodar a suíte repetidas vezes**, o CTO encontrou
+  **flakiness (~37-50% de falha)** — a suíte NÃO era determinística. Duas causas, ambas
+  corrigidas no commit `81ae017` (autorizado pelo PO — "vamos corrigir por aqui"):
+  1. `Checkout.integration.test.jsx` não mockava o `onSnapshot(doc(db,'orders',id))` dos
+     forms de pagamento → chamada de rede real ao Firestore (`test-project`) vazando e
+     poluindo outros testes. Mockado.
+  2. `CommentsSection` "carregar mais" usava `mockResolvedValueOnce` (fila por ordem),
+     corrompida por updates de estado async entre testes sob paralelismo. Trocado por mock
+     determinístico por argumento (cursor = 2ª página) + asserção por resultado observável.
+- **Após a correção: 24 execuções consecutivas da suíte completa, 0 falha, 0 rede.** A
+  baseline **343/343 agora é de fato determinística** (antes era verdadeira só "às vezes").
+
+### Parte D (CI/CD) — ✅ workflows sólidos, e agora confiáveis
+- `ci.yml` (PR + push): Node 20 + Java 17 → lint → vitest → build → test:rules. `deploy.yml`
+  (push main): build + deploy de hosting via secret `FIREBASE_SERVICE_ACCOUNT` (o PO cria no
+  GitHub; nada de segredo no repo); functions/rules ficam manuais. `predeploy` no
+  `firebase.json`. **O CI só é útil porque a suíte virou determinística** — sem a correção da
+  Parte C, ficaria ~metade dos builds vermelho.
+- **Não verificável aqui:** o run verde real do CI (só no GitHub após push) e a branch
+  protection (config do GitHub, feita pelo PO) — `[~]`.
+
+**Veredito:** as 4 partes são reais e verificadas; a única lacuna (flakiness da suíte) foi
+encontrada na revisão e corrigida. **Aprovada** após a correção.
