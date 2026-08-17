@@ -35,6 +35,10 @@ Esta é a primeira versão do `PROJECT_STATE.md` — o projeto passa a adotar o 
 
 ## 1. Próximas ações (ordem de prioridade)
 
+0. **Reativar a loja** — `/store` e `/checkout` renderizam uma página de construção
+   (`src/pages/StoreUnderConstruction.jsx`) por decisão do PO, enquanto o meio de pagamento
+   é revisto. Reativar é descomentar dois lazy imports e voltar duas rotas em `src/App.jsx`
+   (instruções no cabeçalho da própria página). `Store.jsx` e `Checkout.jsx` estão intactos.
 1. **Deploy do Sprint 0 + R-08** — o código das correções de segurança (incluindo agora a
    `createOrder` server-side, que fecha a V-02) está pronto e testado, mas não em produção.
    Ver `docs/seguranca/RELATORIO_SPRINT_0.md` e `docs/os/OS_HARDENING_001*.md` para o checklist.
@@ -53,6 +57,9 @@ Esta é a primeira versão do `PROJECT_STATE.md` — o projeto passa a adotar o 
 
 | Marco | Descrição | Status |
 |---|---|---|
+| OS_PAYMENT_001 (2026-08-17) | Sela a abstração de gateway (V3/V4/V5): `gateway` do pedido vem da config, roteamento por pedido, secrets centralizados, webhook sem formato do MP | ✅ Código concluído, aguardando revisão do CTO — `docs/execution-reports/EXECUTION_REPORT_OS_PAYMENT_001.md` |
+| Loja em construção (2026-08-17) | `/store` e `/checkout` apontam para página temporária enquanto o pagamento é revisto (decisão do PO) | ✅ Em `main` — reativação descrita em §1 item 0 |
+| Estudo Asaas (2026-08-17) | Viabilidade de trocar/coexistir o gateway. **Conclusão: não migrar agora** (custo maior no perfil da loja + PCI-DSS no cartão); reabrir se o marketplace com split andar | ✅ `docs/arquitetura/ESTUDO_GATEWAY_ASAAS.md` — decisão do PO |
 | OS_HARDENING_001 (2026-08-13) | R-08 (pedido no servidor fecha V-02) + lint + triagem de testes (343/343) + CI/CD | ✅ Código concluído, aguardando revisão do CTO |
 | Auditoria de segurança (2026-07-13) | 14 vulnerabilidades encontradas, 4 críticas | ✅ Diagnosticado — `docs/seguranca/AUDITORIA_SEGURANCA.md` |
 | Sprint 0 de segurança (2026-07-13) | Fecha as 4 críticas no código + 35 testes novos (19 de rules) | ✅ Código concluído, **aguardando deploy** — `docs/seguranca/RELATORIO_SPRINT_0.md`, commit `d41bf2a` |
@@ -73,6 +80,7 @@ Esta é a primeira versão do `PROJECT_STATE.md` — o projeto passa a adotar o 
 | DT-06 | BAIXA | Splash screen nativa iOS (`apple-touch-startup-image`) não implementada (OS_REDESIGN_009). Navegadores modernos geram splash a partir do manifest; iOS exige imagens dedicadas por resolução. Melhoria futura. |
 | DT-07 | MÉDIA | A Cloud Function `createOrder` (R-08) não tem teste direto com emulador de functions (`firebase-functions-test`). A segurança está provada por (a) teste de rules (`firestore.rules.test.js` — create negado no cliente) e (b) leitura de código, mas falta prova automatizada de que o preço vem de `products` e não do cliente. Registrar e cobrir numa OS futura (PLANO_DE_ACAO.md 5.2). |
 | DT-08 | BAIXA/MÉDIA | `functions/` segue **sem config de ESLint** própria — o `npm run lint` do backend (`functions/package.json`) falha por não existir `.eslintrc`/`eslint.config` ali (só `eslint-config-google` instalado). A OS_HARDENING_001 criou a config do **front** (raiz) e ignorou `functions/`; a do backend fica para uma OS futura. |
+| DT-09 | BAIXA | `checkPaymentStatus` (`functions/index.js`) declara `secrets` e valida a config de pagamento sem nunca instanciar um gateway — só lê `payment.status` do Firestore. Peso morto herdado; encontrado na OS_PAYMENT_001, que não o removeu por ser mudança de comportamento fora do escopo. Remover junto com DT-07. |
 | DT-07 | BAIXA | Aviso de build ">500 kB": mesmo após o code-splitting de rotas (OS_REDESIGN_010, chunk principal 1.014→776 kB), os vendors (Firebase SDK, framer-motion, react) seguem no chunk inicial. Zerar o aviso exige `build.rollupOptions.output.manualChunks` (split de vendor) — mudança de config de build, unidade de trabalho própria. Micro-OS futura; não bloqueante. |
 
 ### 3.2 Herdadas do plano de ação (não redigitadas aqui — ver fonte)
