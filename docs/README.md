@@ -59,6 +59,7 @@ de cada OS a partir de agora. Exemplo: [`EXECUTION_REPORT_OS_REDESIGN_001.md`](.
 - [PAYMENT_SYSTEM_COMPLETION_ANALYSIS.md](./arquitetura/PAYMENT_SYSTEM_COMPLETION_ANALYSIS.md) — análise de conclusão do sistema
 - [MODULARIZACAO_PAGAMENTO_PLAN.md](./arquitetura/MODULARIZACAO_PAGAMENTO_PLAN.md) — arquitetura de gateways plugáveis (`BaseGateway`/`GatewayFactory`)
 - [ESTUDO_CASO_BOLETO_CARTAO.md](./arquitetura/ESTUDO_CASO_BOLETO_CARTAO.md) — estudo de caso de boleto e cartão
+- [ESTUDO_GATEWAY_ASAAS.md](./arquitetura/ESTUDO_GATEWAY_ASAAS.md) — **estudo para decisão do PO**: viabilidade, custo e implicações de trocar o Mercado Pago pela Asaas (inclui o impacto de PCI-DSS no cartão)
 
 **Marketplace e fornecedores**
 - [MARKETPLACE_PAYMENT_ANALYSIS.md](./arquitetura/MARKETPLACE_PAYMENT_ANALYSIS.md) — modelos de repasse multi-fornecedor
