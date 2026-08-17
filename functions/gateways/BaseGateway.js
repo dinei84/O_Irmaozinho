@@ -45,10 +45,20 @@ class BaseGateway {
     }
     
     /**
-     * Processa webhook do gateway
-     * 
-     * @param {Object} payload - Payload do webhook
-     * @returns {Promise<Object>} Dados processados
+     * Processa webhook do gateway.
+     *
+     * O handler HTTP entrega o corpo da requisição CRU e não o interpreta —
+     * qualquer conhecimento do formato do provedor (nome do evento, onde está o
+     * id do pagamento, como se chega ao pedido) vive aqui dentro. O handler só
+     * consome o retorno normalizado abaixo.
+     *
+     * @param {Object} payload - Payload cru do webhook, como veio do provedor
+     * @returns {Promise<Object>} Resultado normalizado:
+     *   - `processed` {boolean} — se o evento é relevante para nós
+     *   - `reason` {string} — quando `processed: false`, por que foi ignorado
+     *   - `paymentId` {string} — id do pagamento no gateway
+     *   - `status` {string} — status já normalizado (ver normalizeStatus)
+     *   - `orderId` {string} — id do pedido no Firestore
      */
     async processWebhook(payload) {
         throw new Error('Gateway deve implementar processWebhook()');

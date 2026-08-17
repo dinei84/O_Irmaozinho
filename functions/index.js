@@ -18,6 +18,31 @@ const paymentConfig = require('./config/payment.config');
 const PAYMENT_METHODS = ['pix', 'boleto', 'credit_card'];
 
 /**
+ * Gateway servido pelo endpoint `handlePaymentWebhook`.
+ *
+ * Webhook é sempre por provedor — a URL é cadastrada no painel de cada um e o
+ * formato do payload é próprio dele. Não é a env `PAYMENT_GATEWAY`: trocar o
+ * gateway ativo não muda quem está chamando este endpoint.
+ */
+const WEBHOOK_GATEWAY = 'mercadopago';
+
+/**
+ * Descobre qual gateway deve processar um pedido.
+ *
+ * A fonte da verdade é o gateway gravado NO PEDIDO, não a variável de ambiente:
+ * quando PAYMENT_GATEWAY muda, os pedidos já criados precisam continuar sendo
+ * resolvidos pelo provedor que os criou. Ver ESTUDO_GATEWAY_ASAAS.md §9.
+ *
+ * @param {Object} order - Documento do pedido
+ * @returns {string} Nome do gateway
+ */
+function resolveOrderGateway(order) {
+    // Pedidos anteriores à OS_PAYMENT_001 não têm o campo gravado de forma
+    // confiável — até então o único gateway existente era o Mercado Pago.
+    return order?.payment?.gateway || paymentConfig.legacyGateway;
+}
+
+/**
  * Arredonda para 2 casas decimais (evita erro de ponto flutuante em dinheiro).
  */
 function round2(value) {
@@ -250,7 +275,9 @@ exports.createOrder = functions.https.onCall(async (data, context) => {
             payment: {
                 method: paymentMethod,
                 status: 'pending',
-                gateway: 'mercadopago',
+                // Registra qual gateway vai processar este pedido. É por este
+                // campo que createPaymentIntent/checkPaymentStatus roteiam depois.
+                gateway: paymentConfig.activeGateway,
                 gatewayTransactionId: null,
                 gatewayPaymentId: null,
                 pix: null,
@@ -298,16 +325,11 @@ exports.createOrder = functions.https.onCall(async (data, context) => {
  * @param {number} [data.installments] - Parcelas (cartão), default 1
  */
 exports.createPaymentIntent = functions.runWith({
-    secrets: ['MERCADOPAGO_ACCESS_TOKEN']
+    secrets: paymentConfig.getRequiredSecrets()
 }).https.onCall(async (data, context) => {
-    try {
-        paymentConfig.validate();
-    } catch (err) {
-        throw new functions.https.HttpsError(
-            'failed-precondition',
-            `Configuração de pagamento inválida: ${err.message}`
-        );
-    }
+    // A configuração é validada ao instanciar o gateway do pedido, mais abaixo —
+    // validar o gateway ATIVO aqui rejeitaria, sem motivo, o pagamento de um
+    // pedido criado por outro gateway ainda em trânsito.
     if (!context.auth) {
         throw new functions.https.HttpsError(
             'unauthenticated',
@@ -381,7 +403,20 @@ exports.createPaymentIntent = functions.runWith({
             );
         }
 
-        const gateway = GatewayFactory.create();
+        // Roteia pelo gateway gravado NO PEDIDO, não pela env global: se
+        // PAYMENT_GATEWAY mudar, os pedidos já criados continuam sendo cobrados
+        // pelo provedor que os originou.
+        const gatewayName = resolveOrderGateway(order);
+
+        let gateway;
+        try {
+            gateway = GatewayFactory.createFor(gatewayName);
+        } catch (err) {
+            throw new functions.https.HttpsError(
+                'failed-precondition',
+                `Configuração de pagamento inválida: ${err.message}`
+            );
+        }
 
         const paymentResult = await gateway.createPayment({
             orderId,
@@ -501,7 +536,7 @@ exports.createPaymentIntent = functions.runWith({
  * @param {string} data.orderId - ID do pedido
  */
 exports.checkPaymentStatus = functions.runWith({
-    secrets: ['MERCADOPAGO_ACCESS_TOKEN']
+    secrets: paymentConfig.getRequiredSecrets()
 }).https.onCall(async (data, context) => {
     // Validar configuração de pagamento
     try {
@@ -568,50 +603,43 @@ exports.checkPaymentStatus = functions.runWith({
 
 /**
  * Cloud Function: handlePaymentWebhook
- * Endpoint HTTP para receber webhooks do Mercado Pago
- * 
+ * Endpoint HTTP que recebe os webhooks do Mercado Pago.
+ *
  * IMPORTANTE: Configure esta URL no painel do Mercado Pago
  * URL: https://us-central1-<project-id>.cloudfunctions.net/handlePaymentWebhook
+ *
+ * Um endpoint por gateway (ver WEBHOOK_GATEWAY): o formato do payload é próprio
+ * de cada provedor e a URL é cadastrada no painel de cada um. Ao adicionar um
+ * gateway, crie `handle<Provedor>Webhook` — não multiplexe aqui.
+ *
+ * O handler não interpreta o corpo da requisição: entrega o payload cru ao
+ * gateway e trabalha só com o resultado normalizado
+ * ({ processed, paymentId, status, orderId }).
  */
 exports.handlePaymentWebhook = functions.runWith({
-    secrets: ['MERCADOPAGO_ACCESS_TOKEN']
+    secrets: paymentConfig.getRequiredSecrets()
 }).https.onRequest(async (req, res) => {
-    // Validar configuração de pagamento
-    try {
-        paymentConfig.validate();
-    } catch (error) {
-        console.error('Erro na configuração de pagamento:', error);
-        return res.status(500).send('Erro na configuração do gateway de pagamento');
-    }
     // Verificar método HTTP
     if (req.method !== 'POST') {
         return res.status(405).send('Method Not Allowed');
     }
 
+    let gateway;
     try {
-        const { type, data } = req.body;
+        gateway = GatewayFactory.createFor(WEBHOOK_GATEWAY);
+    } catch (error) {
+        console.error('Erro na configuração de pagamento:', error);
+        return res.status(500).send('Erro na configuração do gateway de pagamento');
+    }
 
-        // Processar apenas eventos de pagamento
-        if (type === 'payment') {
-            const paymentId = data?.id;
+    try {
+        const webhookResult = await gateway.processWebhook(req.body);
 
-            if (!paymentId) {
-                return res.status(400).send('Payment ID não encontrado');
-            }
-
-            // Processar webhook usando gateway modular
-            const gateway = GatewayFactory.create();
-            
-            const webhookResult = await gateway.processWebhook(req.body);
-            
-            if (!webhookResult.processed) {
-                return res.status(200).send('Evento ignorado');
-            }
-
+        if (webhookResult.processed) {
             const orderId = webhookResult.orderId;
-            
+
             if (!orderId) {
-                console.error('Pedido não encontrado no metadata do pagamento:', paymentId);
+                console.error('Pedido não encontrado no webhook:', webhookResult.paymentId);
                 return res.status(400).send('Pedido não encontrado');
             }
 
@@ -624,6 +652,18 @@ exports.handlePaymentWebhook = functions.runWith({
             }
 
             const order = orderDoc.data();
+
+            // Guarda contra processamento cruzado: este endpoint só resolve
+            // pedidos do seu próprio gateway. Se não bater, o webhook veio para
+            // o endpoint errado — responde 200 para não gerar reenvio em laço.
+            const orderGateway = resolveOrderGateway(order);
+            if (orderGateway !== WEBHOOK_GATEWAY) {
+                console.error(
+                    `Webhook de ${WEBHOOK_GATEWAY} recebeu o pedido ${orderId}, que pertence a ${orderGateway}. Ignorado.`
+                );
+                return res.status(200).send('Pedido de outro gateway — ignorado');
+            }
+
             const currentStatus = order.payment?.status || 'pending';
             const newStatus = webhookResult.status;
 
@@ -685,8 +725,9 @@ exports.handlePaymentWebhook = functions.runWith({
             return res.status(200).send('OK');
         }
 
-        // Para outros tipos de eventos, apenas confirmar recebimento
-        return res.status(200).send('OK');
+        // Evento que o gateway decidiu não processar (ex.: não é de pagamento).
+        console.log('Webhook ignorado pelo gateway:', webhookResult.reason || 'sem motivo informado');
+        return res.status(200).send('Evento ignorado');
     } catch (error) {
         console.error('Erro ao processar webhook:', error);
         return res.status(500).send('Erro ao processar webhook');
