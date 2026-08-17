@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -13,8 +13,12 @@ const Home = lazy(() => import('./pages/Home'));
 const About = lazy(() => import('./pages/About'));
 const Articles = lazy(() => import('./pages/Articles'));
 const Chronicles = lazy(() => import('./pages/Chronicles'));
-const Store = lazy(() => import('./pages/Store'));
-const Checkout = lazy(() => import('./pages/Checkout'));
+// LOJA TEMPORARIAMENTE FORA DO AR — ver StoreUnderConstruction.jsx.
+// Para reativar: descomente as duas linhas abaixo, remova o import da página
+// de construção e volte as rotas /store e /checkout (mais abaixo).
+// const Store = lazy(() => import('./pages/Store'));
+// const Checkout = lazy(() => import('./pages/Checkout'));
+const StoreUnderConstruction = lazy(() => import('./pages/StoreUnderConstruction'));
 const Orders = lazy(() => import('./pages/Orders'));
 const OrderDetail = lazy(() => import('./pages/OrderDetail'));
 const Login = lazy(() => import('./pages/Login'));
@@ -52,8 +56,9 @@ function App() {
                                     <Route path="/cronicas" element={<Chronicles />} />
                                     <Route path="/artigo/:id" element={<ArticleDetail />} />
                                     <Route path="/cronica/:id" element={<ArticleDetail />} />
-                                    <Route path="/store" element={<Store />} />
-                                    <Route path="/checkout" element={<Checkout />} />
+                                    {/* LOJA EM CONSTRUÇÃO — restaurar para <Store /> e <Checkout /> */}
+                                    <Route path="/store" element={<StoreUnderConstruction />} />
+                                    <Route path="/checkout" element={<Navigate to="/store" replace />} />
                                     <Route path="/orders" element={<Orders />} />
                                     <Route path="/orders/:orderId" element={<OrderDetail />} />
                                     <Route path="/sobre" element={<About />} />
