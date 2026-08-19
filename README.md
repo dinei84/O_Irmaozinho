@@ -69,7 +69,7 @@ npm run dev
 
 ### 1. Variáveis de Ambiente
 
-Crie um arquivo `.env` na raiz do projeto:
+Crie um arquivo `.env` na raiz do projeto (`cp .env.example .env`):
 
 ```env
 VITE_FIREBASE_API_KEY=sua_api_key
