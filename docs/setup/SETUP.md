@@ -37,7 +37,7 @@ Isso instalará todas as dependências, incluindo as novas para testes:
 
 ### Passo 2: Configurar Variáveis de Ambiente
 
-1. Crie um arquivo `.env` na raiz do projeto
+1. Crie um arquivo `.env` na raiz do projeto — o jeito rápido é `cp .env.example .env` e preencher
 2. Adicione as seguintes variáveis:
 
 ```env
