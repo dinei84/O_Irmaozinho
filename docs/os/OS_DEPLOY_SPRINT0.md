@@ -1,6 +1,12 @@
 # OS_DEPLOY_SPRINT0 — Deploy do Sprint 0 de segurança (runbook operacional)
 
-**Status:** 🔲 Não executada
+> ⚠️ **SUBSTITUÍDO — não use este arquivo.**
+> Use [`OS_DEPLOY_002_SPRINT0_R08_PAYMENT001.md`](./OS_DEPLOY_002_SPRINT0_R08_PAYMENT001.md),
+> que consolida este deploy com o R-08 e a OS_PAYMENT_001. As baselines de teste
+> daqui estão desatualizadas e o aviso sobre a V-02 não vale mais (foi fechada pelo
+> R-08). Mantido só como registro histórico.
+
+**Status:** ⛔ Substituído por OS_DEPLOY_002
 **Tipo:** operacional (deploy em produção) — **não é uma OS de código**. A maior parte é
 executada **por você (PO)**, não por um agente CLI: login no Firebase, credenciais,
 segredos e a promoção para produção são ações humanas (ver `AGENTS.md` — entrar

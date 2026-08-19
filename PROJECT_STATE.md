@@ -39,9 +39,12 @@ Esta é a primeira versão do `PROJECT_STATE.md` — o projeto passa a adotar o 
    (`src/pages/StoreUnderConstruction.jsx`) por decisão do PO, enquanto o meio de pagamento
    é revisto. Reativar é descomentar dois lazy imports e voltar duas rotas em `src/App.jsx`
    (instruções no cabeçalho da própria página). `Store.jsx` e `Checkout.jsx` estão intactos.
-1. **Deploy do Sprint 0 + R-08** — o código das correções de segurança (incluindo agora a
-   `createOrder` server-side, que fecha a V-02) está pronto e testado, mas não em produção.
-   Ver `docs/seguranca/RELATORIO_SPRINT_0.md` e `docs/os/OS_HARDENING_001*.md` para o checklist.
+1. **Deploy do Sprint 0 + R-08 + OS_PAYMENT_001** — três levas de trabalho prontas e
+   testadas, nenhuma em produção. **Runbook preparado e pré-flight já executado:**
+   `docs/os/OS_DEPLOY_002_SPRINT0_R08_PAYMENT001.md`. Faltam apenas os passos humanos
+   (login do Firebase, `.env` real, secret do MP, deploy). ⚠️ Atenção ao risco documentado
+   ali: `npm run build` passa sem `.env` e publica um bundle quebrado.
+   O `docs/os/OS_DEPLOY_SPRINT0.md` foi **substituído** — não usar.
 2. **R-10** — assinatura do webhook do Mercado Pago (`x-signature` + idempotência) — o webhook
    ainda é um endpoint público que aceita qualquer POST (ver `PLANO_DE_ACAO.md` Fase 0.4).
 3. **Testes das Cloud Functions com emulador** (`firebase-functions-test`) — o `createOrder`
